@@ -78,9 +78,7 @@
 /* std::includes */
 
 /* plugin::includes */
-#include "AeroControler\\SharedPluginBase\\AC_ErrorSys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_UISys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_ClientSys.inc"
+#include "AeroControler\\SharedPluginBase\\AC_SharedPluginBase.inc"
 
 #include "AeroControler\\Core\\AC_Vars.inc"
 #include "AeroControler\\Core\\AC_InterfaceControl.inc"
@@ -105,6 +103,7 @@
 #define REQUIRE_EXTENSIONS
 /* 3rdParty::includes */
 
+
 public Plugin:myinfo = 
 {
 	name = "Aero Controler",
@@ -117,8 +116,9 @@ public Plugin:myinfo =
 public OnPluginStart()
 {
 	CreateConVar("ac_version", PLUGIN_VERSION, "Version of the AeroControler",  FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
-	
-	LoadVersionNumber();
+
+	LoadVersionNumber();	
+	DetectGameMod();
 	InitCVarSettings();
 	CreateStaticMenus();
 	

@@ -10,9 +10,7 @@
 /* SM INCLUDES */
 
 /* AERO INCLUDES */
-#include "AeroControler\\SharedPluginBase\\AC_ErrorSys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_UISys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_ClientSys.inc"
+#include "AeroControler\\SharedPluginBase\\AC_SharedPluginBase.inc"
 
 #include "AeroControler\\aerocontroler_core_interface.inc" //interface to the core
 #include "AeroControler\\aerocontroler_war_interface.inc" //interface to the war-base
@@ -35,6 +33,7 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
+	DetectGameMod(); //detect, which gamemod is running (g_Game == Game_Css || Game_Csgo)
 	ac_getCoreComTag(Tag, sizeof(Tag)); //get our chat tag
 	ExtensionEntryIndex = ac_registerPluginExtension("WAR Template", PLUGIN_AUTHOR, PLUGIN_VERSION); //register our plugin in the about menu
 	RegisterWars();

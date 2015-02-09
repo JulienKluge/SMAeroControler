@@ -29,9 +29,7 @@
 #include "AeroControler\\aerocontroler_core_interface.inc" //interface to the core
 #include "AeroControler\\aerocontroler_war_interface.inc" //interface to the war-base
 
-#include "AeroControler\\SharedPluginBase\\AC_ErrorSys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_UISys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_ClientSys.inc"
+#include "AeroControler\\SharedPluginBase\\AC_SharedPluginBase.inc"
 
 #include "AeroControler\\War_Sys\\Scripts\\AC_STDWAR_Vars.inc"
 #include "AeroControler\\War_Sys\\Scripts\\AC_STDWAR_Stocks.inc"
@@ -50,6 +48,7 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
+	DetectGameMod();
 	LoadTranslationFiles();
 
 	ac_getCoreComTag(Tag, sizeof(Tag));

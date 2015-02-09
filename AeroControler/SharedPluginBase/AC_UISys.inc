@@ -18,6 +18,8 @@
 #endif
 #define _AC_UISYS_included
 
+#include "AC_GameSys.inc"
+
 new bool:IncludeTag = true;
 new String:Tag[32] = "\x071188FF[Jail]:\x01";
 
@@ -31,9 +33,16 @@ stock AC_PrintToChat(client, const String:msg[], any:...)
 	else
 	{ Format(message, sizeof(message), "\x01%s", message); }
 	new Handle:buffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
-	BfWriteByte(buffer, client);
-	BfWriteByte(buffer, true);
-	BfWriteString(buffer, message);
+	if (g_Game == Game_Css)
+	{
+		BfWriteByte(buffer, client);
+		BfWriteByte(buffer, true);
+		BfWriteString(buffer, message);
+	}
+	else if (g_Game == Game_Csgo)
+	{
+		//TODO
+	}
 	EndMessage();
 }
 
@@ -51,9 +60,16 @@ stock AC_PrintToChatAll(const String:msg[], any:...)
 			else
 			{ Format(message, sizeof(message), "\x01%s", message); }
 			new Handle:buffer = StartMessageOne("SayText2", i, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS); //why I don't use AC_PrintToChat? Because 2 times a VFormat, Format & SetGlobalTransTarget is sensless!
-			BfWriteByte(buffer, i);
-			BfWriteByte(buffer, true);
-			BfWriteString(buffer, message);
+			if (g_Game == Game_Css)
+			{
+				BfWriteByte(buffer, i);
+				BfWriteByte(buffer, true);
+				BfWriteString(buffer, message);
+			}
+			else if (g_Game == Game_Csgo)
+			{
+				//TODO
+			}
 			EndMessage();
 		}
 	}
@@ -65,8 +81,15 @@ stock AC_PrintKeyText(client, const String:msg[], any:...)
 	SetGlobalTransTarget(client);
 	VFormat(message, sizeof(message), msg, 3);
 	new Handle:userMessage = StartMessageOne("KeyHintText", client);
-	BfWriteByte(userMessage, 1);
-	BfWriteString(userMessage, message);
+	if (g_Game == Game_Css)
+	{
+		BfWriteByte(userMessage, 1);
+		BfWriteString(userMessage, message);
+	}
+	else if (g_Game == Game_Csgo)
+	{
+		//TODO
+	}
 	EndMessage();
 }
 

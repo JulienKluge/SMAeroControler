@@ -34,9 +34,7 @@
 /* interface::includes */
 
 /* plugin::includes */
-#include "AeroControler\\SharedPluginBase\\AC_ErrorSys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_UISys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_ClientSys.inc"
+#include "AeroControler\\SharedPluginBase\\AC_SharedPluginBase.inc"
 
 #include "AeroControler\\Store_Sys\\AC_STORE_Vars.inc"
 #include "AeroControler\\Store_Sys\\AC_STORE_Stocks.inc"
@@ -59,6 +57,7 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
+	DetectGameMod();
 	LoadStaticConfig();
 	LoadTranslationFiles();
 	ConnectToDatabase();

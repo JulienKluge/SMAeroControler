@@ -34,9 +34,7 @@ funcenum WarEnd
 functag public WarFreezeTimeStart(_:time);
 functag public WarFreezeTimeEnd();
 
-#include "AeroControler\\SharedPluginBase\\AC_ErrorSys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_UISys.inc"
-#include "AeroControler\\SharedPluginBase\\AC_ClientSys.inc"
+#include "AeroControler\\SharedPluginBase\\AC_SharedPluginBase.inc"
 
 #include "AeroControler\\War_Sys\\Controler\\AC_WAR_Vars.inc"
 #include "AeroControler\\War_Sys\\Controler\\AC_WAR_Stocks.inc"
@@ -56,6 +54,7 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
+	DetectGameMod();
 	LoadStaticConfig();
 	LoadTranslationFiles();
 	
