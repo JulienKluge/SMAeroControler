@@ -41,8 +41,8 @@ stock LoadTranslationFiles()
 	{ Log(EL_FatalEx, "WARSys", "The template file %s could not be readed or the destination file %s be written.", transFile, transDestFile); }
 }
 
-stock bool:IntToBool(_:int)
+stock bool:IntToBool(integer)
 {
-	if (int == 0) { return false; }
+	if (integer == 0) { return false; }
 	return true;
 }

@@ -234,7 +234,7 @@ public AC_Native_PerformDiceOnClient(Handle:plugin, numParams)
 
 public AC_Native_RegisterCMDMenuBuildForward(Handle:plugin, numParams)
 {
-	new Function:func = Function:GetNativeCell(1);
+	new Function:func = GetNativeCell(1);
 	AddToForward(cmdMenuBuildForward, plugin, func);
 	return 0;
 }

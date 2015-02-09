@@ -34,7 +34,7 @@ public Action:Cmd_OpenStoreRank(client, args)
 {
 	decl String:query[160];
 	decl String:id[32];
-	GetClientAuthString(client, id, sizeof(id));
+	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
 	Format(query, sizeof(query), "SELECT (points+gained) FROM `%s` WHERE steamid='%s'", tableName, id);
 	SQL_TQuery(db, TSQL_StoreRankCmdRelay, query, GetClientUserId(client));
 	return Plugin_Handled;

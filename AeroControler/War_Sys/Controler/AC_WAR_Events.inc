@@ -40,7 +40,7 @@ public Action:Event_RoundStart(Handle:event, const String:name[], bool:dontBroad
 			WarInFreezeTime = true;
 			WarFTCount = WarFreezeTime;
 			WarFreezeTimer = CreateTimer(1.0, timer_EndFreezeTime, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
-			if (War_FT_Start[WarIndex] != WarFreezeTimeStart:INVALID_HANDLE)
+			if (War_FT_Start[WarIndex] != WarFreezeTimeStart:INVALID_FUNCTION)
 			{
 				Call_StartFunction(War_Plugin[WarIndex], War_FT_Start[WarIndex]);
 				Call_PushCell(WarFreezeTime);

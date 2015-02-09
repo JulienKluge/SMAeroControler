@@ -39,7 +39,8 @@ stock UpdateClientAsync(client)
 		updatePoints = updatePoints * (1.0 - sf_tax[client]);
 	}
 	decl String:id[32];
-	GetClientAuthString(client, id, sizeof(id));
+	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
+	//GetClientAuthString(client, id, sizeof(id));
 	decl String:query[256];
 	Format(query, sizeof(query), "UPDATE `%s` SET points=points+%f,gained=gained+%f,sfgained=sfgained+%f WHERE steamid='%s'", tableName, updatePoints, updatePoints, updateSFPoints, id);
 	SQL_TQuery(db, TSQL_NULL, query, 0, DBPrio_Low);
@@ -150,7 +151,8 @@ stock DescreasePoints(client, Float:amount)
 	points[client] -= amount;
 	decl String:query[192];
 	decl String:id[32];
-	GetClientAuthString(client, id, sizeof(id));
+	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
+	//GetClientAuthString(client, id, sizeof(id));
 	Format(query, sizeof(query), "UPDATE `%s` SET points=points-%f,spend=spend+%f WHERE steamid='%s'", tableName, amount, amount, id);
 	SQL_TQuery(db, TSQL_NULL, query);
 }

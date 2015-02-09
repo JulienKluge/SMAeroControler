@@ -21,7 +21,7 @@ public TSQL_SelectJoiner(Handle:owner, Handle:hndl, const String:error[], any:da
 	decl String:id[32];
 	decl String:name[32];
 	decl String:sqlname[65];
-	GetClientAuthString(client, id, sizeof(id));
+	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
 	GetClientName(client, name, sizeof(name));
 	SQL_EscapeString(db, name, sqlname, sizeof(sqlname));
 	if (SQL_FetchRow(hndl)) //client is already in database
@@ -604,7 +604,7 @@ public TSQL_SetSFRightsMenu(Handle:owner, Handle:hndl, const String:error[], any
 		decl String:memberLevelStr[8];
 		IntToString(memberLevel, memberLevelStr, sizeof(memberLevelStr));
 		decl String:steamid[32];
-		GetClientAuthString(client, steamid, sizeof(steamid));
+		GetClientAuthId(client, AuthId_Engine, steamid, sizeof(steamid));
 		new count = SQL_GetRowCount(hndl);
 		decl String:name[32];
 		decl String:sid[32];
@@ -647,7 +647,7 @@ public TSQL_SetMemberRights(Handle:owner, Handle:hndl, const String:error[], any
 	{
 		if (IsClientValid(i))
 		{
-			GetClientAuthString(i, sid, sizeof(sid));
+			GetClientAuthId(i, AuthId_Engine, sid, sizeof(sid));
 			if (StrEqual(sid, steamid))
 			{
 				sf_level[i] = memberLevel;
@@ -793,7 +793,7 @@ public TSQL_PayOutDone(Handle:owner, Handle:hndl, const String:error[], any:data
 	{
 		if (IsClientValid(i))
 		{
-			GetClientAuthString(i, sid, sizeof(sid));
+			GetClientAuthId(i, AuthId_Engine, sid, sizeof(sid));
 			if (StrEqual(sid, steamid))
 			{
 				points[i] += float(value);
@@ -845,7 +845,7 @@ public TSQL_SelectRemoveMember(Handle:owner, Handle:hndl, const String:error[], 
 	{
 		decl String:steamid[32];
 		decl String:sid[32];
-		GetClientAuthString(client, sid, sizeof(sid));
+		GetClientAuthId(client, AuthId_Engine, sid, sizeof(sid));
 		decl String:name[32];
 		new Handle:menu = CreateMenu(menuHandler_SelectRemovingMember, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 		SetMenuExitButton(menu, true);
@@ -1024,7 +1024,7 @@ public TSQL_GetSFMemberForLeavingProcess(Handle:owner, Handle:hndl, const String
 			WritePackString(pack, cName);
 			WritePackString(pack, name);
 			decl String:sid[32];
-			GetClientAuthString(client, sid, sizeof(sid));
+			GetClientAuthId(client, AuthId_Engine, sid, sizeof(sid));
 			decl String:query[255];
 			Format(query, sizeof(query), "UPDATE `%s` SET membercount=membercount-1 WHERE id=%i", sfTableName, id);
 			SQL_TQuery(db, TSQL_NULL, query);
@@ -1135,7 +1135,7 @@ public TSQL_NewSkillSet(Handle:owner, Handle:hndl, const String:error[], any:dat
 	{
 		if (IsClientValid(i))
 		{
-			GetClientAuthString(i, sid, sizeof(sid));
+			GetClientAuthId(i, AuthId_Engine, sid, sizeof(sid));
 			if (StrEqual(steamid, sid))
 			{
 				sf_skill[i] = skill;
@@ -1277,7 +1277,7 @@ public TSQL_IncSkill(Handle:owner, Handle:hndl, const String:error[], any:data)
 	{
 		if (IsClientValid(i))
 		{
-			GetClientAuthString(i, sid, sizeof(sid));
+			GetClientAuthId(i, AuthId_Engine, sid, sizeof(sid));
 			if (StrEqual(steamid, sid))
 			{
 				sf_skilllevel[i]++;

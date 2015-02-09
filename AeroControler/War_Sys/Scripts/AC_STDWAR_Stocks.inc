@@ -32,7 +32,7 @@ stock RegisterWars()
 		if (FunWar_Enabled)
 		{
 			Format(transPhrase, sizeof(transPhrase), "%T", "STDWARS_FunWar", LANG_SERVER);
-			ac_war_RegWar(warcallback_FunWarStart, warcallback_FunWarEnd, transPhrase, true, WarFreezeTimeStart:0, WarFreezeTimeEnd:warcallback_FunWarFreezeTimeEnd);
+			ac_war_RegWar(warcallback_FunWarStart, warcallback_FunWarEnd, transPhrase, true, WarFreezeTimeStart:INVALID_FUNCTION, WarFreezeTimeEnd:warcallback_FunWarFreezeTimeEnd);
 		}
 		Ready = true;
 	}

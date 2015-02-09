@@ -180,7 +180,7 @@ public menuHandler_StoreEnd(Handle:menu, MenuAction:action, param1, param2)
 		if (price == -1.0) { return; }
 		decl String:query[160];
 		decl String:id[32];
-		GetClientAuthString(param1, id, sizeof(id));
+		GetClientAuthId(param1, AuthId_Engine, id, sizeof(id));
 		Format(query, sizeof(query), "SELECT points FROM `%s` WHERE steamid='%s'", tableName, id);
 		new Handle:pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
@@ -417,9 +417,9 @@ public menuHandler_ChooseSFFoundership(Handle:menu, MenuAction:action, param1, p
 				new Handle:dPack = CreateDataPack();
 				WritePackCell(dPack, GetClientUserId(founder1));
 				WritePackCell(dPack, GetClientUserId(param1));
-				GetClientAuthString(founder1, id, sizeof(id));
+				GetClientAuthId(founder1, AuthId_Engine, id, sizeof(id));
 				WritePackString(dPack, id);
-				GetClientAuthString(param1, id, sizeof(id));
+				GetClientAuthId(param1, AuthId_Engine, id, sizeof(id));
 				WritePackString(dPack, id);
 				WritePackString(dPack, sfName);
 				decl String:query[192];
@@ -595,7 +595,7 @@ public menuHandler_ChooseSFAccession(Handle:menu, MenuAction:action, param1, par
 			WritePackFloat(pack, tax);
 			WritePackString(pack, name);
 			decl String:steamid[32];
-			GetClientAuthString(param1, steamid, sizeof(steamid));
+			GetClientAuthId(param1, AuthId_Engine, steamid, sizeof(steamid));
 			decl String:query[255];
 			Format(query, sizeof(query), "UPDATE `%s` SET membercount=membercount+1 WHERE id=%i", sfTableName, id);
 			SQL_TQuery(db, TSQL_NULL, query);

@@ -51,7 +51,7 @@ public Action:timer_EndFreezeTime(Handle:timer)
 				}
 			}
 		}
-		if (War_FT_End[WarIndex] != WarFreezeTimeEnd:INVALID_HANDLE)
+		if (War_FT_End[WarIndex] != WarFreezeTimeEnd:INVALID_FUNCTION)
 		{
 			Call_StartFunction(War_Plugin[WarIndex], War_FT_End[WarIndex]);
 			Call_Finish();
@@ -147,14 +147,14 @@ public _:AC_Native_RegWar(Handle:plugin, numParams)
 	}
 	if (index >= 0)
 	{
-		War_StartFunc[index] = WarStart:GetNativeCell(1);
-		War_EndFunc[index] = WarEnd:GetNativeCell(2);
+		War_StartFunc[index] = GetNativeCell(1);
+		War_EndFunc[index] = GetNativeCell(2);
 		GetNativeString(3, War_Name[index], MAX_WAR_NAME);
 		War_HasFreezeTime[index] = bool:GetNativeCell(4);
 		if (War_HasFreezeTime[index])
 		{
-			War_FT_Start[index] = WarFreezeTimeStart:GetNativeCell(5);
-			War_FT_End[index] = WarFreezeTimeEnd:GetNativeCell(6);
+			War_FT_Start[index] = GetNativeCell(5);
+			War_FT_End[index] = GetNativeCell(6);
 		}
 		War_Plugin[index] = plugin;
 		War_Registered[index] = true;

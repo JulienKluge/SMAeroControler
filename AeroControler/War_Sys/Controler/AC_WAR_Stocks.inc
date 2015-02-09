@@ -82,7 +82,7 @@ stock StartWar(_:index)
 	WarHasFreezeTime = War_HasFreezeTime[index];
 	WarRound = 0;
 	LoadWarVectors();
-	if (War_StartFunc[index] != WarStart:INVALID_HANDLE)
+	if (War_StartFunc[index] != WarStart:INVALID_FUNCTION)
 	{
 		Call_StartFunction(War_Plugin[index], War_StartFunc[index]);
 		Call_PushCell(index);
@@ -123,7 +123,7 @@ stock EndWar(bool:ForceRestart = true)
 
 stock ForceEndWar()
 {
-	if (War_EndFunc[WarIndex] != WarEnd:INVALID_HANDLE)
+	if (War_EndFunc[WarIndex] != WarEnd:INVALID_FUNCTION)
 	{
 		Call_StartFunction(War_Plugin[WarIndex], War_EndFunc[WarIndex]);
 		Call_PushCell(WarIndex);
