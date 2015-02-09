@@ -171,7 +171,7 @@ Adds a function to the private build-cmd-menu-forward
 @param function			The function which should be called when the forward raises
 @noparam
 */
-native ac_registerCMDMenuBuildForward(buildCMDMenuForward:function);
+native ac_registerCMDMenuBuildForward(buildCMDMenuForward:func);
 
 /*
 Got called when the tag gets changed.

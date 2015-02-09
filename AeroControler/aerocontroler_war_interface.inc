@@ -75,8 +75,8 @@ native _:ac_war_RegWar(WarStart:startFunction
 						, WarEnd:endFunction
 						, const String:name[]
 						, bool:HasFreezeTime = false
-						, WarFreezeTimeStart:freezeStartFunction = WarFreezeTimeStart:0
-						, WarFreezeTimeEnd:freezeEndFunction = WarFreezeTimeEnd:0);
+						, WarFreezeTimeStart:freezeStartFunction = INVALID_FUNCTION
+						, WarFreezeTimeEnd:freezeEndFunction = INVALID_FUNCTION);
 
 /*
 ** Unregister a war from the controler.
