@@ -229,6 +229,10 @@ stock bool:Diced_NV(client)
 
 stock bool:Diced_Invis(client)
 {
+	if (g_Game == Game_Csgo)
+	{
+		return false; //Invisibility is not working in csgo
+	}
 	new alphaFactor = GetRandomInt(0, 13);
 	SetEntityRenderColor(client, 255, 255, 255, alphaFactor);
 	SetEntityRenderMode(client, RENDER_TRANSALPHA);
