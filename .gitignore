@@ -28,6 +28,12 @@ $RECYCLE.BIN/
 # Paint.NET Image Files
 *.pdn
 
+#Compiled SM Files
+*.smx
+
+#Compiler Data
+*.dat
+
 # =========================
 # Operating System Files
 # =========================
