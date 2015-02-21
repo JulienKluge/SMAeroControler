@@ -14,11 +14,11 @@
 **
 */
 
-stock LoadStaticConfig()
+stock void LoadStaticConfig()
 {
-	decl String:file[PLATFORM_MAX_PATH];
+	char file[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, file, sizeof(file), "configs/AC_STORE_StaticConfig.ini");
-	new Handle:kv = CreateKeyValues("StaticSettings");
+	Handle kv = CreateKeyValues("StaticSettings");
 	if (FileToKeyValues(kv, file))
 	{
 		KvGetString(kv, "Store_CurrentName", currentName, sizeof(currentName), "Points");
@@ -38,25 +38,25 @@ stock LoadStaticConfig()
 	CloseHandle(kv);
 }
 
-stock LoadTranslationFiles()
+stock void LoadTranslationFiles()
 {
 	LoadTranslations("common.phrases.txt");
-	decl String:transFile[PLATFORM_MAX_PATH];
-	decl String:transDestFile[PLATFORM_MAX_PATH];
+	char transFile[PLATFORM_MAX_PATH];
+	char transDestFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, transFile, sizeof(transFile), "/translations/_aerocontroler_store.phrases.txt");
 	BuildPath(Path_SM, transDestFile, sizeof(transDestFile), "/translations/aerocontroler_store.phrases.txt");
-	new transResult = ac_parseTransFile(transFile, transDestFile);
+	int transResult = ac_parseTransFile(transFile, transDestFile);
 	if (transResult)
 	{ LoadTranslations("aerocontroler_store.phrases.txt"); }
 	else
 	{ Log(EL_FatalEx, "STORESys", "The template file %s could not be readed or the destination file %s be written.", transFile, transDestFile); }
 }
 
-stock LoadDatabaseSettings()
+stock void LoadDatabaseSettings()
 {
-	decl String:file[PLATFORM_MAX_PATH];
+	char file[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, file, sizeof(file), "configs/AC_STORE_DatabaseConfig.ini");
-	new Handle:kv = CreateKeyValues("Store_DBConfig");
+	Handle kv = CreateKeyValues("Store_DBConfig");
 	if (FileToKeyValues(kv, file))
 	{
 		KvGetString(kv, "StoreTableName", tableName, sizeof(tableName), "ac_store");
@@ -68,10 +68,10 @@ stock LoadDatabaseSettings()
 	CloseHandle(kv);
 }
 
-stock ConnectToDatabase()
+stock void ConnectToDatabase()
 {
 	LoadDatabaseSettings();
-	decl String:error[512];
+	char error[512];
 	db = SQL_Connect("sql_ac_store", false, error, sizeof(error));
 	if (db == INVALID_HANDLE)
 	{
@@ -85,8 +85,8 @@ stock ConnectToDatabase()
 			Log(EL_Info, "STORESys", "There is no 'sql_ac_store' entry in the databases.cfg. - Connecting using standart configuration...");
 		}
 	}
-	decl String:query[512];
-	new bool:queryResult;
+	char query[512];
+	bool queryResult;
 	if (db_useDecimals)
 	{
 		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS `%s`(id INT NOT NULL AUTO_INCREMENT, steamid VARCHAR(32) UNIQUE, name VARCHAR(32), points DECIMAL(%i,%i), gained DECIMAL(%i,%i), spend DECIMAL(%i,%i), lastjoin DATE, skillforce INT, sfgained DECIMAL(%i,%i), sflevel TINYINT, sfskill TINYINT, sfskilllevel TINYINT, PRIMARY KEY (id))", tableName, db_decimalAbsolutPrecision, db_decimalPrecision, db_decimalAbsolutPrecision, db_decimalPrecision, db_decimalAbsolutPrecision, db_decimalPrecision, db_decimalAbsolutPrecision, db_decimalPrecision);
@@ -117,7 +117,7 @@ stock ConnectToDatabase()
 	}
 }
 
-stock bool:IntToBool(_:integer)
+stock bool IntToBool(int integer)
 {
 	if (integer == 0)
 	{

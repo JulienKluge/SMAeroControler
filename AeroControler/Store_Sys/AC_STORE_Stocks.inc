@@ -14,34 +14,34 @@
 **
 */
 
-stock LoadClient(client, const String:auth[])
+stock void LoadClient(int client, const char[] auth)
 {
 	points[client] = 0.0;
 	c_MultiplierPrivate[client] = c_MultiplierPublic[client] = 1.0;
 	c_PressureNadeCount[client] = sf_skill[client] = sf_skilllevel[client] = 0;
 	c_InSFNameChooseProcess[client] = sf_hasSkill[client] = false;
-	new userid = GetClientUserId(client);
-	decl String:query[256];
+	int userid = GetClientUserId(client);
+	char query[256];
 	Format(query, sizeof(query), "SELECT points,DATEDIFF(NOW(),lastjoin),skillforce,sflevel,sfskill,sfskilllevel FROM `%s` WHERE steamid='%s'", tableName, auth);
 	SQL_TQuery(db, TSQL_SelectJoiner, query, userid);
 }
 
-stock UpdateClientAsync(client)
+stock void UpdateClientAsync(int client)
 {
 	if (!InWork) { return; }
 	if (IsClientReplay(client) || IsClientSourceTV(client) || IsFakeClient(client)) { return; }
 	if (newPoints[client] == 0.0) { return; }
-	new Float:updatePoints = newPoints[client] * c_MultiplierPrivate[client] * c_MultiplierPublic[client] * p_PointsMultiplierPublic;
-	new Float:updateSFPoints = 0.0;
+	float updatePoints = newPoints[client] * c_MultiplierPrivate[client] * c_MultiplierPublic[client] * p_PointsMultiplierPublic;
+	float updateSFPoints = 0.0;
 	if (sf_member[client] != -1)
 	{
 		updateSFPoints = updatePoints * sf_tax[client];
 		updatePoints = updatePoints * (1.0 - sf_tax[client]);
 	}
-	decl String:id[32];
+	char id[32];
 	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
 	//GetClientAuthString(client, id, sizeof(id));
-	decl String:query[256];
+	char query[256];
 	Format(query, sizeof(query), "UPDATE `%s` SET points=points+%f,gained=gained+%f,sfgained=sfgained+%f WHERE steamid='%s'", tableName, updatePoints, updatePoints, updateSFPoints, id);
 	SQL_TQuery(db, TSQL_NULL, query, 0, DBPrio_Low);
 	if (updateSFPoints > 0.0)
@@ -56,7 +56,7 @@ stock UpdateClientAsync(client)
 	#endif
 }
 
-stock GainPoints(client, Float:pointsToGain)
+stock void GainPoints(int client, float pointsToGain)
 {
 	if (!InWork) { return; }
 	#if defined DEBUG
@@ -66,14 +66,14 @@ stock GainPoints(client, Float:pointsToGain)
 	virtualNewPoints[client] += pointsToGain;
 }
 
-stock OpenStoreMenu(client)
+stock void OpenStoreMenu(int client)
 {
 	if (!InWork) { return; }
-	new teamIndex = GetClientTeam(client);
+	int teamIndex = GetClientTeam(client);
 	if (teamIndex == CS_TEAM_T || teamIndex == CS_TEAM_CT) //failsafe
 	{
-		decl String:subStr[64];
-		new Handle:menu = CreateMenu(menuHandler_Store, MenuAction_Select | MenuAction_End);
+		char subStr[64];
+		Handle menu = CreateMenu(menuHandler_Store, MenuAction_Select | MenuAction_End);
 		SetMenuTitle(menu, "%T", "storemenu_title", client, points[client], currentName);
 		Format(subStr, sizeof(subStr), "%T", "storemenu_cat_jail", client);
 		AddMenuItem(menu, "jail", subStr, (teamIndex == CS_TEAM_T) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
@@ -87,7 +87,7 @@ stock OpenStoreMenu(client)
 	}
 }
 
-stock Float:DecodePrice(code)
+stock float DecodePrice(int code)
 {
 	switch (code)
 	{
@@ -117,7 +117,7 @@ stock Float:DecodePrice(code)
 	return -1.0; //year...the compiler cries when it isn't there...
 }
 
-stock ApplyCodeFeature(client, code)
+stock void ApplyCodeFeature(int client, int code)
 {
 	switch (code)
 	{
@@ -146,20 +146,20 @@ stock ApplyCodeFeature(client, code)
 	}
 }
 
-stock DescreasePoints(client, Float:amount)
+stock void DescreasePoints(int client, float amount)
 {
 	points[client] -= amount;
-	decl String:query[192];
-	decl String:id[32];
+	char query[192];
+	char id[32];
 	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
 	//GetClientAuthString(client, id, sizeof(id));
 	Format(query, sizeof(query), "UPDATE `%s` SET points=points-%f,spend=spend+%f WHERE steamid='%s'", tableName, amount, amount, id);
 	SQL_TQuery(db, TSQL_NULL, query);
 }
 
-stock CheckStoreFeatureForClient(client, code)
+stock bool CheckStoreFeatureForClient(int client, int code)
 {
-	new teamIndex = GetClientTeam(client);
+	int teamIndex = GetClientTeam(client);
 	if (!(teamIndex == CS_TEAM_T || teamIndex == CS_TEAM_CT))
 	{ return false; }
 	if (code > 0 && code < 8)
@@ -170,12 +170,12 @@ stock CheckStoreFeatureForClient(client, code)
 	return true;
 }
 
-stock OpenSkillForceMenu(client)
+stock void OpenSkillForceMenu(int client)
 {
 	if (sf_member[client] == -1)
 	{
-		decl String:subStr[64];
-		new Handle:menu = CreateMenu(menuHandler_SFMenu, MenuAction_Select | MenuAction_End);
+		char subStr[64];
+		Handle menu = CreateMenu(menuHandler_SFMenu, MenuAction_Select | MenuAction_End);
 		SetMenuTitle(menu, "%T", "sfmenu_nosf", client);
 		Format(subStr, sizeof(subStr), "%T", "sfmenu_foundsf", client);
 		AddMenuItem(menu, "found", subStr);
@@ -187,21 +187,21 @@ stock OpenSkillForceMenu(client)
 	}
 	else
 	{
-		new userid = GetClientUserId(client);
-		decl String:query[255];
+		int userid = GetClientUserId(client);
+		char query[255];
 		Format(query, sizeof(query), "SELECT name FROM `%s` WHERE id=%i", sfTableName, sf_member[client]);
 		SQL_TQuery(db, TSQL_OpenSFMenu, query, userid);
 	}
 }
 
-stock OpenRekursivePayOutMenu(client, value, const String:steamid[], const String:name[])
+stock void OpenRekursivePayOutMenu(int client, int value, const char[] steamid, const char[] name)
 {
 	if (value < 1) { value = 1; }
 	if (value > 100000) { value = 100000; }
-	new Handle:menu = CreateMenu(menuHandler_RekursivePayOutMenu, MenuAction_Select | MenuAction_End);
+	Handle menu = CreateMenu(menuHandler_RekursivePayOutMenu, MenuAction_Select | MenuAction_End);
 	AddMenuItem(menu, steamid, "", ITEMDRAW_IGNORE);
 	AddMenuItem(menu, name, "", ITEMDRAW_IGNORE);
-	decl String:itemString[64];
+	char itemString[64];
 	IntToString(value, itemString, sizeof(itemString));
 	AddMenuItem(menu, itemString, "", ITEMDRAW_IGNORE);
 	AddMenuItem(menu, "ptnd", "+1000");
@@ -217,7 +217,7 @@ stock OpenRekursivePayOutMenu(client, value, const String:steamid[], const Strin
 	DisplayMenu(menu, client, 45);
 }
 
-stock ConvertSkillNumberIntoString(skill, String:str[], strlength, clientToTranslate = LANG_SERVER)
+stock void ConvertSkillNumberIntoString(int skill, char[] str, int strlength, int clientToTranslate = LANG_SERVER)
 {
 	if (skill == Skill_Medic)
 	{ Format(str, strlength, "%T", "sf_skill_medic", clientToTranslate); }
@@ -231,16 +231,16 @@ stock ConvertSkillNumberIntoString(skill, String:str[], strlength, clientToTrans
 	{ Format(str, strlength, "%T", "sf_skill_none", clientToTranslate); }
 }
 
-stock GetClientAimingClient(client)
+stock int GetClientAimingClient(int client)
 {
-	new target = -1;
-	new Float:pos[3]; new Float:ang[3];
+	int target = -1;
+	float pos[3]; float ang[3];
 	GetClientEyePosition(client, pos);
 	GetClientEyeAngles(client, ang);
-	new Handle:tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
+	Handle tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
 	if (TR_DidHit(tr))
 	{
-		new ent = TR_GetEntityIndex(tr);
+		int ent = TR_GetEntityIndex(tr);
 		if (IsClientValid(ent))
 		{
 			target = ent;

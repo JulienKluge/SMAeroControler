@@ -14,10 +14,10 @@
 **
 */
 
-public AddStoreCmdsToCmdMenu(client, Handle:menu)
+public void AddStoreCmdsToCmdMenu(int client, Handle menu)
 {
-	decl String:subStr[32];
-	decl String:itemString[64];
+	char subStr[32];
+	char itemString[64];
 	if (Cmd_Store)
 	{
 		GetFirstDelimitedCmd(Cmd_Str_Store, subStr);
@@ -50,27 +50,27 @@ public AddStoreCmdsToCmdMenu(client, Handle:menu)
 }
 
 /* MENU HANDLER */
-public menuHandler_Store(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_Store(Handle menu, MenuAction action, int param1, int param2)
 { //HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING, HARDCODING
 	if (action == MenuAction_Select)
 	{
 		if (!InWork) { return; }
 		if (!IsPlayerAlive(param1)) { AC_PrintToChat(param1, "%t", "storemenu_notalive"); }
-		decl String:info[8];
+		char info[8];
 		GetMenuItem(menu, param2, info, sizeof(info));
-		new Float:account = points[param1];
+		float account = points[param1];
 		if (StrEqual(info, "jail", true))
 		{
-			decl String:subStr[64];
-			new Handle:nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			char subStr[64];
+			Handle nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(nMenu, "%T", "storemenu_subtitle", param1, "storemenu_cat_jail", param1, account, currentName);
 			SetMenuExitButton(nMenu, true);
 			SetMenuExitBackButton(nMenu, true);
 			if (s_j_dice != -1) {
 			Format(subStr, sizeof(subStr), "%0.1f %s: %T", s_j_dice, currentName, "storemenu_j_1", param1);
 			AddMenuItem(nMenu, "1", subStr, (account >= s_j_dice) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED); }
-			new val_one;
-			new val_two;
+			int val_one;
+			int val_two;
 			ac_getClientRefuseVars(param1, val_one, val_two);
 			if (s_j_refuse != -1) {
 			Format(subStr, sizeof(subStr), "%0.1f %s: %T", s_j_refuse, currentName, "storemenu_j_2", param1);
@@ -95,8 +95,8 @@ public menuHandler_Store(Handle:menu, MenuAction:action, param1, param2)
 		}
 		else if (StrEqual(info, "prop", true))
 		{
-			decl String:subStr[64];
-			new Handle:nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			char subStr[64];
+			Handle nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(nMenu, "%T", "storemenu_subtitle", param1, "storemenu_cat_props", param1, account, currentName);
 			SetMenuExitButton(nMenu, true);
 			SetMenuExitBackButton(nMenu, true);
@@ -119,8 +119,8 @@ public menuHandler_Store(Handle:menu, MenuAction:action, param1, param2)
 		}
 		else if (StrEqual(info, "item", true))
 		{
-			decl String:subStr[64];
-			new Handle:nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			char subStr[64];
+			Handle nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(nMenu, "%T", "storemenu_subtitle", param1, "storemenu_cat_items", param1, account, currentName);
 			SetMenuExitButton(nMenu, true);
 			SetMenuExitBackButton(nMenu, true);
@@ -143,8 +143,8 @@ public menuHandler_Store(Handle:menu, MenuAction:action, param1, param2)
 		}
 		else if (StrEqual(info, "misc", true))
 		{
-			decl String:subStr[64];
-			new Handle:nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			char subStr[64];
+			Handle nMenu = CreateMenu(menuHandler_StoreEnd, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(nMenu, "%T", "storemenu_subtitle", param1, "storemenu_cat_misc", param1, account, currentName);
 			SetMenuExitButton(nMenu, true);
 			SetMenuExitBackButton(nMenu, true);
@@ -169,20 +169,20 @@ public menuHandler_Store(Handle:menu, MenuAction:action, param1, param2)
 	}
 }
 
-public menuHandler_StoreEnd(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_StoreEnd(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:codeStr[4];
+		char codeStr[4];
 		GetMenuItem(menu, param2, codeStr, sizeof(codeStr));
-		new code = StringToInt(codeStr);
-		new Float:price = DecodePrice(code);
+		int code = StringToInt(codeStr);
+		float price = DecodePrice(code);
 		if (price == -1.0) { return; }
-		decl String:query[160];
-		decl String:id[32];
+		char query[160];
+		char id[32];
 		GetClientAuthId(param1, AuthId_Engine, id, sizeof(id));
 		Format(query, sizeof(query), "SELECT points FROM `%s` WHERE steamid='%s'", tableName, id);
-		new Handle:pack = CreateDataPack();
+		Handle pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
 		WritePackFloat(pack, price);
 		WritePackCell(pack, code);
@@ -199,11 +199,11 @@ public menuHandler_StoreEnd(Handle:menu, MenuAction:action, param1, param2)
 	}
 }
 
-public menuHandler_SFMenu(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_SFMenu(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[8];
+		char info[8];
 		GetMenuItem(menu, param2, info, sizeof(info));
 		if (StrEqual(info, "found")) //Found SF
 		{
@@ -212,45 +212,45 @@ public menuHandler_SFMenu(Handle:menu, MenuAction:action, param1, param2)
 		}
 		else if (StrEqual(info, "sfrce")) //my skillforce menu
 		{
-			decl String:query[160];
+			char query[160];
 			Format(query, sizeof(query), "SELECT name,membercount,account,gained,tax FROM `%s` WHERE id=%i", sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_MySFRelay, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "mates")) //member list
 		{
-			decl String:query[192];
+			char query[192];
 			Format(query, sizeof(query), "SELECT name,sflevel,sfskill,sfskilllevel FROM `%s` WHERE skillforce=%i ORDER BY sflevel DESC, sfgained DESC", tableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_SFMemberList, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "mbrnk")) //member ranks
 		{
-			decl String:query[192];
+			char query[192];
 			Format(query, sizeof(query), "SELECT name,sfgained FROM `%s` WHERE skillforce=%i ORDER BY sfgained DESC, sflevel ASC", tableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_SFMemberRanks, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "addmm")) //add member
 		{
-			decl String:query[127];
+			char query[127];
 			Format(query, sizeof(query), "SELECT membercount FROM `%s` WHERE id=%i", sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_CheckForMemberBorder, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "rmvmm")) //remove member
 		{
-			decl String:query[127];
+			char query[127];
 			Format(query, sizeof(query), "SELECT membercount FROM `%s` WHERE id=%i", sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_SelectMemberCountForRemove, query, GetClientUserId(param1));
 			
 		}
 		else if (StrEqual(info, "payof")) //pay off
 		{
-			decl String:query[127];
+			char query[127];
 			Format(query, sizeof(query), "SELECT steamid,name FROM `%s` WHERE skillforce=%i", tableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_SelectPlayerForPayOff, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "mrght")) //set member rights
 		{
-			decl String:itemString[64];
-			new Handle:cMenu = CreateMenu(menuHandler_SetSFRights, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			char itemString[64];
+			Handle cMenu = CreateMenu(menuHandler_SetSFRights, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			Format(itemString, sizeof(itemString), "%T", "sfmenu_setrole_member", param1);
 			AddMenuItem(cMenu, "mem", itemString);
 			Format(itemString, sizeof(itemString), "%T", "sfmenu_setrole_admin", param1);
@@ -261,14 +261,14 @@ public menuHandler_SFMenu(Handle:menu, MenuAction:action, param1, param2)
 		}
 		else if (StrEqual(info, "cngtx")) //change taxes
 		{
-			new Handle:cMenu = CreateMenu(menuHandler_ChangeSFTaxes, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			Handle cMenu = CreateMenu(menuHandler_ChangeSFTaxes, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(cMenu, "%T", "sfmenu_changetaxes", param1);
-			decl String:infoTax[16];
-			decl String:itemString[64];
-			for (new i = 0; i <= 20; i++)
+			char infoTax[16];
+			char itemString[64];
+			for (int i = 0; i <= 20; i++)
 			{
-				new percent = i * 5;
-				new Float:percentFloat = float(percent) / 100.0;
+				int percent = i * 5;
+				float percentFloat = float(percent) / 100.0;
 				FloatToString(percentFloat, infoTax, sizeof(infoTax));
 				Format(itemString, sizeof(itemString), "%i %%", percent);
 				AddMenuItem(cMenu, infoTax, itemString, (sf_tax[param1] == percentFloat) ? ITEMDRAW_DISABLED : ITEMDRAW_DEFAULT);
@@ -277,21 +277,21 @@ public menuHandler_SFMenu(Handle:menu, MenuAction:action, param1, param2)
 		}
 		else if (StrEqual(info, "ranks")) //Top ranking of the SFs
 		{
-			decl String:query[160];
+			char query[160];
 			Format(query, sizeof(query), "SELECT name,account,gained FROM `%s` ORDER BY (account+gained) DESC LIMIT 20", sfTableName);
 			SQL_TQuery(db, TSQL_TopSFs, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "rankp")) //Top ranking of the SF-players
 		{
-			decl String:query[576]; //a hyper query, needs a hyper string length
+			char query[576]; //a hyper query, needs a hyper string length
 			Format(query, sizeof(query), "SELECT `%s`.name,`%s`.sfgained,`%s`.name FROM `%s`,`%s` WHERE `%s`.skillforce=`%s`.id ORDER BY sfgained DESC LIMIT 10", tableName, tableName, sfTableName, tableName, sfTableName, tableName, sfTableName); //at this point I thought: well, to allow setting the tablename was a bad idea...
 			SQL_TQuery(db, TSQL_TopSFPlayers, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "setsk")) //set skill
 		{
-			new Handle:cMenu = CreateMenu(menuHandler_ChooseSkillToSet, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			Handle cMenu = CreateMenu(menuHandler_ChooseSkillToSet, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(cMenu, "%T", "sfmenu_chooseskill_title", param1);
-			decl String:itemString[64];
+			char itemString[64];
 			Format(itemString, sizeof(itemString), "%T", "sf_skill_medic", param1);
 			AddMenuItem(cMenu, "medi", itemString);
 			Format(itemString, sizeof(itemString), "%T", "sf_skill_medic_expl", param1, Skill_Medic_HPPerLevel);
@@ -312,21 +312,21 @@ public menuHandler_SFMenu(Handle:menu, MenuAction:action, param1, param2)
 		}
 		else if (StrEqual(info, "sklvl")) //increase skill-level
 		{
-			decl String:query[192];
+			char query[192];
 			Format(query, sizeof(query), "SELECT steamid,name,sfskill,sfskilllevel FROM `%s` WHERE skillforce=%i ORDER BY sfskilllevel ASC", tableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_SFIncreaseLevelList, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "leave")) //leave skillforce
 		{
-			decl String:query[160];
+			char query[160];
 			Format(query, sizeof(query), "SELECT sflevel FROM `%s` WHERE skillforce=%i", tableName, sf_member[param1]); //with this query, we can check: 1st membercount & 2nd how many have proadmin-rights
 			SQL_TQuery(db, TSQL_GetSkillforceMemberForLeave, query, GetClientUserId(param1));
 		}
 		else if (StrEqual(info, "delet")) //delete skillforce
 		{
-			new Handle:cMenu = CreateMenu(menuHandler_DeleteSF, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			Handle cMenu = CreateMenu(menuHandler_DeleteSF, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(cMenu, "%T", "sfmenu_suredelete", param1);
-			decl String:itemString[8];
+			char itemString[8];
 			Format(itemString, sizeof(itemString), "%T", "No", param1);
 			AddMenuItem(cMenu, "n", itemString);
 			Format(itemString, sizeof(itemString), "%T", "Yes", param1);
@@ -340,7 +340,7 @@ public menuHandler_SFMenu(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_BackToSfMenu(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_BackToSfMenu(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Cancel)
 	{
@@ -351,30 +351,30 @@ public menuHandler_BackToSfMenu(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_ChooseCoFounder(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_ChooseCoFounder(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:uid[32];
+		char uid[32];
 		GetMenuItem(menu, param2, uid, sizeof(uid));
-		new target = GetClientOfUserId(StringToInt(uid));
+		int target = GetClientOfUserId(StringToInt(uid));
 		if (IsClientValid(target))
 		{
-			decl String:packHandleString[32];
+			char packHandleString[32];
 			GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-			new Handle:subPack = Handle:StringToInt(packHandleString);
+			Handle subPack = Handle:StringToInt(packHandleString);
 			ResetPack(subPack);
-			decl String:name[32];
-			new client = GetClientOfUserId(ReadPackCell(subPack));
+			char name[32];
+			int client = GetClientOfUserId(ReadPackCell(subPack));
 			ReadPackString(subPack, name, sizeof(name)); /* We'll copy the informations to another datapacket, because this one is bound in this menu */
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, name);
 			IntToString(_:pack, packHandleString, sizeof(packHandleString));
-			new Handle:chooseMenu = CreateMenu(menuHandler_ChooseSFFoundership, MenuAction_Select | MenuAction_End);
+			Handle chooseMenu = CreateMenu(menuHandler_ChooseSFFoundership, MenuAction_Select | MenuAction_End);
 			SetMenuTitle(chooseMenu, "%T", "sfmenu_foundsf_cfchoose", target);
 			AddMenuItem(chooseMenu, packHandleString, "", ITEMDRAW_IGNORE); //tricky way to store data in a menu ^^
-			decl String:itemString[64];
+			char itemString[64];
 			Format(itemString, sizeof(itemString), "%T", "sfmenu_foundsf_cfco", target, param1);
 			AddMenuItem(chooseMenu, "", itemString, ITEMDRAW_DISABLED);
 			Format(itemString, sizeof(itemString), "%T", "sfmenu_foundsf_cfsfname", target, name);
@@ -388,33 +388,33 @@ public menuHandler_ChooseCoFounder(Handle:menu, MenuAction:action, param1, param
 	}
 	else if (action == MenuAction_End)
 	{
-		decl String:packHandleString[32];
+		char packHandleString[32];
 		GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-		new Handle:pack = Handle:StringToInt(packHandleString);
+		Handle pack = Handle:StringToInt(packHandleString);
 		CloseHandle(pack);
 		CloseHandle(menu);
 	}
 }
 
-public menuHandler_ChooseSFFoundership(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_ChooseSFFoundership(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[4];
+		char info[4];
 		GetMenuItem(menu, param2, info, sizeof(info));
-		decl String:packHandleString[32];
+		char packHandleString[32];
 		GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-		new Handle:pack = Handle:StringToInt(packHandleString);
-		decl String:sfName[32];
+		Handle pack = Handle:StringToInt(packHandleString);
+		char sfName[32];
 		ResetPack(pack);
-		new founder1 = GetClientOfUserId(ReadPackCell(pack));
+		int founder1 = GetClientOfUserId(ReadPackCell(pack));
 		ReadPackString(pack, sfName, sizeof(sfName));
 		if (StrEqual(info, "y"))
 		{
 			if (IsClientValid(founder1) && (sf_member[founder1] == -1 && sf_member[param1] == -1))
 			{
-				decl String:id[32];
-				new Handle:dPack = CreateDataPack();
+				char id[32];
+				Handle dPack = CreateDataPack();
 				WritePackCell(dPack, GetClientUserId(founder1));
 				WritePackCell(dPack, GetClientUserId(param1));
 				GetClientAuthId(founder1, AuthId_Engine, id, sizeof(id));
@@ -422,7 +422,7 @@ public menuHandler_ChooseSFFoundership(Handle:menu, MenuAction:action, param1, p
 				GetClientAuthId(param1, AuthId_Engine, id, sizeof(id));
 				WritePackString(dPack, id);
 				WritePackString(dPack, sfName);
-				decl String:query[192];
+				char query[192];
 				Format(query, sizeof(query), "INSERT INTO `%s`(name,membercount,account,gained,tax) VALUES ('%s',2,0.0,0.0,0.2)", sfTableName, sfName);
 				SQL_TQuery(db, TSQL_AccomplishSFFounding, query, dPack);
 			}
@@ -432,23 +432,23 @@ public menuHandler_ChooseSFFoundership(Handle:menu, MenuAction:action, param1, p
 	}
 	else if (action == MenuAction_End)
 	{
-		decl String:packHandleString[32];
+		char packHandleString[32];
 		GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-		new Handle:pack = Handle:StringToInt(packHandleString);
+		Handle pack = Handle:StringToInt(packHandleString);
 		CloseHandle(pack);
 		CloseHandle(menu);
 	}
 }
 
-public menuHandler_DeleteSF(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_DeleteSF(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:answer[8];
+		char answer[8];
 		GetMenuItem(menu, param2, answer, sizeof(answer));
 		if (StrEqual(answer, "y"))
 		{
-			decl String:query[128];
+			char query[128];
 			Format(query, sizeof(query), "SELECT name FROM `%s` WHERE id=%i", sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_DeletedSFGetName, query, GetClientUserId(param1));
 		}
@@ -464,18 +464,18 @@ public menuHandler_DeleteSF(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_ChangeSFTaxes(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_ChangeSFTaxes(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[16];
+		char info[16];
 		GetMenuItem(menu, param2, info, sizeof(info));
-		new Float:tax = StringToFloat(info);
-		new Handle:pack = CreateDataPack();
+		float tax = StringToFloat(info);
+		Handle pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
 		WritePackCell(pack, sf_member[param1]);
 		WritePackFloat(pack, tax);
-		decl String:query[160];
+		char query[160];
 		Format(query, sizeof(query), "UPDATE `%s` SET tax=%f WHERE id=%i", sfTableName, tax, sf_member[param1]);
 		SQL_TQuery(db, TSQL_SFTaxesChanged, query, pack);
 	}
@@ -488,22 +488,22 @@ public menuHandler_ChangeSFTaxes(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_SetSFRights(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_SetSFRights(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[8];
+		char info[8];
 		GetMenuItem(menu, param2, info, sizeof(info));
-		new memberLevel;
+		int memberLevel;
 		if (StrEqual(info, "mem"))
 		{ memberLevel = 0; }
 		else if (StrEqual(info, "adm"))
 		{ memberLevel = 1; }
 		else if (StrEqual(info, "ldr"))
 		{ memberLevel = 2; }
-		decl String:query[160];
+		char query[160];
 		Format(query, sizeof(query), "SELECT name,steamid FROM `%s` WHERE skillforce=%i", tableName, sf_member[param1]);
-		new Handle:pack = CreateDataPack();
+		Handle pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
 		WritePackCell(pack, memberLevel);
 		SQL_TQuery(db, TSQL_SetSFRightsMenu, query, pack);
@@ -517,22 +517,22 @@ public menuHandler_SetSFRights(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_SetMemberRights(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_SetMemberRights(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:name[32];
-		decl String:steamid[32];
-		decl String:memberLevelStr[8];
+		char name[32];
+		char steamid[32];
+		char memberLevelStr[8];
 		GetMenuItem(menu, param2, steamid, sizeof(steamid), _, name, sizeof(name));
 		GetMenuItem(menu, 0, memberLevelStr, sizeof(memberLevelStr));
-		new memberLevel = StringToInt(memberLevelStr);
-		new Handle:pack = CreateDataPack();
+		int memberLevel = StringToInt(memberLevelStr);
+		Handle pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
 		WritePackCell(pack, memberLevel);
 		WritePackString(pack, steamid);
 		WritePackString(pack, name);
-		decl String:query[160];
+		char query[160];
 		Format(query, sizeof(query), "UPDATE `%s` SET sflevel=%i WHERE steamid='%s'", tableName, memberLevel, steamid);
 		SQL_TQuery(db, TSQL_SetMemberRights, query, pack);
 	}
@@ -545,22 +545,22 @@ public menuHandler_SetMemberRights(Handle:menu, MenuAction:action, param1, param
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_AddSFMember(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_AddSFMember(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		new String:info[32];
+		char info[32];
 		GetMenuItem(menu, param2, info, sizeof(info));
-		new client = GetClientOfUserId(StringToInt(info));
+		int client = GetClientOfUserId(StringToInt(info));
 		if (IsClientValid(client))
 		{
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackCell(pack, sf_member[param1]);
-			decl String:cName[32];
+			char cName[32];
 			GetClientName(param1, cName, sizeof(cName));
 			WritePackString(pack, cName);
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "SELECT name,tax FROM `%s` WHERE id=%i", sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_AddSFMember, query, pack);
 		}
@@ -574,29 +574,29 @@ public menuHandler_AddSFMember(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_ChooseSFAccession(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_ChooseSFAccession(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[8];
+		char info[8];
 		GetMenuItem(menu, param2, info, sizeof(info));
 		if (StrEqual(info, "y"))
 		{
-			decl String:subStr[32];
-			decl String:name[32];
+			char subStr[32];
+			char name[32];
 			GetMenuItem(menu, 0, subStr, sizeof(subStr));
-			new id = StringToInt(subStr);
+			int id = StringToInt(subStr);
 			GetMenuItem(menu, 1, name, sizeof(name));
 			GetMenuItem(menu, 2, subStr, sizeof(subStr));
-			new Float:tax = StringToFloat(subStr);
-			new Handle:pack = CreateDataPack();
+			float tax = StringToFloat(subStr);
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(param1));
 			WritePackCell(pack, id);
 			WritePackFloat(pack, tax);
 			WritePackString(pack, name);
-			decl String:steamid[32];
+			char steamid[32];
 			GetClientAuthId(param1, AuthId_Engine, steamid, sizeof(steamid));
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "UPDATE `%s` SET membercount=membercount+1 WHERE id=%i", sfTableName, id);
 			SQL_TQuery(db, TSQL_NULL, query);
 			Format(query, sizeof(query), "UPDATE `%s` SET skillforce=%i,sfgained=0.0,sflevel=0,sfskill=0,sfskilllevel=0 WHERE steamid='%s'", tableName, id, steamid);
@@ -607,12 +607,12 @@ public menuHandler_ChooseSFAccession(Handle:menu, MenuAction:action, param1, par
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_SelectClientPayOff(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_SelectClientPayOff(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:steamid[32];
-		decl String:name[32];
+		char steamid[32];
+		char name[32];
 		GetMenuItem(menu, param2, steamid, sizeof(steamid), _, name, sizeof(name));
 		OpenRekursivePayOutMenu(param1, 5, steamid, name);
 	}
@@ -625,28 +625,28 @@ public menuHandler_SelectClientPayOff(Handle:menu, MenuAction:action, param1, pa
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_RekursivePayOutMenu(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_RekursivePayOutMenu(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:steamid[32];
-		decl String:name[32];
-		decl String:valueStr[32];
+		char steamid[32];
+		char name[32];
+		char valueStr[32];
 		GetMenuItem(menu, 0, steamid, sizeof(steamid));
 		GetMenuItem(menu, 1, name, sizeof(name));
 		GetMenuItem(menu, 2, valueStr, sizeof(valueStr));
-		new value = StringToInt(valueStr);
-		decl String:info[8];
+		int value = StringToInt(valueStr);
+		char info[8];
 		GetMenuItem(menu, param2, info, sizeof(info));
 		if (StrEqual(info, "okay"))
 		{
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(param1));
 			WritePackCell(pack, sf_member[param1]);
 			WritePackCell(pack, value);
 			WritePackString(pack, steamid);
 			WritePackString(pack, name);
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "SELECT (account-%i) FROM `%s` WHERE id=%i", value, sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_CheckSFAccount, query, pack);
 		}
@@ -675,18 +675,18 @@ public menuHandler_RekursivePayOutMenu(Handle:menu, MenuAction:action, param1, p
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_SelectRemovingMember(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_SelectRemovingMember(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:steamid[32];
-		decl String:name[32];
+		char steamid[32];
+		char name[32];
 		GetMenuItem(menu, param2, steamid, sizeof(steamid), _, name, sizeof(name));
-		new Handle:cMenu = CreateMenu(menuHandler_RemoveConfirm, MenuAction_Select | MenuAction_End);
+		Handle cMenu = CreateMenu(menuHandler_RemoveConfirm, MenuAction_Select | MenuAction_End);
 		SetMenuTitle(cMenu, "%T", "sfmenu_remove_confirm", param1, name);
 		AddMenuItem(cMenu, steamid, "", ITEMDRAW_IGNORE);
 		AddMenuItem(cMenu, name, "", ITEMDRAW_IGNORE);
-		decl String:itemString[32];
+		char itemString[32];
 		Format(itemString, sizeof(itemString), "%T", "No", param1);
 		AddMenuItem(cMenu, "n", itemString);
 		Format(itemString, sizeof(itemString), "%T", "Yes", param1);
@@ -702,24 +702,24 @@ public menuHandler_SelectRemovingMember(Handle:menu, MenuAction:action, param1, 
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_RemoveConfirm(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_RemoveConfirm(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:steamid[32];
-		decl String:name[32];
-		decl String:info[32];
+		char steamid[32];
+		char name[32];
+		char info[32];
 		GetMenuItem(menu, 0, steamid, sizeof(steamid));
 		GetMenuItem(menu, 0, name, sizeof(name));
 		GetMenuItem(menu, param2, info, sizeof(info));
 		if (StrEqual(info, "y"))
 		{
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, sf_member[param1]);
 			WritePackCell(pack, GetClientUserId(param1));
 			WritePackString(pack, steamid);
 			WritePackString(pack, name);
-			decl String:query[127];
+			char query[127];
 			Format(query, sizeof(query), "SELECT name,membercount FROM `%s` WHERE id=%i", sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_CheckMemberCountForEndRemove, query, pack);
 		}
@@ -728,15 +728,15 @@ public menuHandler_RemoveConfirm(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_LeaveSF(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_LeaveSF(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[8];
+		char info[8];
 		GetMenuItem(menu, param2, info, sizeof(info));
 		if (StrEqual(info, "y"))
 		{
-			decl String:query[160];
+			char query[160];
 			Format(query, sizeof(query), "SELECT name FROM `%s` WHERE id=%i", sfTableName, sf_member[param1]);
 			SQL_TQuery(db, TSQL_GetSkillforceMemberForLeaveRelay, query, GetClientUserId(param1));
 		}
@@ -745,13 +745,13 @@ public menuHandler_LeaveSF(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_ChooseSkillToSet(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_ChooseSkillToSet(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[8];
+		char info[8];
 		GetMenuItem(menu, param2, info, sizeof(info));
-		new skillNumber = 0;
+		int skillNumber = 0;
 		if (StrEqual(info, "medi"))
 		{ skillNumber = Skill_Medic; }
 		else if (StrEqual(info, "figh"))
@@ -760,10 +760,10 @@ public menuHandler_ChooseSkillToSet(Handle:menu, MenuAction:action, param1, para
 		{ skillNumber = Skill_Defender; }
 		else if (StrEqual(info, "crok"))
 		{ skillNumber = Skill_Crook; }
-		new Handle:pack = CreateDataPack();
+		Handle pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
 		WritePackCell(pack, skillNumber);
-		decl String:query[160];
+		char query[160];
 		Format(query, sizeof(query), "SELECT steamid,name,sfskill,sfskilllevel FROM `%s` WHERE skillforce=%i", tableName, sf_member[param1]);
 		SQL_TQuery(db, TSQL_SetSkillMenuFetchClients, query, pack);
 	}
@@ -776,21 +776,21 @@ public menuHandler_ChooseSkillToSet(Handle:menu, MenuAction:action, param1, para
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_SetClientNewSkill(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_SetClientNewSkill(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[32];
+		char info[32];
 		GetMenuItem(menu, 0, info, sizeof(info));
-		new skill = StringToInt(info);
-		decl String:name[32];
+		int skill = StringToInt(info);
+		char name[32];
 		GetMenuItem(menu, param2, info, sizeof(info), _, name, sizeof(name));
-		new Handle:pack = CreateDataPack();
+		Handle pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
 		WritePackCell(pack, skill);
 		WritePackString(pack, info);
 		WritePackString(pack, name);
-		decl String:query[160];
+		char query[160];
 		Format(query, sizeof(query), "UPDATE `%s` SET sfskill=%i,sfskilllevel=0 WHERE steamid='%s'", tableName, skill, info);
 		SQL_TQuery(db, TSQL_NewSkillSet, query, pack);
 	}
@@ -803,19 +803,19 @@ public menuHandler_SetClientNewSkill(Handle:menu, MenuAction:action, param1, par
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_IncreaseLevelClient(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_IncreaseLevelClient(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:name[32];
-		decl String:steamid[32];
+		char name[32];
+		char steamid[32];
 		GetMenuItem(menu, param2, steamid, sizeof(steamid));
 		GetMenuItem(menu, param2 - 1, name, sizeof(name));
-		new Handle:pack = CreateDataPack();
+		Handle pack = CreateDataPack();
 		WritePackCell(pack, GetClientUserId(param1));
 		WritePackString(pack, steamid);
 		WritePackString(pack, name);
-		decl String:query[160];
+		char query[160];
 		Format(query, sizeof(query), "SELECT sfskill,sfskilllevel FROM `%s` WHERE steamid='%s'", tableName, steamid);
 		SQL_TQuery(db, TSQL_FetchSFSkillsForInc, query, pack);
 	}
@@ -828,7 +828,7 @@ public menuHandler_IncreaseLevelClient(Handle:menu, MenuAction:action, param1, p
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_CloseHandleOnEnd(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_CloseHandleOnEnd(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{ CloseHandle(menu); }
@@ -836,11 +836,11 @@ public menuHandler_CloseHandleOnEnd(Handle:menu, MenuAction:action, param1, para
 /* MENU HANDLER */
 
 /* TIMER */
-public Action:timer_RespawnClient(Handle:timer, any:data)
+public Action timer_RespawnClient(Handle timer, any data)
 {
 	ResetPack(Handle:data);
-	new clientIndex = ReadPackCell(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
+	int clientIndex = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
 	CloseHandle(data);
 	c_RespawnTimer[clientIndex] = INVALID_HANDLE;
 	c_HasRespawn[clientIndex] = false;
@@ -852,11 +852,11 @@ public Action:timer_RespawnClient(Handle:timer, any:data)
 	return Plugin_Stop;
 }
 
-public Action:timer_InvisTimer(Handle:timer, any:data)
+public Action timer_InvisTimer(Handle timer, any data)
 {
 	ResetPack(Handle:data);
-	new clientIndex = ReadPackCell(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
+	int clientIndex = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
 	c_InvisibleSeconds[clientIndex]--;
 	if (c_InvisibleSeconds[clientIndex] == 0 || (!IsClientValid(client)))
 	{
@@ -869,9 +869,9 @@ public Action:timer_InvisTimer(Handle:timer, any:data)
 	return Plugin_Continue;
 }
 
-public Action:timer_CheckSkill(Handle:timer)
+public Action timer_CheckSkill(Handle timer)
 {
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -881,29 +881,29 @@ public Action:timer_CheckSkill(Handle:timer)
 				{
 					if (c_MedicSkillAmount[i] > 0)
 					{
-						new buttons = GetClientButtons(i);
+						int buttons = GetClientButtons(i);
 						if (buttons & IN_USE)
 						{
-							new target = GetClientAimingClient(i);
+							int target = GetClientAimingClient(i);
 							if (target != -1)
 							{
 								if (GetClientTeam(i) == GetClientTeam(target))
 								{
-									new targetHealth = GetClientHealth(target);
-									new hpToAdd = 100 - targetHealth;
+									int targetHealth = GetClientHealth(target);
+									int hpToAdd = 100 - targetHealth;
 									if (hpToAdd > 0)
 									{
 										if (hpToAdd > c_MedicSkillAmount[i]) //what a FUCKING HUGE if-tree
 										{ hpToAdd = c_MedicSkillAmount[i]; }
 										c_MedicSkillAmount[i] -= hpToAdd;
 										SetEntityHealth(target, targetHealth + hpToAdd);
-										new Float:pos_one[3];
-										new Float:pos_two[3];
+										float pos_one[3];
+										float pos_two[3];
 										GetClientAbsOrigin(i, pos_one);
 										GetClientAbsOrigin(target, pos_two);
 										pos_one[2] += 40.0;
 										pos_two[2] += 40.0;
-										new clients[2]; clients[0] = target; clients[1] = i;
+										int clients[2]; clients[0] = target; clients[1] = i;
 										TE_SetupBeamPoints(pos_one, pos_two, g_BeamSprite, g_HaloSprite, 0, 10, 1.5, 2.0, 2.0, 1, 0.0, { 0, 128, 0, 255 }, 10);
 										TE_Send(clients, 2, 0.0);
 										TE_SetupBeamRingPoint(pos_two, 150.0, 20.0, g_BeamSprite, g_HaloSprite, 0, 10, 1.5, 2.0, 0.0, { 0, 128, 0, 255 }, 10, 0);
@@ -924,10 +924,10 @@ public Action:timer_CheckSkill(Handle:timer)
 
 /* SDK HOOKS */
 
-public Action:SDKH_OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damagetype, &weapon, Float:damageForce[3], Float:damagePosition[3]) //Make us backwards compatible until 2.0+
+public Action SDKH_OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3]) //Make us backwards compatible until 2.0+
 {
-	new Action:result = Plugin_Continue;
-	new bool:victimValid = IsClientValid(victim);
+	Action result = Plugin_Continue;
+	bool victimValid = IsClientValid(victim);
 	if (victimValid)
 	{
 		if (sf_hasSkill[victim])
@@ -952,16 +952,16 @@ public Action:SDKH_OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &d
 			{
 				if (victimValid)
 				{
-					new wpn = GetEntPropEnt(attacker, Prop_Send, "m_hActiveWeapon"); //Because the wepon entity fails!
+					int wpn = GetEntPropEnt(attacker, Prop_Send, "m_hActiveWeapon"); //Because the wepon entity fails!
 					if (IsValidEntity(wpn))
 					{
-						decl String:className[32];
+						char className[32];
 						GetEntityClassname(wpn, className, sizeof(className));
 						if (StrEqual(className, "weapon_knife"))
 						{
 							if (GetRandomInt(1, 1000) <= (sf_skilllevel[attacker] * Skill_Crook_PercentPerLevel))
 							{
-								new ent = GetEntPropEnt(victim, Prop_Send, "m_hActiveWeapon");
+								int ent = GetEntPropEnt(victim, Prop_Send, "m_hActiveWeapon");
 								if (ent != -1)
 								{ CS_DropWeapon(victim, ent, true); }
 							}
@@ -978,7 +978,7 @@ public Action:SDKH_OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &d
 
 /* FILTER */
 
-public bool:Filter_FilterOutData(ent, contentMask, any:data)
+public bool Filter_FilterOutData(int ent, int contentMask, any data)
 {
 	if (ent == data) { return false; }
 	return true;

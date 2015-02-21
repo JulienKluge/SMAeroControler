@@ -14,27 +14,27 @@
 **
 */
 
-public TSQL_SelectJoiner(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SelectJoiner(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (client == 0) { return; } //year...when will this happen? ... SAFETYYY FIRST XD
-	decl String:id[32];
-	decl String:name[32];
-	decl String:sqlname[65];
+	char id[32];
+	char name[32];
+	char sqlname[65];
 	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
 	GetClientName(client, name, sizeof(name));
 	SQL_EscapeString(db, name, sqlname, sizeof(sqlname));
 	if (SQL_FetchRow(hndl)) //client is already in database
 	{
 		points[client] = SQL_FetchFloat(hndl, 0);
-		new daysTillLastJoin = SQL_FetchInt(hndl, 1);
+		int daysTillLastJoin = SQL_FetchInt(hndl, 1);
 		sf_member[client] = SQL_FetchInt(hndl, 2);
 		sf_level[client] = SQL_FetchInt(hndl, 3);
 		sf_skill[client] = SQL_FetchInt(hndl, 4);
 		sf_skilllevel[client] = SQL_FetchInt(hndl, 5);
 		if (sf_member[client] != -1 && sf_skill[client] > 0)
 		{ sf_hasSkill[client] = true; }
-		decl String:query[270]; //264 characters maximum for the second query...
+		char query[270]; //264 characters maximum for the second query...
 		if (daysTillLastJoin == 0 || p_JoinDay == 0.0)
 		{
 			Format(query, sizeof(query), "UPDATE `%s` SET name='%s',lastjoin=NOW() WHERE steamid='%s'", tableName, sqlname, p_JoinDay, p_JoinDay, id);
@@ -55,15 +55,15 @@ public TSQL_SelectJoiner(Handle:owner, Handle:hndl, const String:error[], any:da
 	{
 		points[client] = p_FirstJoin;
 		sf_member[client] = -1;
-		decl String:query[384];
+		char query[384];
 		Format(query, sizeof(query), "INSERT INTO `%s`(steamid,name,points,gained,spend,lastjoin,skillforce,sfgained,sflevel,sfskill,sfskilllevel) VALUES ('%s','%s',%f,%f,0.0,NOW(),-1,0.0,0,0,0)", tableName, id, sqlname, p_FirstJoin, p_FirstJoin);
 		SQL_TQuery(db, TSQL_NULL, query, 0, DBPrio_High); //the only time, you'll see a high db priority in this plugin...I think xD
 	}
 }
 
-public TSQL_FetchSFTax(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_FetchSFTax(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (client == 0) { return; }
 	if (SQL_FetchRow(hndl))
 	{ sf_tax[client] = SQL_FetchFloat(hndl, 0); }
@@ -71,13 +71,13 @@ public TSQL_FetchSFTax(Handle:owner, Handle:hndl, const String:error[], any:data
 	{ sf_member[client] = -1; } //failsafe
 }
 
-public TSQL_CheckValidTransferLimit(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_CheckValidTransferLimit(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new Handle:pack = Handle:data; //first thing to do: read data packet and dispose it
+	Handle pack = Handle:data; //first thing to do: read data packet and dispose it
 	ResetPack(pack, false);
-	new client = GetClientOfUserId(ReadPackCell(pack));
-	new Float:price = ReadPackFloat(pack);
-	new code = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
+	float price = ReadPackFloat(pack);
+	int code = ReadPackCell(pack);
 	CloseHandle(pack);
 	if (IsClientValid(client)) //fast client || slow query xD
 	{
@@ -100,22 +100,22 @@ public TSQL_CheckValidTransferLimit(Handle:owner, Handle:hndl, const String:erro
 	}
 }
 
-public TSQL_StoreTopCmd(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_StoreTopCmd(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new count = 20;
-		new rowCount = SQL_GetRowCount(hndl);
+		int count = 20;
+		int rowCount = SQL_GetRowCount(hndl);
 		if (rowCount < count) { count = rowCount; }
 		if (count > 0)
 		{
-			new Handle:menu = CreateMenu(menuHandler_CloseHandleOnEnd, MenuAction_End);
-			decl String:name[32];
-			decl String:itemString[64];
-			new Float:r_points;
-			new Float:r_gained;
-			for (new i = 0; i < count; i++)
+			Handle menu = CreateMenu(menuHandler_CloseHandleOnEnd, MenuAction_End);
+			char name[32];
+			char itemString[64];
+			float r_points;
+			float r_gained;
+			for (int i = 0; i < count; i++)
 			{
 				SQL_FetchRow(hndl);
 				SQL_FetchString(hndl, 0, name, sizeof(name));
@@ -131,51 +131,51 @@ public TSQL_StoreTopCmd(Handle:owner, Handle:hndl, const String:error[], any:dat
 	}
 }
 
-public TSQL_StoreRankCmdRelay(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_StoreRankCmdRelay(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			new Float:valueToCheckFor = SQL_FetchFloat(hndl, 0);
-			decl String:query[160];
+			float valueToCheckFor = SQL_FetchFloat(hndl, 0);
+			char query[160];
 			Format(query, sizeof(query), "SELECT COUNT(*) FROM `%s` WHERE (points+gained)>=%f", tableName, valueToCheckFor);
 			SQL_TQuery(db, TSQL_StoreRankCmd, query, data);
 		}
 	}
 }
-public TSQL_StoreRankCmd(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_StoreRankCmd(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			new place = SQL_FetchInt(hndl, 0);
+			int place = SQL_FetchInt(hndl, 0);
 			AC_PrintToChat(client, "%t", "store_rank", place);
 		}
 	}
 }
 
-public TSQL_TopSFs(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_TopSFs(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new count = 20;
-		new rowCount = SQL_GetRowCount(hndl);
+		int count = 20;
+		int rowCount = SQL_GetRowCount(hndl);
 		if (rowCount < count) { count = rowCount; }
 		if (count > 0)
 		{
-			new Handle:menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
+			Handle menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
 			SetMenuExitButton(menu, true);
 			SetMenuExitBackButton(menu, true);
-			decl String:name[32];
-			decl String:itemString[64];
-			new Float:account;
-			new Float:gained;
-			for (new i = 0; i < count; i++)
+			char name[32];
+			char itemString[64];
+			float account;
+			float gained;
+			for (int i = 0; i < count; i++)
 			{
 				SQL_FetchRow(hndl);
 				SQL_FetchString(hndl, 0, name, sizeof(name));
@@ -191,24 +191,24 @@ public TSQL_TopSFs(Handle:owner, Handle:hndl, const String:error[], any:data)
 	}
 }
 
-public TSQL_TopSFPlayers(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_TopSFPlayers(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new count = 10;
-		new rowCount = SQL_GetRowCount(hndl);
+		int count = 10;
+		int rowCount = SQL_GetRowCount(hndl);
 		if (rowCount < count) { count = rowCount; }
 		if (count > 0)
 		{
-			new Handle:menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
+			Handle menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
 			SetMenuExitButton(menu, true);
 			SetMenuExitBackButton(menu, true);
-			decl String:name[32];
-			decl String:sfName[32];
-			decl String:itemString[64];
-			new Float:gained;
-			for (new i = 0; i < count; i++)
+			char name[32];
+			char sfName[32];
+			char itemString[64];
+			float gained;
+			for (int i = 0; i < count; i++)
 			{
 				SQL_FetchRow(hndl);
 				SQL_FetchString(hndl, 0, name, sizeof(name));
@@ -225,31 +225,31 @@ public TSQL_TopSFPlayers(Handle:owner, Handle:hndl, const String:error[], any:da
 	}
 }
 
-public TSQL_CheckUniqueSFName(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_CheckUniqueSFName(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
 	if (IsClientValid(client))
 	{
-		new resultCount = SQL_GetRowCount(hndl);
+		int resultCount = SQL_GetRowCount(hndl);
 		if (resultCount > 0)
 		{ AC_PrintToChat(client, "%t", "sf_foundsf_nametaken", name); }
 		else
 		{
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, name);
-			new Handle:menu = CreateMenu(menuHandler_ChooseCoFounder, MenuAction_Select | MenuAction_End);
+			Handle menu = CreateMenu(menuHandler_ChooseCoFounder, MenuAction_Select | MenuAction_End);
 			SetMenuTitle(menu, "%T", "sfmenu_foundsf_cofounder", client);
-			decl String:handleString[32];
+			char handleString[32];
 			IntToString(_:pack, handleString, sizeof(handleString));
 			AddMenuItem(menu, handleString, "", ITEMDRAW_IGNORE); //tricky way to store data in a menu ^^
-			decl String:uid[32];
-			decl String:cName[32];
-			for (new i = 1; i <= MaxClients; i++)
+			char uid[32];
+			char cName[32];
+			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (IsClientValid(i))
 				{
@@ -266,37 +266,37 @@ public TSQL_CheckUniqueSFName(Handle:owner, Handle:hndl, const String:error[], a
 	}
 }
 
-public TSQL_AccomplishSFFounding(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_AccomplishSFFounding(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
 	ReadPackCell(data); ReadPackCell(data);
-	decl String:subStr[1]; /* THAT SUCKS!! How to calc the offset in a datapack to use SatPackPosition? */
+	char subStr[1]; /* THAT SUCKS!! How to calc the offset in a datapack to use SatPackPosition? */
 	ReadPackString(data, subStr, sizeof(subStr));
 	ReadPackString(data, subStr, sizeof(subStr));
-	decl String:sfName[32];
+	char sfName[32];
 	ReadPackString(data, sfName, sizeof(sfName));
-	decl String:query[160];
+	char query[160];
 	Format(query, sizeof(query), "SELECT id FROM `%s` WHERE name='%s'", sfTableName, sfName);
 	SQL_TQuery(db, TSQL_AccomplishSFFounders, query, data);
 }
 
-public TSQL_AccomplishSFFounders(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_AccomplishSFFounders(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new founder1 = GetClientOfUserId(ReadPackCell(data));
-	new bool:founder1_Valid = IsClientValid(founder1);
-	new founder2 = GetClientOfUserId(ReadPackCell(data));
-	new bool:founder2_Valid = IsClientValid(founder2);
+	int founder1 = GetClientOfUserId(ReadPackCell(data));
+	bool founder1_Valid = IsClientValid(founder1);
+	int founder2 = GetClientOfUserId(ReadPackCell(data));
+	bool founder2_Valid = IsClientValid(founder2);
 	if (SQL_FetchRow(hndl))
 	{
-		new id = SQL_FetchInt(hndl, 0);
-		decl String:id_1[32];
-		decl String:id_2[32];
+		int id = SQL_FetchInt(hndl, 0);
+		char id_1[32];
+		char id_2[32];
 		ReadPackString(data, id_1, sizeof(id_1));
 		ReadPackString(data, id_2, sizeof(id_2));
-		decl String:sfName[32];
+		char sfName[32];
 		ReadPackString(data, sfName, sizeof(sfName));
-		decl String:query[255];
+		char query[255];
 		Format(query, sizeof(query), "UPDATE `%s` SET skillforce=%i,sfgained=0.0,sflevel=2,sfskill=0,sfskilllevel=0 WHERE steamid='%s' OR steamid='%s'", tableName, id, id_1, id_2);
 		SQL_TQuery(db, TSQL_NULL, query);
 		if (founder1_Valid || founder2_Valid)
@@ -323,17 +323,17 @@ public TSQL_AccomplishSFFounders(Handle:owner, Handle:hndl, const String:error[]
 	CloseHandle(data);
 }
 
-public TSQL_OpenSFMenu(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_OpenSFMenu(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		decl String:sfName[32];
+		char sfName[32];
 		if (SQL_FetchRow(hndl)) //well, the if is sensless, why do i check an impossible possibility? FAILSAFE XD
 		{
 			SQL_FetchString(hndl, 0, sfName, sizeof(sfName));
-			decl String:itemString[64];
-			new Handle:menu = CreateMenu(menuHandler_SFMenu, MenuAction_Select | MenuAction_End);
+			char itemString[64];
+			Handle menu = CreateMenu(menuHandler_SFMenu, MenuAction_Select | MenuAction_End);
 			SetMenuTitle(menu, sfName);
 			Format(itemString, sizeof(itemString), "%T", "sfmenu_sf", client);
 			AddMenuItem(menu, "sfrce", itemString);
@@ -377,52 +377,52 @@ public TSQL_OpenSFMenu(Handle:owner, Handle:hndl, const String:error[], any:data
 	}
 }
 
-public TSQL_MySFRelay(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_MySFRelay(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			decl String:name[32];
+			char name[32];
 			SQL_FetchString(hndl, 0, name, sizeof(name));
-			new membercount = SQL_FetchInt(hndl, 1);
-			new Float:account = SQL_FetchFloat(hndl, 2);
-			new Float:gained = SQL_FetchFloat(hndl, 3);
-			new Float:tax = SQL_FetchFloat(hndl, 4);
-			new Handle:pack = CreateDataPack();
+			int membercount = SQL_FetchInt(hndl, 1);
+			float account = SQL_FetchFloat(hndl, 2);
+			float gained = SQL_FetchFloat(hndl, 3);
+			float tax = SQL_FetchFloat(hndl, 4);
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, name);
 			WritePackCell(pack, membercount);
 			WritePackFloat(pack, account);
 			WritePackFloat(pack, gained);
 			WritePackFloat(pack, tax);
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "SELECT COUNT(*) FROM `%s` WHERE (account+gained)>=(SELECT (account+gained) FROM `%s` WHERE id=%i)", sfTableName, sfTableName, sf_member[client]);
 			SQL_TQuery(db, TSQL_MySF, query, pack);
 		}
 	}
 }
 
-public TSQL_MySF(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_MySF(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
-	new membercount = ReadPackCell(data);
-	new Float:account = ReadPackFloat(data);
-	new Float:gained = ReadPackFloat(data);
-	new Float:tax = ReadPackFloat(data);
-	new RealTaxes = RoundFloat(tax * 100);
+	int membercount = ReadPackCell(data);
+	float account = ReadPackFloat(data);
+	float gained = ReadPackFloat(data);
+	float tax = ReadPackFloat(data);
+	int RealTaxes = RoundFloat(tax * 100);
 	CloseHandle(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			new rank = SQL_FetchInt(hndl, 0);
-			decl String:itemString[64];
-			new Handle:menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
+			int rank = SQL_FetchInt(hndl, 0);
+			char itemString[64];
+			Handle menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
 			SetMenuExitButton(menu, true);
 			SetMenuExitBackButton(menu, true);
 			AddMenuItem(menu, "", name, ITEMDRAW_DISABLED);
@@ -442,18 +442,18 @@ public TSQL_MySF(Handle:owner, Handle:hndl, const String:error[], any:data)
 	}
 }
 
-public TSQL_DeletedSFGetName(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_DeletedSFGetName(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			decl String:name[32];
+			char name[32];
 			SQL_FetchString(hndl, 0, name, sizeof(name));
-			new id = sf_member[client];
-			decl String:query[160];
-			new Handle:pack = CreateDataPack();
+			int id = sf_member[client];
+			char query[160];
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, id);
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, name);
@@ -463,24 +463,24 @@ public TSQL_DeletedSFGetName(Handle:owner, Handle:hndl, const String:error[], an
 	}
 }
 
-public TSQL_DeletedSFRelay(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_DeletedSFRelay(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new id = ReadPackCell(data);
-	decl String:query[128];
+	int id = ReadPackCell(data);
+	char query[128];
 	Format(query, sizeof(query), "DELETE FROM `%s` WHERE id=%i", sfTableName, id);
 	SQL_TQuery(db, TSQL_DeletedSF, query, data);
 }
 
-public TSQL_DeletedSF(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_DeletedSF(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new id = ReadPackCell(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	decl String:name[32];
+	int id = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (sf_member[i] == id)
 		{ sf_member[i] = -1; }
@@ -491,16 +491,16 @@ public TSQL_DeletedSF(Handle:owner, Handle:hndl, const String:error[], any:data)
 	{ AC_PrintToChatAll("%t", "sf_deleted", name); }
 }
 
-public TSQL_SFTaxesChanged(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SFTaxesChanged(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new id = ReadPackCell(data);
-	new Float:tax = ReadPackFloat(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int id = ReadPackCell(data);
+	float tax = ReadPackFloat(data);
 	CloseHandle(data);
-	new newTax = RoundFloat(tax * 100.0);
-	new clientValid = IsClientValid(client);
-	for (new i = 1; i <= MaxClients; i++)
+	int newTax = RoundFloat(tax * 100.0);
+	int clientValid = IsClientValid(client);
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (sf_member[i] == id)
 		{
@@ -518,22 +518,22 @@ public TSQL_SFTaxesChanged(Handle:owner, Handle:hndl, const String:error[], any:
 	}
 }
 
-public TSQL_SFMemberList(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SFMemberList(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new Handle:menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
+		Handle menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
 		SetMenuExitButton(menu, true);
 		SetMenuExitBackButton(menu, true);
-		new count = SQL_GetRowCount(hndl);
-		decl String:itemString[64];
-		decl String:name[32];
-		decl String:roleName[28];
-		new sfLevel;
-		new skill;
-		new skilllevel;
-		for (new i = 0; i < count; i++)
+		int count = SQL_GetRowCount(hndl);
+		char itemString[64];
+		char name[32];
+		char roleName[28];
+		int sfLevel;
+		int skill;
+		int skilllevel;
+		for (int i = 0; i < count; i++)
 		{
 			if (SQL_FetchRow(hndl))
 			{
@@ -566,19 +566,19 @@ public TSQL_SFMemberList(Handle:owner, Handle:hndl, const String:error[], any:da
 	}
 }
 
-public TSQL_SFMemberRanks(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SFMemberRanks(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new Handle:menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
+		Handle menu = CreateMenu(menuHandler_BackToSfMenu, MenuAction_Cancel | MenuAction_End);
 		SetMenuExitButton(menu, true);
 		SetMenuExitBackButton(menu, true);
-		new count = SQL_GetRowCount(hndl);
-		decl String:itemString[64];
-		decl String:name[32];
-		new Float:sfGained;
-		for (new i = 0; i < count; i++)
+		int count = SQL_GetRowCount(hndl);
+		char itemString[64];
+		char name[32];
+		float sfGained;
+		for (int i = 0; i < count; i++)
 		{
 			if (SQL_FetchRow(hndl))
 			{
@@ -593,24 +593,24 @@ public TSQL_SFMemberRanks(Handle:owner, Handle:hndl, const String:error[], any:d
 	}
 }
 
-public TSQL_SetSFRightsMenu(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SetSFRightsMenu(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new memberLevel = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int memberLevel = ReadPackCell(data);
 	CloseHandle(data);
 	if (IsClientValid(client))
 	{
-		decl String:memberLevelStr[8];
+		char memberLevelStr[8];
 		IntToString(memberLevel, memberLevelStr, sizeof(memberLevelStr));
-		decl String:steamid[32];
+		char steamid[32];
 		GetClientAuthId(client, AuthId_Engine, steamid, sizeof(steamid));
-		new count = SQL_GetRowCount(hndl);
-		decl String:name[32];
-		decl String:sid[32];
-		new Handle:menu = CreateMenu(menuHandler_SetMemberRights, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+		int count = SQL_GetRowCount(hndl);
+		char name[32];
+		char sid[32];
+		Handle menu = CreateMenu(menuHandler_SetMemberRights, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 		AddMenuItem(menu, memberLevelStr, "", ITEMDRAW_IGNORE);
-		for (new i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			if (SQL_FetchRow(hndl))
 			{
@@ -624,26 +624,26 @@ public TSQL_SetSFRightsMenu(Handle:owner, Handle:hndl, const String:error[], any
 	}
 }
 
-public TSQL_SetMemberRights(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SetMemberRights(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new memberLevel = ReadPackCell(data);
-	decl String:steamid[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int memberLevel = ReadPackCell(data);
+	char steamid[32];
 	ReadPackString(data, steamid, sizeof(steamid));
-	decl String:name[32];
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
-	decl String:sid[32];
-	new bool:clientValid = IsClientValid(client);
-	decl String:roleName[64];
+	char sid[32];
+	bool clientValid = IsClientValid(client);
+	char roleName[64];
 	if (memberLevel == 2)
 	{ Format(roleName, sizeof(roleName), "%T", "sf_role_proadmin", client); }
 	else if (memberLevel == 1)
 	{ Format(roleName, sizeof(roleName), "%T", "sf_role_admin", client); }
 	else
 	{ Format(roleName, sizeof(roleName), "%T", "sf_role_member", client); }
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -663,23 +663,23 @@ public TSQL_SetMemberRights(Handle:owner, Handle:hndl, const String:error[], any
 	{ AC_PrintToChat(client, "%t", "sf_setrole_set", name, roleName); }
 }
 
-public TSQL_AddSFMember(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_AddSFMember(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new id = ReadPackCell(data);
-	decl String:cName[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int id = ReadPackCell(data);
+	char cName[32];
 	ReadPackString(data, cName, sizeof(cName));
 	CloseHandle(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			decl String:name[32];
+			char name[32];
 			SQL_FetchString(hndl, 0, name, sizeof(name));
-			new Float:tax = SQL_FetchFloat(hndl, 1);
-			decl String:itemString[64];
-			new Handle:menu = CreateMenu(menuHandler_ChooseSFAccession, MenuAction_Select | MenuAction_End);
+			float tax = SQL_FetchFloat(hndl, 1);
+			char itemString[64];
+			Handle menu = CreateMenu(menuHandler_ChooseSFAccession, MenuAction_Select | MenuAction_End);
 			IntToString(id, itemString, sizeof(itemString));
 			AddMenuItem(menu, itemString, "", ITEMDRAW_IGNORE);
 			AddMenuItem(menu, name, "", ITEMDRAW_IGNORE);
@@ -700,13 +700,13 @@ public TSQL_AddSFMember(Handle:owner, Handle:hndl, const String:error[], any:dat
 	}
 }
 
-public TSQL_SFMemberAdded(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SFMemberAdded(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new id = ReadPackCell(data);
-	new Float:tax = ReadPackFloat(data);
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int id = ReadPackCell(data);
+	float tax = ReadPackFloat(data);
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
 	if (IsClientValid(client))
@@ -718,19 +718,19 @@ public TSQL_SFMemberAdded(Handle:owner, Handle:hndl, const String:error[], any:d
 	}
 }
 
-public TSQL_SelectPlayerForPayOff(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SelectPlayerForPayOff(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new count = SQL_GetRowCount(hndl);
-		decl String:name[32];
-		decl String:steamid[32];
-		new Handle:menu = CreateMenu(menuHandler_SelectClientPayOff, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+		int count = SQL_GetRowCount(hndl);
+		char name[32];
+		char steamid[32];
+		Handle menu = CreateMenu(menuHandler_SelectClientPayOff, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 		SetMenuExitButton(menu, true);
 		SetMenuExitBackButton(menu, true);
 		SetMenuTitle(menu, "%T", "sfmenu_payout_selectclient", client);
-		for (new i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			SQL_FetchRow(hndl);
 			SQL_FetchString(hndl, 0, steamid, sizeof(steamid));
@@ -741,28 +741,28 @@ public TSQL_SelectPlayerForPayOff(Handle:owner, Handle:hndl, const String:error[
 	}
 }
 
-public TSQL_CheckSFAccount(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_CheckSFAccount(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new id = ReadPackCell(data);
-	new value = ReadPackCell(data);
-	decl String:steamid[32];
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int id = ReadPackCell(data);
+	int value = ReadPackCell(data);
+	char steamid[32];
+	char name[32];
 	ReadPackString(data, steamid, sizeof(steamid));
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
-	new bool:clientValid = IsClientValid(client);
+	bool clientValid = IsClientValid(client);
 	if (SQL_FetchRow(hndl))
 	{
 		if (SQL_FetchFloat(hndl, 0) > 0.0)
 		{
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackCell(pack, value);
 			WritePackString(pack, steamid);
 			WritePackString(pack, name);
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "UPDATE `%s` SET account=account-%i WHERE id=%i", sfTableName, value, id);
 			SQL_TQuery(db, TSQL_NULL, query);
 			Format(query, sizeof(query), "UPDATE `%s` SET points=points+%i WHERE id=%i", tableName, value, id);
@@ -776,20 +776,20 @@ public TSQL_CheckSFAccount(Handle:owner, Handle:hndl, const String:error[], any:
 	}
 }
 
-public TSQL_PayOutDone(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_PayOutDone(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new value = ReadPackCell(data);
-	decl String:steamid[32];
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int value = ReadPackCell(data);
+	char steamid[32];
+	char name[32];
 	ReadPackString(data, steamid, sizeof(steamid));
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
-	new bool:clientValid = IsClientValid(client);
-	new bool:jumpClientMessage = false;
-	decl String:sid[32];
-	for (new i = 1; i <= MaxClients; i++)
+	bool clientValid = IsClientValid(client);
+	bool jumpClientMessage = false;
+	char sid[32];
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -818,19 +818,19 @@ public TSQL_PayOutDone(Handle:owner, Handle:hndl, const String:error[], any:data
 	}
 }
 
-public TSQL_SelectMemberCountForRemove(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SelectMemberCountForRemove(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{		
-			new memberCount = SQL_FetchInt(hndl, 0);
+			int memberCount = SQL_FetchInt(hndl, 0);
 			if (memberCount < 3)
 			{ AC_PrintToChat(client, "%t", "sfmenu_removeerror_justtwo"); }
 			else
 			{
-				decl String:query[160];
+				char query[160];
 				Format(query, sizeof(query), "SELECT steamid,name FROM `%s` WHERE skillforce=%i AND sflevel<=%i", tableName, sf_member[client], sf_level[client]);
 				SQL_TQuery(db, TSQL_SelectRemoveMember, query, GetClientUserId(client));
 			}
@@ -838,20 +838,20 @@ public TSQL_SelectMemberCountForRemove(Handle:owner, Handle:hndl, const String:e
 	}
 }
 
-public TSQL_SelectRemoveMember(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SelectRemoveMember(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		decl String:steamid[32];
-		decl String:sid[32];
+		char steamid[32];
+		char sid[32];
 		GetClientAuthId(client, AuthId_Engine, sid, sizeof(sid));
-		decl String:name[32];
-		new Handle:menu = CreateMenu(menuHandler_SelectRemovingMember, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+		char name[32];
+		Handle menu = CreateMenu(menuHandler_SelectRemovingMember, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 		SetMenuExitButton(menu, true);
 		SetMenuExitBackButton(menu, true);
-		new count = SQL_GetRowCount(hndl);
-		for (new i = 0; i < count; i++)
+		int count = SQL_GetRowCount(hndl);
+		for (int i = 0; i < count; i++)
 		{
 			SQL_FetchRow(hndl);
 			SQL_FetchString(hndl, 0, steamid, sizeof(steamid));
@@ -863,30 +863,30 @@ public TSQL_SelectRemoveMember(Handle:owner, Handle:hndl, const String:error[], 
 	}
 }
 
-public TSQL_CheckMemberCountForEndRemove(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_CheckMemberCountForEndRemove(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new id = ReadPackCell(data);
-	new userid = ReadPackCell(data);
-	new client = GetClientOfUserId(userid);
-	new bool:clientValid = IsClientValid(client);
-	decl String:steamid[32];
-	decl String:name[32];
-	decl String:sfName[32];
+	int id = ReadPackCell(data);
+	int userid = ReadPackCell(data);
+	int client = GetClientOfUserId(userid);
+	bool clientValid = IsClientValid(client);
+	char steamid[32];
+	char name[32];
+	char sfName[32];
 	ReadPackString(data, steamid, sizeof(steamid));
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
 	if (SQL_FetchRow(hndl))
 	{
 		SQL_FetchString(hndl, 0, sfName, sizeof(sfName));
-		new memberCount = SQL_FetchInt(hndl, 1);
+		int memberCount = SQL_FetchInt(hndl, 1);
 		if (memberCount > 2)
 		{
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, userid);
 			WritePackString(pack, name);
 			WritePackString(pack, sfName);
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "UPDATE `%s` SET membercount=membercount-1 WHERE id=%i", sfTableName, id);
 			SQL_TQuery(db, TSQL_NULL, query);
 			Format(query, sizeof(query), "UPDATE `%s` SET skillforce=-1,sfgained=0.0,sflevel=0,sfskill=0,sfskilllevel=0 WHERE steamid='%s'", tableName, steamid);
@@ -900,12 +900,12 @@ public TSQL_CheckMemberCountForEndRemove(Handle:owner, Handle:hndl, const String
 	}
 }
 
-public TSQL_PlayerRemoved(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_PlayerRemoved(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	decl String:name[32];
-	decl String:sfName[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	char name[32];
+	char sfName[32];
 	ReadPackString(data, name, sizeof(name));
 	ReadPackString(data, sfName, sizeof(sfName));
 	if (IsClientValid(client))
@@ -915,21 +915,21 @@ public TSQL_PlayerRemoved(Handle:owner, Handle:hndl, const String:error[], any:d
 	CloseHandle(data);
 }
 
-public TSQL_GetSkillforceMemberForLeave(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_GetSkillforceMemberForLeave(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new bool:LeaveWouldDeleteSF = false;
-		new memberCount = SQL_GetRowCount(hndl);
+		bool LeaveWouldDeleteSF = false;
+		int memberCount = SQL_GetRowCount(hndl);
 		if (memberCount < 3)
 		{ LeaveWouldDeleteSF = true; }
 		if (!LeaveWouldDeleteSF)
 		{
 			if (sf_level[client] == 2)
 			{
-				new proAdminCount = 0;
-				for (new i = 0; i < memberCount; i++)
+				int proAdminCount = 0;
+				for (int i = 0; i < memberCount; i++)
 				{
 					SQL_FetchRow(hndl);
 					if (SQL_FetchInt(hndl, 0) == 2)
@@ -939,9 +939,9 @@ public TSQL_GetSkillforceMemberForLeave(Handle:owner, Handle:hndl, const String:
 				{ LeaveWouldDeleteSF = true; }
 			}
 		}
-		new Handle:menu = CreateMenu(menuHandler_LeaveSF, MenuAction_Select | MenuAction_End);
+		Handle menu = CreateMenu(menuHandler_LeaveSF, MenuAction_Select | MenuAction_End);
 		SetMenuTitle(menu, "%T", "sfmenu_leavequestion", client);
-		decl String:itemString[64];
+		char itemString[64];
 		if (LeaveWouldDeleteSF)
 		{
 			Format(itemString, sizeof(itemString), "%T", "sfmenu_leavedelete", client);
@@ -955,44 +955,44 @@ public TSQL_GetSkillforceMemberForLeave(Handle:owner, Handle:hndl, const String:
 	}
 }
 
-public TSQL_GetSkillforceMemberForLeaveRelay(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_GetSkillforceMemberForLeaveRelay(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			decl String:name[32];
+			char name[32];
 			SQL_FetchString(hndl, 0, name, sizeof(name));
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, name);
-			decl String:query[160];
+			char query[160];
 			Format(query, sizeof(query), "SELECT sflevel FROM `%s` WHERE skillforce=%i", tableName, sf_member[client]);
 			SQL_TQuery(db, TSQL_GetSFMemberForLeavingProcess, query, pack);
 		}
 	}
 }
 
-public TSQL_GetSFMemberForLeavingProcess(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_GetSFMemberForLeavingProcess(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
 	if (IsClientValid(client))
 	{
-		new bool:LeaveWouldDeleteSF = false;
-		new memberCount = SQL_GetRowCount(hndl);
+		bool LeaveWouldDeleteSF = false;
+		int memberCount = SQL_GetRowCount(hndl);
 		if (memberCount < 3)
 		{ LeaveWouldDeleteSF = true; }
 		if (!LeaveWouldDeleteSF)
 		{
 			if (sf_level[client] == 2)
 			{
-				new proAdminCount = 0;
-				for (new i = 0; i < memberCount; i++)
+				int proAdminCount = 0;
+				for (int i = 0; i < memberCount; i++)
 				{
 					SQL_FetchRow(hndl);
 					if (SQL_FetchInt(hndl, 0) == 2)
@@ -1002,14 +1002,14 @@ public TSQL_GetSFMemberForLeavingProcess(Handle:owner, Handle:hndl, const String
 				{ LeaveWouldDeleteSF = true; }
 			}
 		}
-		new id = sf_member[client];
+		int id = sf_member[client];
 		if (LeaveWouldDeleteSF)
 		{
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, id);
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, name);
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "DELETE FROM `%s` WHERE id=%i", sfTableName, id);
 			SQL_TQuery(db, TSQL_NULL, query);
 			Format(query, sizeof(query), "UPDATE `%s` SET skillforce=-1,sfgained=0.0,sflevel=0,sfskill=0,sfskilllevel=0 WHERE skillforce=%i", tableName, id);
@@ -1017,15 +1017,15 @@ public TSQL_GetSFMemberForLeavingProcess(Handle:owner, Handle:hndl, const String
 		}
 		else
 		{
-			decl String:cName[32];
+			char cName[32];
 			GetClientName(client, cName, sizeof(cName));
-			new Handle:pack = CreateDataPack();
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, cName);
 			WritePackString(pack, name);
-			decl String:sid[32];
+			char sid[32];
 			GetClientAuthId(client, AuthId_Engine, sid, sizeof(sid));
-			decl String:query[255];
+			char query[255];
 			Format(query, sizeof(query), "UPDATE `%s` SET membercount=membercount-1 WHERE id=%i", sfTableName, id);
 			SQL_TQuery(db, TSQL_NULL, query);
 			Format(query, sizeof(query), "UPDATE `%s` SET skillforce=-1,sfgained=0.0,sflevel=0,sfskill=0,sfskilllevel=0 WHERE steamid='%s'", tableName, sid);
@@ -1034,15 +1034,15 @@ public TSQL_GetSFMemberForLeavingProcess(Handle:owner, Handle:hndl, const String
 	}
 }
 
-public TSQL_LeavedSFAndDeleted(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_LeavedSFAndDeleted(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new id = ReadPackCell(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	decl String:name[32];
+	int id = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (sf_member[i] == id)
 		{
@@ -1057,13 +1057,13 @@ public TSQL_LeavedSFAndDeleted(Handle:owner, Handle:hndl, const String:error[], 
 	{ AC_PrintToChatAll("%t", "sf_leftsf_del", name); }
 }
 
-public TSQL_LeavedSF(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_LeavedSF(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	char name[32];
 	ReadPackString(data, name, sizeof(name));
-	decl String:sfName[32];
+	char sfName[32];
 	ReadPackString(data, sfName, sizeof(sfName));
 	CloseHandle(data);
 	if (IsClientValid(client))
@@ -1075,28 +1075,28 @@ public TSQL_LeavedSF(Handle:owner, Handle:hndl, const String:error[], any:data)
 	AC_PrintToChatAll("%t", "sf_leftsf", name, sfName);
 }
 
-public TSQL_SetSkillMenuFetchClients(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SetSkillMenuFetchClients(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new skillNumber = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int skillNumber = ReadPackCell(data);
 	CloseHandle(data);
 	if (IsClientValid(client))
 	{
-		new count = SQL_GetRowCount(hndl);
+		int count = SQL_GetRowCount(hndl);
 		if (count > 0)
 		{
-			new Handle:menu = CreateMenu(menuHandler_SetClientNewSkill, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			Handle menu = CreateMenu(menuHandler_SetClientNewSkill, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuTitle(menu, "%T", "sfmenu_chooseskill_client", client);
-			decl String:itemString[64];
+			char itemString[64];
 			IntToString(skillNumber, itemString, sizeof(itemString));
 			AddMenuItem(menu, itemString, "", ITEMDRAW_IGNORE);
-			decl String:steamid[32];
-			decl String:name[32];
-			decl String:skillName[32];
-			new skill;
-			new skilllevel;
-			for (new i = 0; i < count; i++)
+			char steamid[32];
+			char name[32];
+			char skillName[32];
+			int skill;
+			int skilllevel;
+			for (int i = 0; i < count; i++)
 			{
 				SQL_FetchRow(hndl);
 				SQL_FetchString(hndl, 0, steamid, sizeof(steamid));
@@ -1119,19 +1119,19 @@ public TSQL_SetSkillMenuFetchClients(Handle:owner, Handle:hndl, const String:err
 	}
 }
 
-public TSQL_NewSkillSet(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_NewSkillSet(Handle owner, Handle hndl, const char[] error, any data)
 {
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new skill = ReadPackCell(data);
-	decl String:steamid[32];
-	decl String:name[32];
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int skill = ReadPackCell(data);
+	char steamid[32];
+	char name[32];
 	ReadPackString(data, steamid, sizeof(steamid));
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
-	new clientValid = IsClientValid(client);
-	decl String:sid[32];
-	for (new i = 1; i <= MaxClients; i++)
+	int clientValid = IsClientValid(client);
+	char sid[32];
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -1140,7 +1140,7 @@ public TSQL_NewSkillSet(Handle:owner, Handle:hndl, const String:error[], any:dat
 			{
 				sf_skill[i] = skill;
 				sf_skilllevel[i] = 0;
-				decl String:skillName[32];
+				char skillName[32];
 				ConvertSkillNumberIntoString(skill, skillName, sizeof(skillName), i);
 				AC_PrintToChat(i, "%t", "sf_skillchanged", skillName);
 				if (clientValid)
@@ -1151,31 +1151,31 @@ public TSQL_NewSkillSet(Handle:owner, Handle:hndl, const String:error[], any:dat
 	}
 	if (clientValid)
 	{
-		decl String:skillName[32];
+		char skillName[32];
 		ConvertSkillNumberIntoString(skill, skillName, sizeof(skillName), client);
 		AC_PrintToChat(client, "%t", "sf_skillchanged_setter", name, skillName);
 		OpenSkillForceMenu(client);
 	}
 }
 
-public TSQL_SFIncreaseLevelList(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_SFIncreaseLevelList(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
-		new count = SQL_GetRowCount(hndl);
+		int count = SQL_GetRowCount(hndl);
 		if (count > 0)
 		{
-			decl String:name[32];
-			decl String:steamid[32];
-			decl String:itemString[64];
-			decl String:skillName[32];
-			new skill;
-			new skilllevel;
-			new Handle:menu = CreateMenu(menuHandler_IncreaseLevelClient, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+			char name[32];
+			char steamid[32];
+			char itemString[64];
+			char skillName[32];
+			int skill;
+			int skilllevel;
+			Handle menu = CreateMenu(menuHandler_IncreaseLevelClient, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
 			SetMenuExitButton(menu, true);
 			SetMenuExitBackButton(menu, true);
-			for (new i = 0; i < count; i++)
+			for (int i = 0; i < count; i++)
 			{
 				SQL_FetchRow(hndl);
 				SQL_FetchString(hndl, 0, steamid, sizeof(steamid));
@@ -1194,12 +1194,12 @@ public TSQL_SFIncreaseLevelList(Handle:owner, Handle:hndl, const String:error[],
 	}
 }
 
-public TSQL_FetchSFSkillsForInc(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_FetchSFSkillsForInc(Handle owner, Handle hndl, const char[] error, any data)
 {
-	decl String:name[32];
-	decl String:steamid[32];
+	char name[32];
+	char steamid[32];
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
+	int client = GetClientOfUserId(ReadPackCell(data));
 	ReadPackString(data, steamid, sizeof(steamid));
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
@@ -1207,30 +1207,30 @@ public TSQL_FetchSFSkillsForInc(Handle:owner, Handle:hndl, const String:error[],
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			new skill = SQL_FetchInt(hndl, 0);
-			new skilllevel = SQL_FetchInt(hndl, 1);
-			new Float:costs = Pow(sf_level_Base, float(skilllevel + 1));
-			new Handle:pack = CreateDataPack();
+			int skill = SQL_FetchInt(hndl, 0);
+			int skilllevel = SQL_FetchInt(hndl, 1);
+			float costs = Pow(sf_level_Base, float(skilllevel + 1));
+			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackCell(pack, skill);
 			WritePackCell(pack, skilllevel);
 			WritePackString(pack, steamid);
 			WritePackString(pack, name);
-			decl String:query[160];
+			char query[160];
 			Format(query, sizeof(query), "SELECT (account-%f) FROM `%s` WHERE id=%i", costs, sfTableName, sf_member[client]);
 			SQL_TQuery(db, TSQL_FetchValidAccountFoIncSkill, query, pack);
 		}
 	}
 }
 
-public TSQL_FetchValidAccountFoIncSkill(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_FetchValidAccountFoIncSkill(Handle owner, Handle hndl, const char[] error, any data)
 {
-	decl String:name[32];
-	decl String:steamid[32];
+	char name[32];
+	char steamid[32];
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new skill = ReadPackCell(data);
-	new skilllevel = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int skill = ReadPackCell(data);
+	int skilllevel = ReadPackCell(data);
 	ReadPackString(data, steamid, sizeof(steamid));
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
@@ -1238,16 +1238,16 @@ public TSQL_FetchValidAccountFoIncSkill(Handle:owner, Handle:hndl, const String:
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			new Float:accountDelta = SQL_FetchFloat(hndl, 0);
+			float accountDelta = SQL_FetchFloat(hndl, 0);
 			if (accountDelta > 0.0)
 			{
-				new Handle:pack = CreateDataPack();
+				Handle pack = CreateDataPack();
 				WritePackCell(pack, GetClientUserId(client));
 				WritePackCell(pack, skill);
 				WritePackCell(pack, skilllevel);
 				WritePackString(pack, steamid);
 				WritePackString(pack, name);
-				decl String:query[160];
+				char query[160];
 				Format(query, sizeof(query), "UPDATE `%s` SET account=account-%f WHERE id=%i", sfTableName, Pow(sf_level_Base, float(skilllevel + 1)), sf_member[client]);
 				SQL_TQuery(db, TSQL_NULL, query);
 				Format(query, sizeof(query), "UPDATE `%s` SET sfskilllevel=sfskilllevel+1 WHERE steamid='%s'", tableName, steamid);
@@ -1259,21 +1259,21 @@ public TSQL_FetchValidAccountFoIncSkill(Handle:owner, Handle:hndl, const String:
 	}
 }
 
-public TSQL_IncSkill(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_IncSkill(Handle owner, Handle hndl, const char[] error, any data)
 {
-	decl String:name[32];
-	decl String:steamid[32];
+	char name[32];
+	char steamid[32];
 	ResetPack(data);
-	new client = GetClientOfUserId(ReadPackCell(data));
-	new clientValid = IsClientValid(client);
-	new skill = ReadPackCell(data);
-	new skilllevel = ReadPackCell(data);
+	int client = GetClientOfUserId(ReadPackCell(data));
+	int clientValid = IsClientValid(client);
+	int skill = ReadPackCell(data);
+	int skilllevel = ReadPackCell(data);
 	ReadPackString(data, steamid, sizeof(steamid));
 	ReadPackString(data, name, sizeof(name));
 	CloseHandle(data);
-	decl String:sid[32];
-	decl String:skillName[32];
-	for (new i = 1; i <= MaxClients; i++)
+	char sid[32];
+	char skillName[32];
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -1298,14 +1298,14 @@ public TSQL_IncSkill(Handle:owner, Handle:hndl, const String:error[], any:data)
 	}
 }
 
-public TSQL_CheckForMemberBorder(Handle:owner, Handle:hndl, const String:error[], any:data)
+public void TSQL_CheckForMemberBorder(Handle owner, Handle hndl, const char[] error, any data)
 {
-	new client = GetClientOfUserId(data);
+	int client = GetClientOfUserId(data);
 	if (IsClientValid(client))
 	{
 		if (SQL_FetchRow(hndl))
 		{
-			new mCount = SQL_FetchInt(hndl, 0);
+			int mCount = SQL_FetchInt(hndl, 0);
 			if (mCount >= sf_maximumMemberCount)
 			{
 				AC_PrintToChat(client, "%t", "sf_toomuchmember");
@@ -1313,16 +1313,16 @@ public TSQL_CheckForMemberBorder(Handle:owner, Handle:hndl, const String:error[]
 			}
 			else
 			{
-				new Handle:cMenu = CreateMenu(menuHandler_AddSFMember, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
-				decl String:uid[32];
-				decl String:name[32];
-				for (new i = 1; i <= MaxClients; i++)
+				Handle cMenu = CreateMenu(menuHandler_AddSFMember, MenuAction_Select | MenuAction_Cancel | MenuAction_End);
+				char uid[32];
+				char name[32];
+				for (int i = 1; i <= MaxClients; i++)
 				{
 					if (IsClientValid(i) && i != client)
 					{
 						if (sf_member[i] == -1)
 						{
-							new userid = GetClientUserId(i);
+							int userid = GetClientUserId(i);
 							IntToString(userid, uid, sizeof(uid));
 							GetClientName(i, name, sizeof(name));
 							AddMenuItem(cMenu, uid, name);
@@ -1335,4 +1335,4 @@ public TSQL_CheckForMemberBorder(Handle:owner, Handle:hndl, const String:error[]
 	}
 }
 
-public TSQL_NULL(Handle:owner, Handle:hndl, const String:error[], any:data) { }
+public void TSQL_NULL(Handle owner, Handle hndl, const char[] error, any data) { }

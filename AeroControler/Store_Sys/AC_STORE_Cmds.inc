@@ -14,7 +14,7 @@
 **
 */
 
-public Action:Cmd_OpenStore(client, args)
+public Action Cmd_OpenStore(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	UpdateClientAsync(client);
@@ -22,46 +22,46 @@ public Action:Cmd_OpenStore(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_OpenStoreTop(client, args)
+public Action Cmd_OpenStoreTop(int client, int args)
 {
-	decl String:query[160];
+	char query[160];
 	Format(query, sizeof(query), "SELECT name,points,gained FROM `%s` ORDER BY (points+gained) DESC LIMIT 20", tableName);
 	SQL_TQuery(db, TSQL_StoreTopCmd, query, GetClientUserId(client));
 	return Plugin_Handled;
 }
 
-public Action:Cmd_OpenStoreRank(client, args)
+public Action Cmd_OpenStoreRank(int client, int args)
 {
-	decl String:query[160];
-	decl String:id[32];
+	char query[160];
+	char id[32];
 	GetClientAuthId(client, AuthId_Engine, id, sizeof(id));
 	Format(query, sizeof(query), "SELECT (points+gained) FROM `%s` WHERE steamid='%s'", tableName, id);
 	SQL_TQuery(db, TSQL_StoreRankCmdRelay, query, GetClientUserId(client));
 	return Plugin_Handled;
 }
 
-public Action:Cmd_SkillForce(client, args)
+public Action Cmd_SkillForce(int client, int args)
 {
 	OpenSkillForceMenu(client);
 	return Plugin_Handled;
 }
 
-public Action:Cmd_SFChat(client, args)
+public Action Cmd_SFChat(int client, int args)
 {
-	new sf = sf_member[client];
+	int sf = sf_member[client];
 	if (sf == -1)
 	{
 		AC_PrintToChat(client, "%t", "sf_sfc_nosf");
 		return Plugin_Handled;
 	}
-	decl String:message[192];
+	char message[192];
 	GetCmdArgString(message, sizeof(message));
 	TrimString(message);
 	StripQuotes(message);
 	if (strlen(message) > 0)
 	{
 		IncludeTag = false;
-		for (new i = 1; i <= MaxClients; i++)
+		for (int i = 1; i <= MaxClients; i++)
 		{
 			if (IsClientValid(i))
 			{

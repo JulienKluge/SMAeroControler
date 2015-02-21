@@ -14,13 +14,13 @@
 **
 */
 
-public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast)
 {
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
-			new teamIndex = GetClientTeam(i);
+			int teamIndex = GetClientTeam(i);
 			if (IsPlayerAlive(i))
 			{
 				if (teamIndex == CS_TEAM_T)
@@ -37,8 +37,8 @@ public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadca
 				{
 					if (sf_member[i] != -1)
 					{
-						new Float:virtualSFPoints = virtualNewPoints[i] * sf_tax[i];
-						new Float:virtualPoints = virtualNewPoints[i] * (1.0 - sf_tax[i]);
+						float virtualSFPoints = virtualNewPoints[i] * sf_tax[i];
+						float virtualPoints = virtualNewPoints[i] * (1.0 - sf_tax[i]);
 						PrintCenterText(i, "%t", "sf_sf_gained_string", virtualPoints, currentName, virtualSFPoints, currentName);
 					}
 					else
@@ -55,7 +55,7 @@ public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadca
 		if (c_InvisibleSeconds[i] > 0)
 		{ SetEntityRenderMode(i, RENDER_NORMAL); }
 		c_InvisibleSeconds[i] = 0;
-		new Handle:subHndl;
+		Handle subHndl;
 		if (c_RespawnTimer[i] != INVALID_HANDLE)
 		{
 			subHndl = c_RespawnTimer[i];
@@ -72,10 +72,10 @@ public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadca
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if (IsClientValid(client))
 	{
 		virtualNewPoints[client] = 0.0;
@@ -88,17 +88,17 @@ public Action:Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroa
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
-	new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
 	if (IsClientValid(client))
 	{
 		if (IsClientValid(attacker))
 		{
-			new teamIndex_Vic = GetClientTeam(client);
-			new teamIndex_Att = GetClientTeam(attacker);
+			int teamIndex_Vic = GetClientTeam(client);
+			int teamIndex_Att = GetClientTeam(attacker);
 			if (teamIndex_Vic == CS_TEAM_T && teamIndex_Att == CS_TEAM_CT)
 			{ GainPoints(attacker, p_CT_Kill_T); }
 			if (teamIndex_Vic == CS_TEAM_CT && teamIndex_Att == CS_TEAM_T)
@@ -106,7 +106,7 @@ public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroa
 		}
 		if (c_HasRespawn[client])
 		{
-			new Handle:pack;
+			Handle pack;
 			c_RespawnTimer[client] = CreateDataTimer(3.0, timer_RespawnClient, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 			WritePackCell(pack, client);
 			WritePackCell(pack, GetClientUserId(client));
@@ -116,32 +116,32 @@ public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroa
 	return Plugin_Continue;
 }
 
-public Action:Event_HEDetonate(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_HEDetonate(Handle event, const char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if (IsClientValid(client))
 	{
 		if (c_PressureNadeCount[client] > 0)
 		{
 			c_PressureNadeCount[client]--;
-			new Float:pos[3];
+			float pos[3];
 			pos[0] = GetEventFloat(event, "x");
 			pos[1] = GetEventFloat(event, "y");
 			pos[2] = GetEventFloat(event, "z");
-			new Float:cPos[3];
-			new teamIndex = GetClientTeam(client);
-			for (new i = 1; i <= MaxClients; i++)
+			float cPos[3];
+			int teamIndex = GetClientTeam(client);
+			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (IsClientValid(i) && i != client)
 				{
 					if (GetClientTeam(i) != teamIndex)
 					{
 						GetClientAbsOrigin(i, cPos);
-						new Float:length = GetVectorDistance(pos, cPos);
+						float length = GetVectorDistance(pos, cPos);
 						if (length <= 300.0)
 						{
-							new Float:vec[3];
+							float vec[3];
 							SubtractVectors(cPos, pos, vec);
 							NormalizeVector(vec, vec);
 							ScaleVector(vec, (300.0 / length) * 1000.0);
