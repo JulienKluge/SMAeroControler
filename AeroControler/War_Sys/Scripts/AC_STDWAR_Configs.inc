@@ -14,13 +14,13 @@
 **
 */
 
-stock LoadTranslationFiles()
+stock void LoadTranslationFiles()
 {
-	decl String:transFile[PLATFORM_MAX_PATH];
-	decl String:transDestFile[PLATFORM_MAX_PATH];
+	char transFile[PLATFORM_MAX_PATH];
+	char transDestFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, transFile, sizeof(transFile), "/translations/_aerocontroler_stdwars.phrases.txt");
 	BuildPath(Path_SM, transDestFile, sizeof(transDestFile), "/translations/aerocontroler_stdwars.phrases.txt");
-	new transResult = ac_parseTransFile(transFile, transDestFile);
+	bool transResult = ac_parseTransFile(transFile, transDestFile);
 	if (transResult)
 	{ LoadTranslations("aerocontroler_stdwars.phrases.txt"); }
 	else

@@ -14,11 +14,11 @@
 **
 */
 
-stock RegisterWars()
+stock void RegisterWars()
 {
 	if (!Ready)
 	{
-		new String:transPhrase[64];
+		char transPhrase[64];
 		if (NormalWar_Enabled)
 		{
 			Format(transPhrase, sizeof(transPhrase), "%T", "STDWARS_NormalWar", LANG_SERVER);
@@ -38,12 +38,12 @@ stock RegisterWars()
 	}
 }
 
-stock ApplyFunWarRules() /* It's in a stock, because it would mess the Callback File */
+stock void ApplyFunWarRules() /* It's in a stock, because it would mess the Callback File */
 {
-	new _:fun_hp = GetRandomInt(FunWar_MinHp, FunWar_MaxHp);
-	new Float:fun_speed = GetRandomFloat(1.05, FunWar_MaxSpeed);
-	new Float:fun_grav = GetRandomFloat(FunWar_MinGrav, 0.95);
-	for (new i = 1; i <= MaxClients; i++)
+	int fun_hp = GetRandomInt(FunWar_MinHp, FunWar_MaxHp);
+	float fun_speed = GetRandomFloat(1.05, FunWar_MaxSpeed);
+	float fun_grav = GetRandomFloat(FunWar_MinGrav, 0.95);
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -51,7 +51,7 @@ stock ApplyFunWarRules() /* It's in a stock, because it would mess the Callback 
 			{
 				RemoveAllClientItems(i, CS_SLOT_KNIFE);
 				SetClientDefaultValues(i, true, fun_hp, fun_grav, fun_speed);
-				new wpnIndex = GetRandomInt(0, 3);
+				int wpnIndex = GetRandomInt(0, 3);
 				switch (wpnIndex) /* I fucking hate switch case... */
 				{
 					case 0: { GivePlayerItem(i, "weapon_m4a1"); }

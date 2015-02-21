@@ -40,7 +40,7 @@ stock void Log(int EL_Level, const char[] pluginName, const char[] message, any 
 		case EL_Abort:
 		{
 			int endMessageLength = eMsgLength + 255;
-			char endMsg = new char[endMessageLength];
+			char[] endMsg = new char[endMessageLength];
 			Format(endMsg, endMessageLength, "!!! [AeroControler (%s) - FATAL ERROR]: %s | STOP PLUGIN EXECUTION", pluginName, errorMsg);
 			SetFailState(endMsg);
 		}

@@ -14,21 +14,21 @@
 **
 */
 
-new ExtensionEntryIndex = -1;
+int ExtensionEntryIndex = -1;
 
-new bool:Ready = false;
-new bool:WarOnline = false;
+bool Ready = false;
+bool WarOnline = false;
 
-new bool:NormalWar_Enabled = true;
-new bool:NormalWar_Online = false;
+bool NormalWar_Enabled = true;
+bool NormalWar_Online = false;
 
-new bool:HCWar_Enabled = true;
-new bool:HCWar_Online = false;
-new Float:HCWar_DmgFactor = 5.0;
+bool HCWar_Enabled = true;
+bool HCWar_Online = false;
+float HCWar_DmgFactor = 5.0;
 
-new bool:FunWar_Enabled = true;
-new bool:FunWar_Online = false;
-new FunWar_MinHp = 1;
-new FunWar_MaxHp = 500;
-new Float:FunWar_MaxSpeed = 3.0;
-new Float:FunWar_MinGrav = 0.1;
+bool FunWar_Enabled = true;
+bool FunWar_Online = false;
+int FunWar_MinHp = 1;
+int FunWar_MaxHp = 500;
+float FunWar_MaxSpeed = 3.0;
+float FunWar_MinGrav = 0.1;

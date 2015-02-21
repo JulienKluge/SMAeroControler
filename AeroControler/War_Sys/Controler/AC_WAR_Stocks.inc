@@ -14,22 +14,22 @@
 **
 */
 
-stock StartWARKindVote(bool:voteForAll = true, _:voteClients[] = {}, voteClientNumber = 0)
+stock void StartWARKindVote(bool voteForAll = true, int voteClients[] = {}, int voteClientNumber = 0)
 {
 	if (!WarOnline)
 	{
 		if (WarCount < 1) { return; }
 		if (IsVoteInProgress()) { return; }
 		CloseVoteTime();
-		new Handle:vote = CreateMenu(voteHandler_WarKindVote, MenuAction_VoteEnd | MenuAction_End);
-		decl String:transPhrase[32];
+		Handle vote = CreateMenu(voteHandler_WarKindVote, MenuAction_VoteEnd | MenuAction_End);
+		char transPhrase[32];
 		Format(transPhrase, sizeof(transPhrase), "%T", "war_vote_title", LANG_SERVER);
 		SetMenuTitle(vote, transPhrase);
 		if (AddNoVoteOption) { SetMenuNoVoteButton(vote, true); }
 		SetMenuExitButton(vote, false);
-		new WarsIndexArray[WarCount];
-		new WarsIndexCount = -1;
-		for (new i = 0; i < MAX_WARS; i++)
+		int[] WarsIndexArray = new int[WarCount];
+		int WarsIndexCount = -1;
+		for (int i = 0; i < MAX_WARS; i++)
 		{
 			if (War_Registered[i])
 			{
@@ -37,20 +37,20 @@ stock StartWARKindVote(bool:voteForAll = true, _:voteClients[] = {}, voteClientN
 				WarsIndexArray[WarsIndexCount] = i; //order all in an array
 			}
 		}
-		new menuItemCount = 6;
+		int menuItemCount = 6;
 		if (WarCount < 6)
 		{ menuItemCount = WarCount; } //we don't need 6 menu items when less wars are active..
-		for (new i = 0; i < menuItemCount; i++)
+		for (int i = 0; i < menuItemCount; i++)
 		{
-			new testIndex;
-			new arrayIndex;
+			int testIndex;
+			int arrayIndex;
 			for (;;)
 			{
 				arrayIndex = GetRandomInt(0, WarCount - 1);
 				testIndex = WarsIndexArray[arrayIndex];
 				if (testIndex != -1) { break; }
 			}
-			decl String:index[8]; //why 8? Because therefore...
+			char index[8]; //why 8? Because therefore...
 			IntToString(testIndex, index, sizeof(index));
 			AddMenuItem(vote, index, War_Name[testIndex]);
 			WarsIndexArray[testIndex] = -1;
@@ -62,7 +62,7 @@ stock StartWARKindVote(bool:voteForAll = true, _:voteClients[] = {}, voteClientN
 	}
 }
 
-stock CloseVoteTime()
+stock void CloseVoteTime()
 {
 	VoteIsOpen = false;
 	if (ReVoteTimer != INVALID_HANDLE)
@@ -72,7 +72,7 @@ stock CloseVoteTime()
 	ReVoteTimer = CreateTimer(ReAllowVoteTime, timer_ReAllowVoting);
 }
 
-stock StartWar(_:index)
+stock void StartWar(int index)
 {
 	if (WarOnline)
 	{ return; }
@@ -95,7 +95,7 @@ stock StartWar(_:index)
 	CS_TerminateRound(1.0, CSRoundEnd_Draw, false);
 }
 
-stock EndWar(bool:ForceRestart = true)
+stock void EndWar(bool ForceRestart = true)
 {
 	if (WarOnline)
 	{
@@ -105,13 +105,13 @@ stock EndWar(bool:ForceRestart = true)
 		{ CS_TerminateRound(1.0, CSRoundEnd_Draw, false); }
 		if (WarMaxTimer != INVALID_HANDLE)
 		{
-			new Handle:subHndl = WarMaxTimer;
+			Handle subHndl = WarMaxTimer;
 			WarMaxTimer = INVALID_HANDLE;
 			CloseHandle(subHndl);
 		}
 		if (WarFreezeTimer != INVALID_HANDLE)
 		{
-			new Handle:subHndl = WarFreezeTimer;
+			Handle subHndl = WarFreezeTimer;
 			WarFreezeTimer = INVALID_HANDLE;
 			CloseHandle(subHndl);
 		}
@@ -121,7 +121,7 @@ stock EndWar(bool:ForceRestart = true)
 	}
 }
 
-stock ForceEndWar()
+stock void ForceEndWar()
 {
 	if (War_EndFunc[WarIndex] != WarEnd:INVALID_FUNCTION)
 	{
@@ -132,15 +132,15 @@ stock ForceEndWar()
 	EndWar();
 }
 
-stock LoadWarVectors()
+stock void LoadWarVectors()
 {
-	new bool:OverrideFound = false;
-	new Handle:kv = CreateKeyValues("warvectors");
-	decl String:file[PLATFORM_MAX_PATH];
+	bool OverrideFound = false;
+	Handle kv = CreateKeyValues("warvectors");
+	char file[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, file, sizeof(file), "configs/AC_WAR_VectorOverride.ini");
 	if (FileToKeyValues(kv, file))
 	{
-		decl String:keyName[PLATFORM_MAX_PATH]; //How long can a mapname be?
+		char keyName[PLATFORM_MAX_PATH]; //How long can a mapname be?
 		GetCurrentMap(keyName, sizeof(keyName));
 		if (KvJumpToKey(kv, keyName))
 		{
@@ -152,8 +152,8 @@ stock LoadWarVectors()
 	CloseHandle(kv);
 	if (!OverrideFound)
 	{
-		new lastSpawnEnt = -1;
-		new searchOffset = MaxClients + 1;
+		int lastSpawnEnt = -1;
+		int searchOffset = MaxClients + 1;
 		while ((searchOffset = FindEntityByClassname(searchOffset, "info_player_counterterrorist")) != -1)
 		{ lastSpawnEnt = searchOffset; } //we want the last spawn - the probability should be lower that a ct is spawning there...I think
 		if (lastSpawnEnt >= searchOffset)

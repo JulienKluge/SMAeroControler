@@ -14,14 +14,14 @@
 **
 */
 
-public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast)
 {
 	if (WarOnline)
 	{
 		WarRound++;
 		if (WarFreezeTimer != INVALID_HANDLE)
 		{
-			new Handle:subHndl = WarFreezeTimer;
+			Handle subHndl = WarFreezeTimer;
 			WarFreezeTimer = INVALID_HANDLE;
 			CloseHandle(subHndl);
 		}
@@ -31,7 +31,7 @@ public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadca
 	return Plugin_Continue;
 }
 
-public Action:Event_RoundStart(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_RoundStart(Handle event, const char[] name, bool dontBroadcast)
 {
 	if (WarOnline)
 	{
@@ -54,9 +54,9 @@ public Action:Event_RoundStart(Handle:event, const String:name[], bool:dontBroad
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast)
 {
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if (WarOnline)
 	{
 		SetEntData(client, g_Offset_CollisionGroup, COLLISION_GROUP_DEBRIS_TRIGGER, 4, true);

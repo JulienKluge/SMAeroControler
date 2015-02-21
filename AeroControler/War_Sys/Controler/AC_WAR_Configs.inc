@@ -14,11 +14,11 @@
 **
 */
 
-stock LoadStaticConfig()
+stock void LoadStaticConfig()
 {
-	decl String:file[PLATFORM_MAX_PATH];
+	char file[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, file, sizeof(file), "configs/AC_WAR_StaticConfig.ini");
-	new Handle:kv = CreateKeyValues("StaticSettings");
+	Handle kv = CreateKeyValues("StaticSettings");
 	if (FileToKeyValues(kv, file))
 	{
 		KvGetString(kv, "Cmd_Str_WarVote", Str_WarVoteCmd, sizeof(Str_WarVoteCmd), "sm_war;sm_w");
@@ -28,20 +28,20 @@ stock LoadStaticConfig()
 	CloseHandle(kv);
 }
 
-stock LoadTranslationFiles()
+stock void LoadTranslationFiles()
 {
-	decl String:transFile[PLATFORM_MAX_PATH];
-	decl String:transDestFile[PLATFORM_MAX_PATH];
+	char transFile[PLATFORM_MAX_PATH];
+	char transDestFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, transFile, sizeof(transFile), "/translations/_aerocontroler_war.phrases.txt");
 	BuildPath(Path_SM, transDestFile, sizeof(transDestFile), "/translations/aerocontroler_war.phrases.txt");
-	new transResult = ac_parseTransFile(transFile, transDestFile);
+	int transResult = ac_parseTransFile(transFile, transDestFile);
 	if (transResult)
 	{ LoadTranslations("aerocontroler_war.phrases.txt"); }
 	else
 	{ Log(EL_FatalEx, "WARSys", "The template file %s could not be readed or the destination file %s be written.", transFile, transDestFile); }
 }
 
-stock bool:IntToBool(integer)
+stock bool IntToBool(int integer)
 {
 	if (integer == 0) { return false; }
 	return true;

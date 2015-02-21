@@ -14,7 +14,7 @@
 **
 */
 
-public Action:Cmd_VoteWar(client, args)
+public Action Cmd_VoteWar(int client, int args)
 {
 	if (IsClientValid(client)) //the server shouldn't be able to vote...
 	{
@@ -25,8 +25,8 @@ public Action:Cmd_VoteWar(client, args)
 		}
 		if (!HasVotedWar[client])
 		{
-			new voteCount = 0; new voteAbleCount = 0;
-			for (new i = 1; i <= MaxClients; i++)
+			int voteCount = 0; int voteAbleCount = 0;
+			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (IsClientValid(i))
 				{
@@ -60,31 +60,31 @@ public Action:Cmd_VoteWar(client, args)
 	return Plugin_Handled;
 }
 
-public Action:ACmd_ForceWarMenu(client, args)
+public Action ACmd_ForceWarMenu(int client, int args)
 {
 	if (WarOnline)
 	{
 		ReplyToCommand(client, "[AC]: War is still running. War vote not possible.");
 		return Plugin_Handled;
 	}
-	decl String:target[MAX_NAME_LENGTH];
+	char target[MAX_NAME_LENGTH];
 	if (args == 0)
 	{ target = "@all"; /*it's seems legit to make it as a workaround in this case*/ }
 	else
 	{ GetCmdArg(1, target, sizeof(target)); }
-	decl String:buffer[MAX_NAME_LENGTH];
-	new targets[MAXPLAYERS+1];
-	new bool:ml = false;
-	new count = ProcessTargetString(target, client, targets, sizeof(targets), COMMAND_FILTER_CONNECTED | COMMAND_FILTER_NO_IMMUNITY | COMMAND_FILTER_NO_BOTS, buffer, sizeof(buffer), ml);
+	char buffer[MAX_NAME_LENGTH];
+	int targets[MAXPLAYERS+1];
+	bool ml = false;
+	int count = ProcessTargetString(target, client, targets, sizeof(targets), COMMAND_FILTER_CONNECTED | COMMAND_FILTER_NO_IMMUNITY | COMMAND_FILTER_NO_BOTS, buffer, sizeof(buffer), ml);
 	if (count <= 0) { ReplyToTargetError(client, count); return Plugin_Handled; }
-	for (new i = 0; i < count; i++)
+	for (int i = 0; i < count; i++)
 	{ LogAction(client, targets[i], "[AC]: %L forced warmenu on %L", client, targets[i]); }
 	StartWARKindVote(false, targets, count);
 	AC_Notify(client, "war_acmd_forcemenu_activity", buffer, ml);
 	return Plugin_Handled;
 }
 
-public Action:ACmd_StopWar(client, args)
+public Action ACmd_StopWar(int client, int args)
 {
 	if (!WarOnline)
 	{
