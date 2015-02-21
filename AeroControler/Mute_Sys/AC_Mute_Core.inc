@@ -36,7 +36,7 @@ stock void MuteSys_LoadClient(int client)
 {
 	SetClientListeningFlags(client, VOICE_MUTED);
 	c_MuteBanned[client] = MuteSys_GetClientMuteBanState(client);
-	AdminId:adm_id = GetUserAdmin(client);
+	AdminId adm_id = GetUserAdmin(client);
 	#if defined DEBUG
 	adm_id = INVALID_ADMIN_ID;
 	#endif
@@ -92,7 +92,7 @@ stock bool MuteSys_GetClientMuteBanState(int client)
 	return false;
 }
 
-public void BaseComm_OnClientMute(int client, bool muteState)
+public int BaseComm_OnClientMute(int client, bool muteState)
 {
 	c_MuteBanned[client] = muteState;
 	if (!muteState)
@@ -104,6 +104,7 @@ public void BaseComm_OnClientMute(int client, bool muteState)
 		else if (c_MuteState[client] == 2)
 		{ MuteSys_SetTempMuteState(client); }
 	}
+	return 0;
 }
 
 stock void MuteSys_LibraryAdded_Detour(const char[] name)

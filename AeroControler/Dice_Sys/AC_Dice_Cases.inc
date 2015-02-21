@@ -160,7 +160,7 @@ stock bool Diced_Fire(int client)
 
 stock bool Diced_Noclip(int client)
 {
-	MoveType:cMoveType = GetEntityMoveType(client);
+	MoveType cMoveType = GetEntityMoveType(client);
 	if (cMoveType == MOVETYPE_NOCLIP) { return false; }
 	if (cMoveType == MOVETYPE_NONE) { return false; }
 	SetEntityMoveType(client, MOVETYPE_NOCLIP);
@@ -174,7 +174,7 @@ stock bool Diced_Noclip(int client)
 
 stock bool Diced_Freeze(int client) //it's interesting that the freeze function looks nearly the same as the noclip function
 {
-	MoveType:cMoveType = GetEntityMoveType(client);
+	MoveType cMoveType = GetEntityMoveType(client);
 	if (cMoveType == MOVETYPE_NOCLIP) { return false; }
 	if (cMoveType == MOVETYPE_NONE) { return false; }
 	SetEntityMoveType(client, MOVETYPE_NONE);
@@ -494,8 +494,8 @@ stock bool Diced_RandTeleChange(int client)
 	{ victim = victims[0]; }
 	else
 	{ victim = victims[GetRandomInt(0, victimCount - 1)]; }
-	MoveType:mType_1 = GetEntityMoveType(client);
-	MoveType:mType_2 = GetEntityMoveType(victim);
+	MoveType mType_1 = GetEntityMoveType(client);
+	MoveType mType_2 = GetEntityMoveType(victim);
 	if (mType_1 == MOVETYPE_NOCLIP || mType_2 == MOVETYPE_NOCLIP || mType_1 == MOVETYPE_NONE || mType_2 == MOVETYPE_NONE)
 	{ return false; }
 	float pos_1[3]; float pos_2[3];
