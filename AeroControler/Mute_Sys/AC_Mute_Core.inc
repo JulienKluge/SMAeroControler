@@ -22,21 +22,21 @@
 #include <basecomm>
 #define REQUIRE_PLUGIN
 
-new mutedTTime = 40;
-new bool:BaseCommIsAvailable = false;
-new c_MuteState[MAXPLAYERS + 1]; //0 = muted | 1 = talk | 2 = tempmute
+int mutedTTime = 40;
+bool BaseCommIsAvailable = false;
+int c_MuteState[MAXPLAYERS + 1]; //0 = muted | 1 = talk | 2 = tempmute
 //The tempmute-state will have sense with special mute systems.
-new bool:c_MuteBanned[MAXPLAYERS + 1];
-new bool:c_MuteImmunity[MAXPLAYERS + 1];
-new Handle:endTempMute = INVALID_HANDLE;
-new bool:tempMudeEnded = false;
-new Float:c_StartetTempMute = -1.0;
+bool c_MuteBanned[MAXPLAYERS + 1];
+bool c_MuteImmunity[MAXPLAYERS + 1];
+Handle endTempMute = INVALID_HANDLE;
+bool tempMudeEnded = false;
+float c_StartetTempMute = -1.0;
 
-stock MuteSys_LoadClient(client)
+stock void MuteSys_LoadClient(int client)
 {
 	SetClientListeningFlags(client, VOICE_MUTED);
 	c_MuteBanned[client] = MuteSys_GetClientMuteBanState(client);
-	new AdminId:adm_id = GetUserAdmin(client);
+	AdminId:adm_id = GetUserAdmin(client);
 	#if defined DEBUG
 	adm_id = INVALID_ADMIN_ID;
 	#endif
@@ -52,7 +52,7 @@ stock MuteSys_LoadClient(client)
 	}
 }
 
-stock MuteSys_SetMuteState(client, bool:isOutOfClientDeath = false)
+stock void MuteSys_SetMuteState(int client, bool isOutOfClientDeath = false)
 {
 	c_MuteState[client] = 0;
 	if (c_MuteImmunity[client]) { return; }
@@ -61,7 +61,7 @@ stock MuteSys_SetMuteState(client, bool:isOutOfClientDeath = false)
 	{ AC_PrintToChat(client, "%t", "mute_mute"); }
 }
 
-stock MuteSys_SetTempMuteState(client, bool:isOutOfTempMute = false)
+stock void MuteSys_SetTempMuteState(int client, bool isOutOfTempMute = false)
 {
 	c_MuteState[client] = 2;
 	if (c_MuteImmunity[client]) { return; }
@@ -71,28 +71,28 @@ stock MuteSys_SetTempMuteState(client, bool:isOutOfTempMute = false)
 		if (isOutOfTempMute)
 		{
 			if (c_StartetTempMute <= 0.0) { c_StartetTempMute = GetGameTime(); }
-			new amount = mutedTTime - RoundFloat(GetGameTime() - c_StartetTempMute);
+			int amount = mutedTTime - RoundFloat(GetGameTime() - c_StartetTempMute);
 			if (amount > 0)
 			{ AC_PrintToChat(client, "%t", "mute_tempmutebegins", amount); }
 		}
 	}
 }
 
-stock MuteSys_SetTalkState(client)
+stock void MuteSys_SetTalkState(int client)
 {
 	c_MuteState[client] = 1;
 	if (c_MuteBanned[client]) { return; }
 	SetClientListeningFlags(client, VOICE_NORMAL);
 }
 
-stock bool:MuteSys_GetClientMuteBanState(client)
+stock bool MuteSys_GetClientMuteBanState(int client)
 {
 	if (BaseCommIsAvailable)
 	{ return BaseComm_IsClientMuted(client); }
 	return false;
 }
 
-public BaseComm_OnClientMute(client, bool:muteState)
+public void BaseComm_OnClientMute(int client, bool muteState)
 {
 	c_MuteBanned[client] = muteState;
 	if (!muteState)
@@ -106,22 +106,22 @@ public BaseComm_OnClientMute(client, bool:muteState)
 	}
 }
 
-stock MuteSys_LibraryAdded_Detour(const String:name[])
+stock void MuteSys_LibraryAdded_Detour(const char[] name)
 {
 	if (StrEqual(name, "basecomm"))
 	{ BaseCommIsAvailable = true; }
 }
 
-stock MuteSys_LibraryRemoved_Detour(const String:name[])
+stock void MuteSys_LibraryRemoved_Detour(const char[] name)
 {
 	if (StrEqual(name, "basecomm"))
 	{ BaseCommIsAvailable = false; }
 }
 
-stock MuteSys_RoundStart_Detour()
+stock void MuteSys_RoundStart_Detour()
 {
-	new teamIndex;
-	for (new i = 1; i <= MaxClients; i++)
+	int teamIndex;
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -134,9 +134,9 @@ stock MuteSys_RoundStart_Detour()
 	endTempMute = CreateTimer(float(mutedTTime), timer_EndTempMute, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-stock MuteSys_ClientSpawn_Detour(client)
+stock void MuteSys_ClientSpawn_Detour(int client)
 {
-	new teamIndex = GetClientTeam(client);
+	int teamIndex = GetClientTeam(client);
 	if (teamIndex == CS_TEAM_CT)
 	{ MuteSys_SetTalkState(client); }
 	else if (teamIndex == CS_TEAM_T)
@@ -145,16 +145,16 @@ stock MuteSys_ClientSpawn_Detour(client)
 	{ MuteSys_SetMuteState(client); }
 }
 
-stock MuteSys_ClientDeath_Detour(client)
+stock void MuteSys_ClientDeath_Detour(int client)
 {
 	MuteSys_SetMuteState(client, true);
 }
 
-stock MuteSys_RoundEnd_Detour()
+stock void MuteSys_RoundEnd_Detour()
 {
 	c_StartetTempMute = -1.0;
 	tempMudeEnded = false;
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -163,17 +163,17 @@ stock MuteSys_RoundEnd_Detour()
 	}
 	if (endTempMute != INVALID_HANDLE)
 	{
-		new Handle:subHndl = endTempMute;
+		Handle subHndl = endTempMute;
 		endTempMute = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 }
 
-public Action:timer_EndTempMute(Handle:timer)
+public Action timer_EndTempMute(Handle timer)
 {
 	endTempMute = INVALID_HANDLE;
 	tempMudeEnded = true;
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{

@@ -20,19 +20,19 @@
 
 #include "AC_GameSys.inc"
 
-new bool:IncludeTag = true;
-new String:Tag[32] = "\x071188FF[Jail]:\x01";
+bool IncludeTag = true;
+char Tag[32] = "\x071188FF[Jail]:\x01";
 
-stock AC_PrintToChat(client, const String:msg[], any:...)
+stock void AC_PrintToChat(int client, const char[] msg, any ...)
 {
-	decl String:message[255]; //not 192 because we perhaps need more without display more than 192
+	char message[255]; //not 192 because we perhaps need more without display more than 192
 	SetGlobalTransTarget(client);
 	VFormat(message, sizeof(message), msg, 3);
 	if (IncludeTag)
 	{ Format(message, sizeof(message), "\x01%s %s", Tag, message); }
 	else
 	{ Format(message, sizeof(message), "\x01%s", message); }
-	new Handle:buffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
+	Handle buffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
 	if (g_Game == Game_Css)
 	{
 		BfWriteByte(buffer, client);
@@ -46,10 +46,10 @@ stock AC_PrintToChat(client, const String:msg[], any:...)
 	EndMessage();
 }
 
-stock AC_PrintToChatAll(const String:msg[], any:...)
+stock void AC_PrintToChatAll(char[] msg, any ...)
 {
-	decl String:message[255]; //not 192 because we perhaps need more without display more than 192
-	for (new i = 1; i <= MaxClients; i++)
+	char message[255]; //not 192 because we perhaps need more without display more than 192
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientInGame(i))
 		{
@@ -59,7 +59,7 @@ stock AC_PrintToChatAll(const String:msg[], any:...)
 			{ Format(message, sizeof(message), "\x01%s %s", Tag, message); }
 			else
 			{ Format(message, sizeof(message), "\x01%s", message); }
-			new Handle:buffer = StartMessageOne("SayText2", i, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS); //why I don't use AC_PrintToChat? Because 2 times a VFormat, Format & SetGlobalTransTarget is sensless!
+			Handle buffer = StartMessageOne("SayText2", i, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS); //why I don't use AC_PrintToChat? Because 2 times a VFormat, Format & SetGlobalTransTarget is sensless!
 			if (g_Game == Game_Css)
 			{
 				BfWriteByte(buffer, i);
@@ -75,12 +75,12 @@ stock AC_PrintToChatAll(const String:msg[], any:...)
 	}
 }
 
-stock AC_PrintKeyText(client, const String:msg[], any:...)
+stock void AC_PrintKeyText(int client, char[] msg, any ...)
 {
-	decl String:message[255];
+	char message[255];
 	SetGlobalTransTarget(client);
 	VFormat(message, sizeof(message), msg, 3);
-	new Handle:userMessage = StartMessageOne("KeyHintText", client);
+	Handle userMessage = StartMessageOne("KeyHintText", client);
 	if (g_Game == Game_Css)
 	{
 		BfWriteByte(userMessage, 1);
@@ -93,10 +93,10 @@ stock AC_PrintKeyText(client, const String:msg[], any:...)
 	EndMessage();
 }
 
-stock AC_Notify(client, const String:transPhrase[], const String:targetPhrase[], bool:isMl)
+stock void AC_Notify(int client, const char[] transPhrase, const char[] targetPhrase, bool isMl)
 {
-	decl String:originName[MAX_NAME_LENGTH];
-	for (new i = 1; i <= MaxClients; i++)
+	char originName[MAX_NAME_LENGTH];
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -113,10 +113,10 @@ stock AC_Notify(client, const String:transPhrase[], const String:targetPhrase[],
 	}
 }
 
-stock AC_RawNotify(client, const String:transPhrase[])
+stock void AC_RawNotify(int client, const char[] transPhrase)
 {
-	decl String:originName[MAX_NAME_LENGTH];
-	for (new i = 1; i <= MaxClients; i++)
+	char originName[MAX_NAME_LENGTH];
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -126,13 +126,13 @@ stock AC_RawNotify(client, const String:transPhrase[])
 	}
 }
 
-stock RegMultipleConsoleCmd(const String:cmd[], ConCmd:callback, const String:description[]="", flags=0)
+stock void RegMultipleConsoleCmd(const char[] cmd, ConCmd callback, const char [] description = "", int flags=0)
 {
-	new String:cmd_parts[16][32];
-	new stringCount = ExplodeString(cmd, ";", cmd_parts, 16, 32);
+	char cmd_parts[16][32];
+	int stringCount = ExplodeString(cmd, ";", cmd_parts, 16, 32);
 	if (stringCount > 0)
 	{
-		for (new i = 0; i < stringCount; i++)
+		for (int i = 0; i < stringCount; i++)
 		{
 			if (strlen(cmd_parts[i]) > 0)
 			{ RegConsoleCmd(cmd_parts[i], callback, description, flags); }
@@ -140,20 +140,20 @@ stock RegMultipleConsoleCmd(const String:cmd[], ConCmd:callback, const String:de
 	}
 }
 
-stock GetFirstDelimitedCmd(const String:cmds[], String:cmd[])
+stock void GetFirstDelimitedCmd(char[] cmds, char[] cmd)
 {
-	decl String:cmd_parts[2][32];
-	new stringCount = ExplodeString(cmds, ";", cmd_parts, 2, 32);
+	char cmd_parts[2][32];
+	int stringCount = ExplodeString(cmds, ";", cmd_parts, 2, 32);
 	if (stringCount > 0)
 	{
 		Format(cmd, 32, "%s", cmd_parts[0]);
 	}
 }
 
-stock WhiteStripIllegalCharacters(String:str[])
+stock void WhiteStripIllegalCharacters(char[] str)
 {
-	new strlength = strlen(str) - 1;
-	for (new i = 0; i < strlength; i++)
+	int strlength = strlen(str) - 1;
+	for (int i = 0; i < strlength; i++)
 	{
 		if (str[i] < 32 || str[i] > 126)
 		{ str[i] = ' '; }

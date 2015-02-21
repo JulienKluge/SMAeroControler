@@ -14,9 +14,9 @@
 **
 */
 
-stock bool:Diced_Nothing(client)
+stock bool Diced_Nothing(int client)
 {
-	new Float:perhapsPercent = 100.0 - d_deccapitulates;
+	float perhapsPercent = 100.0 - d_deccapitulates;
 	if (perhapsPercent > 0.0)
 	{
 		AC_Dice_PrintToChat(client, perhapsPercent, d_StateLevel_Neutral, "%t", "d_nothing");
@@ -28,13 +28,13 @@ stock bool:Diced_Nothing(client)
 	return true;
 }
 
-stock bool:Diced_Pistol(client)
+stock bool Diced_Pistol(int client)
 {
 	if (GetPlayerWeaponSlot(client, CS_SLOT_SECONDARY) != -1) { return false; } //when the player have a secondary, he/she doesn't need a second one
-	new pistolCase = GetRandomInt(0, 5);
-	new ent = -1;
-	new primaryAmmo = 1;
-	new secondaryAmmo = GetRandomInt(0, 10);
+	int pistolCase = GetRandomInt(0, 5);
+	int ent = -1;
+	int primaryAmmo = 1;
+	int secondaryAmmo = GetRandomInt(0, 10);
 	switch (pistolCase)
 	{
 		case 0: { ent = GivePlayerItem(client, "weapon_glock"); primaryAmmo = GetRandomInt(1, 20); }
@@ -45,7 +45,7 @@ stock bool:Diced_Pistol(client)
 		case 5: { ent = GivePlayerItem(client, "weapon_elite"); primaryAmmo = GetRandomInt(1, 30); }
 	}
 	if (g_offset_ammo == -1) { g_offset_ammo = FindDataMapOffs(client, "m_iAmmo"); }
-	new offset = g_offset_ammo + (GetEntProp(ent, Prop_Data, "m_iPrimaryAmmoType") * 4);
+	int offset = g_offset_ammo + (GetEntProp(ent, Prop_Data, "m_iPrimaryAmmoType") * 4);
 	SetEntData(client, offset, primaryAmmo, 4, true);
 	offset = g_offset_ammo + (GetEntProp(ent, Prop_Data, "m_iSecondaryAmmoType") * 4);
 	SetEntData(client, offset, secondaryAmmo, 4, true);
@@ -53,7 +53,7 @@ stock bool:Diced_Pistol(client)
 	return true;
 }
 
-stock bool:Diced_HE(client)
+stock bool Diced_HE(int client)
 {
 	if (GetEntProp(client, Prop_Data, "m_iAmmo", _:4, g_preoffset_he) > 0) { return false; }
 	GivePlayerItem(client, "weapon_hegrenade");
@@ -61,11 +61,11 @@ stock bool:Diced_HE(client)
 	return true;
 }
 
-stock bool:Diced_Flash(client)
+stock bool Diced_Flash(int client)
 {
-	new currentCount = 0;
+	int currentCount = 0;
 	if ((currentCount = GetEntProp(client, Prop_Data, "m_iAmmo", _:4, g_preoffset_flash)) > 1) { return false; }
-	new count = GetRandomInt(1, 2);
+	int count = GetRandomInt(1, 2);
 	if (currentCount == 1) { count = 1; }
 	if (count == 1)
 	{ GivePlayerItem(client, "weapon_flashbang"); }
@@ -75,7 +75,7 @@ stock bool:Diced_Flash(client)
 	return true;
 }
 
-stock bool:Diced_Smoke(client)
+stock bool Diced_Smoke(int client)
 {
 	if (GetEntProp(client, Prop_Data, "m_iAmmo", _:4, g_preoffset_smoke) > 0) { return false; }
 	GivePlayerItem(client, "weapon_smokegrenade");
@@ -83,44 +83,44 @@ stock bool:Diced_Smoke(client)
 	return true;
 }
 
-stock bool:Diced_IncHP(client)
+stock bool Diced_IncHP(int client)
 {
-	new amount = GetRandomInt(15, 40);
+	int amount = GetRandomInt(15, 40);
 	SetEntityHealth(client, GetClientHealth(client) + amount);
 	AC_Dice_PrintToChat(client, d_inchp - d_smoke, d_StateLevel_Good, "%t", "d_inchp", amount);
 	return true;
 }
 
-stock bool:Diced_DecHP(client)
+stock bool Diced_DecHP(int client)
 {
-	new amount = GetRandomInt(15, 40);
-	new health = GetClientHealth(client);
-	new resultHP = health - amount;
+	int amount = GetRandomInt(15, 40);
+	int health = GetClientHealth(client);
+	int resultHP = health - amount;
 	if (resultHP <= 0) { return false; }
 	SetEntityHealth(client, resultHP);
 	AC_Dice_PrintToChat(client, d_dechp - d_inchp, d_StateLevel_Bad, "%t", "d_dechp", amount);
 	return true;
 }
 
-stock bool:Diced_IncSpeed(client)
+stock bool Diced_IncSpeed(int client)
 {
-	new Float:faktor = GetRandomFloat(1.2, 1.45);
-	new amount = RoundFloat((faktor - 1.0) * 100.0);
+	float faktor = GetRandomFloat(1.2, 1.45);
+	int amount = RoundFloat((faktor - 1.0) * 100.0);
 	SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", GetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue") * faktor);
 	AC_Dice_PrintToChat(client, d_incspeed - d_dechp, d_StateLevel_Good, "%t", "d_incspeed", amount);
 	return true;
 }
 
-stock bool:Diced_DecSpeed(client)
+stock bool Diced_DecSpeed(int client)
 {
-	new Float:faktor = GetRandomFloat(0.8, 0.55);
-	new amount = RoundFloat((1.0 - faktor) * 100.0);
+	float faktor = GetRandomFloat(0.8, 0.55);
+	int amount = RoundFloat((1.0 - faktor) * 100.0);
 	SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", GetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue") * faktor);
 	AC_Dice_PrintToChat(client, d_decspeed - d_incspeed, d_StateLevel_Bad, "%t", "d_decspeed", amount);
 	return true;
 }
 
-stock bool:Diced_LongJump(client)
+stock bool Diced_LongJump(int client)
 {
 	if (d_LongJump[client]) { return false; }
 	d_LongJump[client] = true;
@@ -128,7 +128,7 @@ stock bool:Diced_LongJump(client)
 	return true;
 }
 
-stock bool:Diced_FrogJump(client)
+stock bool Diced_FrogJump(int client)
 {
 	if (d_FrogJump[client]) { return false; }
 	d_FrogJump[client] = true;
@@ -136,7 +136,7 @@ stock bool:Diced_FrogJump(client)
 	return true;
 }
 
-stock bool:Diced_DoubleJump(client)
+stock bool Diced_DoubleJump(int client)
 {
 	if (d_DoubleJump[client]) { return false; }
 	d_DoubleJump[client] = d_DoubleJumpExist = true;
@@ -144,13 +144,13 @@ stock bool:Diced_DoubleJump(client)
 	return true;
 }
 
-stock bool:Diced_Fire(client)
+stock bool Diced_Fire(int client)
 {
 	//The time where a client loses 5hp is (in average) 0.975 seconds. So: (5 / 0.975) ≈ 5.128 && 0.975 * 4 = 3.9
-	new Float:estimatedTimeToBurn = (float(GetClientHealth(client) + GetClientArmor(client)) / 5.1282051) - 3.9;
+	float estimatedTimeToBurn = (float(GetClientHealth(client) + GetClientArmor(client)) / 5.1282051) - 3.9;
 	if (estimatedTimeToBurn < 2.0) { return false; } //a burn time below 2 seconds is sensless
 	IgniteEntity(client, 1.0);
-	new Handle:pack;
+	Handle pack;
 	d_HandleFire[client] = CreateDataTimer(0.5, timer_HandleFire, pack, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -158,13 +158,13 @@ stock bool:Diced_Fire(client)
 	return true;
 }
 
-stock bool:Diced_Noclip(client)
+stock bool Diced_Noclip(int client)
 {
-	new MoveType:cMoveType = GetEntityMoveType(client);
+	MoveType:cMoveType = GetEntityMoveType(client);
 	if (cMoveType == MOVETYPE_NOCLIP) { return false; }
 	if (cMoveType == MOVETYPE_NONE) { return false; }
 	SetEntityMoveType(client, MOVETYPE_NOCLIP);
-	new Handle:pack;
+	Handle pack;
 	d_EndNoclip[client] = CreateDataTimer(5.0, timer_endNoclip, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE); //I know the 2nd flag is not necessary but its fine to have it there :D
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -172,13 +172,13 @@ stock bool:Diced_Noclip(client)
 	return true;
 }
 
-stock bool:Diced_Freeze(client) //it's interesting that the freeze function looks nearly the same as the noclip function
+stock bool Diced_Freeze(int client) //it's interesting that the freeze function looks nearly the same as the noclip function
 {
-	new MoveType:cMoveType = GetEntityMoveType(client);
+	MoveType:cMoveType = GetEntityMoveType(client);
 	if (cMoveType == MOVETYPE_NOCLIP) { return false; }
 	if (cMoveType == MOVETYPE_NONE) { return false; }
 	SetEntityMoveType(client, MOVETYPE_NONE);
-	new Handle:pack;
+	Handle pack;
 	d_EndFreeze[client] = CreateDataTimer(30.0, timer_endFreeze, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -186,28 +186,28 @@ stock bool:Diced_Freeze(client) //it's interesting that the freeze function look
 	return true;
 }
 
-stock bool:Diced_LowGrav(client)
+stock bool Diced_LowGrav(int client)
 {
-	new Float:factor = GetRandomFloat(0.5, 0.8);
-	new amount = RoundFloat((1.0 - factor) * 100.0);
+	float factor = GetRandomFloat(0.5, 0.8);
+	int amount = RoundFloat((1.0 - factor) * 100.0);
 	SetEntityGravity(client, GetEntityGravity(client) * factor);
 	AC_Dice_PrintToChat(client, d_lowgrav - d_freeze, d_StateLevel_Good, "%t", "d_lowgrav", amount);
 	return true;
 }
 
-stock bool:Diced_HighGrav(client)
+stock bool Diced_HighGrav(int client)
 {
-	new Float:factor = GetRandomFloat(1.2, 1.5);
-	new amount = RoundFloat((factor - 1.0) * 100.0);
+	float factor = GetRandomFloat(1.2, 1.5);
+	int amount = RoundFloat((factor - 1.0) * 100.0);
 	SetEntityGravity(client, GetEntityGravity(client) * factor);
 	AC_Dice_PrintToChat(client, d_highgrav - d_lowgrav, d_StateLevel_Bad, "%t", "d_highgrav", amount);
 	return true;
 }
 
-stock bool:Diced_GodMode(client)
+stock bool Diced_GodMode(int client)
 {
 	if (d_GotGodMode[client]) { return false; }
-	new Handle:pack;
+	Handle pack;
 	d_EndGodMode[client] = CreateDataTimer(5.0, timer_endGodMode, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -216,7 +216,7 @@ stock bool:Diced_GodMode(client)
 	return true;
 }
 
-stock bool:Diced_NV(client)
+stock bool Diced_NV(int client)
 {
 	if (g_offset_hasnv == -1) { g_offset_hasnv = FindSendPropOffs("CCSPlayer", "m_bHasNightVision"); }
 	if (g_offset_nvon == -1) { g_offset_nvon = FindSendPropOffs("CCSPlayer", "m_bNightVisionOn"); }
@@ -227,26 +227,26 @@ stock bool:Diced_NV(client)
 	return true;
 }
 
-stock bool:Diced_Invis(client)
+stock bool Diced_Invis(int client)
 {
 	if (g_Game == Game_Csgo)
 	{
 		return false; //Invisibility is not working in csgo
 	}
-	new alphaFactor = GetRandomInt(0, 13);
+	int alphaFactor = GetRandomInt(0, 13);
 	SetEntityRenderColor(client, 255, 255, 255, alphaFactor);
 	SetEntityRenderMode(client, RENDER_TRANSALPHA);
-	new amount = RoundFloat(100.0 - ((float(alphaFactor) / 255.0) * 100.0));
+	int amount = RoundFloat(100.0 - ((float(alphaFactor) / 255.0) * 100.0));
 	AC_Dice_PrintToChat(client, d_invis - d_nv, d_StateLevel_Good, "%t", "d_invis", amount);
 	/* I also have code pieces, for making the weapons invisible or transparent BUT it's funnier, when they keep visible. ^^ */
 	return true;
 }
 
-stock bool:Diced_Model(client) //let's play a little bit hide&seek xD
+stock bool Diced_Model(int client) //let's play a little bit hide&seek xD
 {
 	if (d_GotModel[client]) { return false; }
-	new choose = GetRandomInt(0, d_ModelCount - 1);
-	decl String:modelString[PLATFORM_MAX_PATH];
+	int choose = GetRandomInt(0, d_ModelCount - 1);
+	char modelString[PLATFORM_MAX_PATH];
 	modelString = d_ModelStringArray[choose];
 	if (!IsModelPrecached(modelString))
 	{
@@ -258,11 +258,11 @@ stock bool:Diced_Model(client) //let's play a little bit hide&seek xD
 	return true;
 }
 
-stock bool:Diced_Kevlar(client)
+stock bool Diced_Kevlar(int client)
 {
-	new randVal = GetRandomInt(0, 1);
-	new armorVal = GetEntProp(client, Prop_Data, "m_ArmorValue");
-	new hasHelm = GetEntProp(client, Prop_Send, "m_bHasHelmet", 4);
+	int randVal = GetRandomInt(0, 1);
+	int armorVal = GetEntProp(client, Prop_Data, "m_ArmorValue");
+	int hasHelm = GetEntProp(client, Prop_Send, "m_bHasHelmet", 4);
 	//well, this codepiece, has a fucking secret mistery sense...you'll get it, with a big "ahhhhhhhhhhhhhhhh" if you understood what i did here...
 	if (armorVal > 99)
 	{
@@ -286,7 +286,7 @@ stock bool:Diced_Kevlar(client)
 	return true;
 }
 
-stock bool:Diced_CFour(client)
+stock bool Diced_CFour(int client)
 {
 	if (GetPlayerWeaponSlot(client, CS_SLOT_C4) != -1) { return false; }
 	GivePlayerItem(client, "weapon_c4");
@@ -294,17 +294,17 @@ stock bool:Diced_CFour(client)
 	return true;
 }
 
-stock bool:Diced_ExpCFour(client)
+stock bool Diced_ExpCFour(int client)
 {
 	if (GetPlayerWeaponSlot(client, CS_SLOT_C4) != -1) { return false; }
-	new ent = GivePlayerItem(client, "weapon_c4");
+	int ent = GivePlayerItem(client, "weapon_c4");
 	if (ent > 0)
 	{
 		if (IsValidEdict(ent))
 		{
-			new Handle:pack;
-			new Float:timeToExplode_f = GetRandomFloat(20.0, 40.0);
-			new timeToExplode = RoundFloat(timeToExplode_f) + GetRandomInt(-2, 2); //spray a little bit random into the displayed time ^^
+			Handle pack;
+			float timeToExplode_f = GetRandomFloat(20.0, 40.0);
+			int timeToExplode = RoundFloat(timeToExplode_f) + GetRandomInt(-2, 2); //spray a little bit random into the displayed time ^^
 			d_ExpBombExplode[client] = CreateDataTimer(timeToExplode_f, timer_expCFour, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 			/*
 			** I know, it is possible that the handles are getting overridden. but that is not bad. Because we overload an entityreference.
@@ -321,9 +321,9 @@ stock bool:Diced_ExpCFour(client)
 	return false;
 }
 
-stock bool:Diced_ThrowingKnife(client)
+stock bool Diced_ThrowingKnife(int client)
 {
-	new ent = GetPlayerWeaponSlot(client, CS_SLOT_KNIFE);
+	int ent = GetPlayerWeaponSlot(client, CS_SLOT_KNIFE);
 	if (ent > 0) { RemoveEdict(ent); } //just to give the client a kind of animation that this is a 'new' knife
 	GivePlayerItem(client, "weapon_knife");
 	d_ThrowingKnifeCount[client]++;
@@ -331,26 +331,26 @@ stock bool:Diced_ThrowingKnife(client)
 	return true;
 }
 
-stock bool:Diced_IncFrags(client)
+stock bool Diced_IncFrags(int client)
 {
-	new amount = GetRandomInt(1, 5);
+	int amount = GetRandomInt(1, 5);
 	SetEntProp(client, Prop_Data, "m_iFrags", (GetClientFrags(client) + amount));
 	AC_Dice_PrintToChat(client, d_incfrags - d_throwingknife, d_StateLevel_Good, "%t", "d_incfrags", amount);
 	return true;
 }
 
-stock bool:Diced_DecFrags(client)
+stock bool Diced_DecFrags(int client)
 {
-	new amount = GetRandomInt(1, 5);
+	int amount = GetRandomInt(1, 5);
 	SetEntProp(client, Prop_Data, "m_iFrags", (GetClientFrags(client) - amount));
 	AC_Dice_PrintToChat(client, d_decfrags - d_incfrags, d_StateLevel_Bad, "%t", "d_decfrags", amount);
 	return true;
 }
 
-stock bool:Diced_Hologram(client)
+stock bool Diced_Hologram(int client)
 {
 	if (d_HologramShow[client] != INVALID_HANDLE) { return false; }
-	new Handle:pack;
+	Handle pack;
 	d_HologramShow[client] = CreateDataTimer(0.5, timer_hologramShow, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT | TIMER_DATA_HNDL_CLOSE);
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -359,10 +359,10 @@ stock bool:Diced_Hologram(client)
 	return true;
 }
 
-stock bool:Diced_Blind(client)
+stock bool Diced_Blind(int client)
 {
 	if (d_GotBlindness[client]) { return false; }
-	new color[4];
+	int color[4];
 	color[0] = GetRandomInt(0, 255); color[1] = GetRandomInt(0, 255); color[2] = GetRandomInt(0, 255);
 	color[3] = GetRandomInt(210, 235);
 	ApplyClientFade(client, 2000, color, false, true);
@@ -371,7 +371,7 @@ stock bool:Diced_Blind(client)
 	return true;
 }
 
-stock bool:Diced_IncRefuses(client)
+stock bool Diced_IncRefuses(int client)
 {
 	if (c_c[client] < c_cBase[client]) { return false; }
 	c_r[client]++;
@@ -380,7 +380,7 @@ stock bool:Diced_IncRefuses(client)
 	return true;
 }
 
-stock bool:Diced_DecRefuses(client)
+stock bool Diced_DecRefuses(int client)
 {
 	if (c_c[client] < c_cBase[client]) { return false; }
 	if (c_r[client] < 1) { return false; }
@@ -389,7 +389,7 @@ stock bool:Diced_DecRefuses(client)
 	return true;
 }
 
-stock bool:Diced_CTBullyMenu(client)
+stock bool Diced_CTBullyMenu(int client)
 {
 	if (d_CTBullyMenu == INVALID_HANDLE) { CreateMenus(); }
 	if (GetClientTeam(client) != CS_TEAM_T) { return false; }
@@ -399,7 +399,7 @@ stock bool:Diced_CTBullyMenu(client)
 	return true;
 }
 
-stock bool:Diced_GoodTMenu(client)
+stock bool Diced_GoodTMenu(int client)
 {
 	if (d_GoodTMenu == INVALID_HANDLE) { CreateMenus(); }
 	if (GetClientTeam(client) != CS_TEAM_T) { return false; }
@@ -409,7 +409,7 @@ stock bool:Diced_GoodTMenu(client)
 	return true;
 }
 
-stock bool:Diced_BadTMenu(client)
+stock bool Diced_BadTMenu(int client)
 {
 	if (d_BadTMenu == INVALID_HANDLE) { CreateMenus(); }
 	if (GetClientTeam(client) != CS_TEAM_T) { return false; }
@@ -419,7 +419,7 @@ stock bool:Diced_BadTMenu(client)
 	return true;
 }
 
-stock bool:Diced_MirrorDmg(client)
+stock bool Diced_MirrorDmg(int client)
 {
 	if (d_GotMirrorDmg[client] || d_GotVampireDmg[client]) { return false; }
 	d_GotMirrorDmg[client] = true;
@@ -427,7 +427,7 @@ stock bool:Diced_MirrorDmg(client)
 	return true;
 }
 
-stock bool:Diced_VampireDmg(client)
+stock bool Diced_VampireDmg(int client)
 {
 	if (d_GotVampireDmg[client] || d_GotMirrorDmg[client]) { return false; }
 	d_GotVampireDmg[client] = true;
@@ -435,33 +435,33 @@ stock bool:Diced_VampireDmg(client)
 	return true;
 }
 
-stock bool:Diced_IncDmg(client)
+stock bool Diced_IncDmg(int client)
 {
 	d_dmgFactorModified[client] = true;
-	new Float:factor = GetRandomFloat(1.1, 1.25);
-	new amount = RoundFloat((factor - 1.0) * 100.0);
+	float factor = GetRandomFloat(1.1, 1.25);
+	int amount = RoundFloat((factor - 1.0) * 100.0);
 	d_dmgFactor[client] *= factor;
 	AC_Dice_PrintToChat(client, d_incdmg - d_vampiredmg, d_StateLevel_Good, "%t", "d_incdmg", amount);
 	return true;
 }
 
-stock bool:Diced_DecDmg(client)
+stock bool Diced_DecDmg(int client)
 {
 	d_dmgFactorModified[client] = true;
-	new Float:factor = GetRandomFloat(0.9, 0.75);
-	new amount = RoundFloat((1.0 - factor) * 100.0);
+	float factor = GetRandomFloat(0.9, 0.75);
+	int amount = RoundFloat((1.0 - factor) * 100.0);
 	d_dmgFactor[client] *= factor;
 	AC_Dice_PrintToChat(client, d_decdmg - d_incdmg, d_StateLevel_Bad, "%t", "d_decdmg", amount);
 	return true;
 }
 
-stock bool:Diced_Drugs(client)
+stock bool Diced_Drugs(int client)
 {
-	new amount = GetRandomInt(50, 60);
+	int amount = GetRandomInt(50, 60);
 	d_DrugsSecondsLeft[client] += amount;
 	if (d_ApplyDrugs[client] == INVALID_HANDLE)
 	{
-		new Handle:pack;
+		Handle pack;
 		d_ApplyDrugs[client] = CreateDataTimer(1.0, timer_ApplyDrugs, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE | TIMER_REPEAT);
 		WritePackCell(pack, client);
 		WritePackCell(pack, GetClientUserId(client));
@@ -470,12 +470,12 @@ stock bool:Diced_Drugs(client)
 	return true;
 }
 
-stock bool:Diced_RandTeleChange(client)
+stock bool Diced_RandTeleChange(int client)
 {
-	new teamIndex = GetClientTeam(client);
-	new victim = -1;
-	new victims[46]; new victimCount = 0;
-	for (new i = 1; i <= MaxClients; i++)
+	int teamIndex = GetClientTeam(client);
+	int victim = -1;
+	int victims[46]; int victimCount = 0;
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (i != client)
 		{
@@ -494,23 +494,23 @@ stock bool:Diced_RandTeleChange(client)
 	{ victim = victims[0]; }
 	else
 	{ victim = victims[GetRandomInt(0, victimCount - 1)]; }
-	new MoveType:mType_1 = GetEntityMoveType(client);
-	new MoveType:mType_2 = GetEntityMoveType(victim);
+	MoveType:mType_1 = GetEntityMoveType(client);
+	MoveType:mType_2 = GetEntityMoveType(victim);
 	if (mType_1 == MOVETYPE_NOCLIP || mType_2 == MOVETYPE_NOCLIP || mType_1 == MOVETYPE_NONE || mType_2 == MOVETYPE_NONE)
 	{ return false; }
-	new Float:pos_1[3]; new Float:pos_2[3];
-	new Float:ang_1[3]; new Float:ang_2[3];
-	new Float:vel_1[3]; new Float:vel_2[3];
+	float pos_1[3]; float pos_2[3];
+	float ang_1[3]; float ang_2[3];
+	float vel_1[3]; float vel_2[3];
 	GetClientAbsOrigin(client, pos_1);
 	GetClientAbsOrigin(victim, pos_2);
 	GetClientEyeAngles(client, ang_1);
 	GetClientEyeAngles(victim, ang_2);
 	GetEntPropVector(client, Prop_Data, "m_vecVelocity", vel_1);
 	GetEntPropVector(victim, Prop_Data, "m_vecVelocity", vel_2);
-	new isDucked_1 = GetEntProp(client, Prop_Send, "m_bDucked", 1);
-	new isDucked_2 = GetEntProp(victim, Prop_Send, "m_bDucked", 1);
-	new inDucking_1 = GetEntProp(client, Prop_Send, "m_bDucking", 1);
-	new inDucking_2 = GetEntProp(victim, Prop_Send, "m_bDucking", 1);
+	int isDucked_1 = GetEntProp(client, Prop_Send, "m_bDucked", 1);
+	int isDucked_2 = GetEntProp(victim, Prop_Send, "m_bDucked", 1);
+	int inDucking_1 = GetEntProp(client, Prop_Send, "m_bDucking", 1);
+	int inDucking_2 = GetEntProp(victim, Prop_Send, "m_bDucking", 1);
 	TeleportEntity(client, pos_2, ang_2, vel_2);
 	TeleportEntity(victim, pos_1, ang_1, vel_1);
 	SetEntProp(client, Prop_Send, "m_bDucking", inDucking_2, 1);
@@ -522,18 +522,18 @@ stock bool:Diced_RandTeleChange(client)
 	return true;
 }
 
-stock bool:Diced_EntShoot(client)
+stock bool Diced_EntShoot(int client)
 {
-	new amount = GetRandomInt(1, 2);
+	int amount = GetRandomInt(1, 2);
 	d_EntCountToShoot[client] += amount;
 	AC_Dice_PrintToChat(client, d_entshoot - d_randtelechange, d_StateLevel_Neutral, "%t", "d_entshoot", amount);
 	return true;
 }
 
-stock bool:Diced_Regenerate(client)
+stock bool Diced_Regenerate(int client)
 {
 	if (d_Regenerate[client] != INVALID_HANDLE) { return false; }
-	new Handle:pack;
+	Handle pack;
 	d_Regenerate[client] = CreateDataTimer(2.0, timer_Regenerate, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE | TIMER_REPEAT);
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -541,10 +541,10 @@ stock bool:Diced_Regenerate(client)
 	return true;
 }
 
-stock bool:Diced_Disease(client)
+stock bool Diced_Disease(int client)
 {
 	if (d_Disease[client] != INVALID_HANDLE) { return false; }
-	new Handle:pack;
+	Handle pack;
 	d_Disease[client] = CreateDataTimer(2.0, timer_Disease, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE | TIMER_REPEAT);
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -552,12 +552,12 @@ stock bool:Diced_Disease(client)
 	return true;
 }
 
-stock bool:Diced_TeamHeal(client)
+stock bool Diced_TeamHeal(int client)
 {
 	if (d_TeamHeal[client] != INVALID_HANDLE) { return false; }
 	if (d_TeamHealCount[client] < 1)
 	{
-		new Handle:pack;
+		Handle pack;
 		d_TeamHeal[client] = CreateDataTimer(2.0, timer_TeamHeal, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE | TIMER_REPEAT);
 		WritePackCell(pack, client);
 		WritePackCell(pack, GetClientUserId(client));
@@ -567,10 +567,10 @@ stock bool:Diced_TeamHeal(client)
 	return true;
 }
 
-stock bool:Diced_Death_Exp(client)
+stock bool Diced_Death_Exp(int client)
 {
-	new Float:pos[3];
-	new hp = GetClientHealth(client);
+	float pos[3];
+	int hp = GetClientHealth(client);
 	GetClientAbsOrigin(client, pos);
 	SetupExplosion(pos, hp + 50, 0, client);
 	if (IsPlayerAlive(client))
@@ -581,10 +581,10 @@ stock bool:Diced_Death_Exp(client)
 	return true;
 }
 
-stock bool:Diced_Death_Degenerate(client)
+stock bool Diced_Death_Degenerate(int client)
 {
 	if (d_DeathDegenerate[client] != INVALID_HANDLE) { return false; }
-	new Handle:pack;
+	Handle pack;
 	d_DeathDegenerate[client] = CreateDataTimer(2.0, timer_Degenerate, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE | TIMER_REPEAT);
 	WritePackCell(pack, client);
 	WritePackCell(pack, GetClientUserId(client));
@@ -592,15 +592,15 @@ stock bool:Diced_Death_Degenerate(client)
 	return true;
 }
 
-stock bool:Diced_Death_Lightning(client)
+stock bool Diced_Death_Lightning(int client)
 {
-	new Float:origin[3]; new Float:pos[3]; new Float:ang[3];
+	float origin[3]; float pos[3]; float ang[3];
 	GetClientAbsOrigin(client, origin);
 	GetClientEyePosition(client, pos);
 	ang[0] = -90.0 + GetRandomFloat(-5.0, 5.0);
 	ang[1] = GetRandomFloat(-180.0, 180.0);
 	ang[2] = 0.0;
-	new Handle:tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
+	Handle tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
 	if (TR_DidHit(tr))
 	{
 		TR_GetEndPosition(pos, tr);
@@ -618,7 +618,7 @@ stock bool:Diced_Death_Lightning(client)
 	return true;
 }
 
-stock bool:Diced_WpnRestrict(client)
+stock bool Diced_WpnRestrict(int client)
 {
 	if (d_WpnRestricted[client]) { return false; }
 	RemoveAllClientItems(client, CS_SLOT_KNIFE);
@@ -627,14 +627,14 @@ stock bool:Diced_WpnRestrict(client)
 	return true;
 }
 
-stock bool:Diced_Mine(client)
+stock bool Diced_Mine(int client)
 {
 	d_MineCount[client]++;
 	AC_Dice_PrintToChat(client, d_mine - d_wpnrestrict, d_StateLevel_Good, "%t", "d_mine");
 	return true;
 }
 
-stock bool:Diced_IncCapitulates(client)
+stock bool Diced_IncCapitulates(int client)
 {
 	c_c[client]++;
 	c_cBaseMax[client]++;
@@ -642,7 +642,7 @@ stock bool:Diced_IncCapitulates(client)
 	return true;
 }
 
-stock bool:Diced_DecCapitulates(client)
+stock bool Diced_DecCapitulates(int client)
 {
 	if (c_c[client] < 1) { return false; }
 	c_c[client]--;

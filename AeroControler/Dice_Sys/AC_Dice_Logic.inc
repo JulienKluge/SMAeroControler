@@ -14,74 +14,74 @@
 **
 */
 
-new g_offset_ammo = -1;
-new g_offset_hasnv = -1;
-new g_offset_nvon = -1;
+int g_offset_ammo = -1;
+int g_offset_hasnv = -1;
+int g_offset_nvon = -1;
 
-new g_preoffset_he = 11;
-new g_preoffset_flash = 12;
-new g_preoffset_smoke = 13;
+int g_preoffset_he = 11;
+int g_preoffset_flash = 12;
+int g_preoffset_smoke = 13;
 
-new bool:d_LongJump[MAXPLAYERS + 1];
-new bool:d_FrogJump[MAXPLAYERS + 1];
-new bool:d_DoubleJump[MAXPLAYERS + 1];
-new d_JumpState[MAXPLAYERS + 1];
-new bool:d_DoubleJumpExist = false; //optimization. We don't have to iterate trough the clients in the game frame, when noone have it.
-new bool:d_GotModel[MAXPLAYERS + 1];
+bool d_LongJump[MAXPLAYERS + 1];
+bool d_FrogJump[MAXPLAYERS + 1];
+bool d_DoubleJump[MAXPLAYERS + 1];
+int d_JumpState[MAXPLAYERS + 1];
+bool d_DoubleJumpExist = false; //optimization. We don't have to iterate trough the clients in the game frame, when noone have it.
+bool d_GotModel[MAXPLAYERS + 1];
 #define d_ModelCount 5
-new String:d_ModelStringArray[d_ModelCount][PLATFORM_MAX_PATH] = 
+char d_ModelStringArray[d_ModelCount][PLATFORM_MAX_PATH] = 
 { "models/props/cs_office/vending_machine.mdl"
 , "models/props/cs_office/sofa_chair.mdl"
 , "models/props/de_prodigy/tirestack2.mdl"
 , "models/props_pipes/valve002.mdl"
 , "models/props_wasteland/kitchen_stove002a.mdl"};
-new bool:d_GotBlindness[MAXPLAYERS + 1];
-new Handle:d_EndNoclip[MAXPLAYERS + 1];
-new Handle:d_EndFreeze[MAXPLAYERS + 1];
-new Handle:d_HandleFire[MAXPLAYERS + 1];
-new bool:d_GotGodMode[MAXPLAYERS + 1];
-new Handle:d_EndGodMode[MAXPLAYERS + 1];
-new Handle:d_ExpBombExplode[MAXPLAYERS + 1];
-new d_ThrowingKnifeCount[MAXPLAYERS + 1];
-new Handle:d_HologramShow[MAXPLAYERS + 1];
-new Handle:d_CTBullyMenu = INVALID_HANDLE;
-new Handle:d_GoodTMenu = INVALID_HANDLE;
-new Handle:d_BadTMenu = INVALID_HANDLE;
-new bool:d_GotMirrorDmg[MAXPLAYERS + 1];
-new bool:d_GotVampireDmg[MAXPLAYERS + 1];
-new bool:d_dmgFactorModified[MAXPLAYERS + 1];
-new Float:d_dmgFactor[MAXPLAYERS + 1] = 1.0;
-new d_DrugsSecondsLeft[MAXPLAYERS + 1];
-new Handle:d_ApplyDrugs[MAXPLAYERS + 1];
-new d_EntCountToShoot[MAXPLAYERS + 1];
+bool d_GotBlindness[MAXPLAYERS + 1];
+Handle d_EndNoclip[MAXPLAYERS + 1];
+Handle d_EndFreeze[MAXPLAYERS + 1];
+Handle d_HandleFire[MAXPLAYERS + 1];
+bool d_GotGodMode[MAXPLAYERS + 1];
+Handle d_EndGodMode[MAXPLAYERS + 1];
+Handle d_ExpBombExplode[MAXPLAYERS + 1];
+int d_ThrowingKnifeCount[MAXPLAYERS + 1];
+Handle d_HologramShow[MAXPLAYERS + 1];
+Handle d_CTBullyMenu = INVALID_HANDLE;
+Handle d_GoodTMenu = INVALID_HANDLE;
+Handle d_BadTMenu = INVALID_HANDLE;
+bool d_GotMirrorDmg[MAXPLAYERS + 1];
+bool d_GotVampireDmg[MAXPLAYERS + 1];
+bool d_dmgFactorModified[MAXPLAYERS + 1];
+float d_dmgFactor[MAXPLAYERS + 1] = 1.0;
+int d_DrugsSecondsLeft[MAXPLAYERS + 1];
+Handle d_ApplyDrugs[MAXPLAYERS + 1];
+int d_EntCountToShoot[MAXPLAYERS + 1];
 #define d_EntModelCount 3
-new String:d_EntModelStringArray[d_EntModelCount][PLATFORM_MAX_PATH] =
+char d_EntModelStringArray[d_EntModelCount][PLATFORM_MAX_PATH] =
 { "models/props_junk/metal_paintcan001b.mdl"
 , "models/props_junk/garbage_metalcan002a.mdl"
 , "models/props_junk/propanecanister001a.mdl"};
-new Handle:d_Regenerate[MAXPLAYERS + 1];
-new Handle:d_Disease[MAXPLAYERS + 1];
-new Handle:d_TeamHeal[MAXPLAYERS + 1];
-new d_TeamHealCount[MAXPLAYERS + 1];
-new Handle:d_DeathDegenerate[MAXPLAYERS + 1];
-new bool:d_WpnRestricted[MAXPLAYERS + 1];
-new d_MineCount[MAXPLAYERS + 1];
+Handle d_Regenerate[MAXPLAYERS + 1];
+Handle d_Disease[MAXPLAYERS + 1];
+Handle d_TeamHeal[MAXPLAYERS + 1];
+int d_TeamHealCount[MAXPLAYERS + 1];
+Handle d_DeathDegenerate[MAXPLAYERS + 1];
+bool d_WpnRestricted[MAXPLAYERS + 1];
+int d_MineCount[MAXPLAYERS + 1];
 
-new Handle:d_MineCheck[MAXPLAYERS + 1];
+Handle d_MineCheck[MAXPLAYERS + 1];
 #define MAX_MINES 32
-new bool:d_MineActive[MAX_MINES];
-new d_MineOwner[MAX_MINES];
-new d_MineOwnerTeam[MAX_MINES];
-new d_MineEnt[MAX_MINES];
+bool d_MineActive[MAX_MINES];
+int d_MineOwner[MAX_MINES];
+int d_MineOwnerTeam[MAX_MINES];
+int d_MineEnt[MAX_MINES];
 
-stock Diced_PlayerJump_Detour(client)
+stock void Diced_PlayerJump_Detour(int client)
 {
 	if (d_DoubleJump[client])
 	{
 		if (d_JumpState[client] == 0) { d_JumpState[client] = 1; }
 	}
-	new Float:vec[3];
-	new bool:ChangesMade = false;
+	float vec[3];
+	bool ChangesMade = false;
 	if (d_LongJump[client])
 	{
 		vec[0] = 1.5 * GetEntPropFloat(client, Prop_Send, "m_vecVelocity[0]");
@@ -99,11 +99,11 @@ stock Diced_PlayerJump_Detour(client)
 	}
 }
 
-stock Diced_GameFrame_Detour()
+stock void Diced_GameFrame_Detour()
 {
 	if (d_DoubleJumpExist) //it's amazing ^^
 	{
-		for (new i = 1; i <= MaxClients; i++)
+		for (int i = 1; i <= MaxClients; i++)
 		{
 			if (IsClientInGame(i)) //you asking why i don't use the IsClientValid stock? Well, timing is everything in the gameframe forward...^^
 			{
@@ -113,8 +113,8 @@ stock Diced_GameFrame_Detour()
 					{
 						if (d_DoubleJump[i])
 						{
-							new keys = GetClientButtons(i);
-							new flags = GetEntityFlags(i);
+							int keys = GetClientButtons(i);
+							int flags = GetEntityFlags(i);
 							if (flags & FL_ONGROUND)
 							{
 								d_JumpState[i] = 0;
@@ -126,7 +126,7 @@ stock Diced_GameFrame_Detour()
 									if (d_JumpState[i] == 2)
 									{
 										d_JumpState[i] = -1;
-										new Float:vec[3];
+										float vec[3];
 										GetAngleVectors(Float:{-90.0, 0.0, 0.0}, vec, NULL_VECTOR, NULL_VECTOR);
 										NormalizeVector(vec, vec);
 										ScaleVector(vec, 250.0);
@@ -149,10 +149,10 @@ stock Diced_GameFrame_Detour()
 	}
 }
 
-stock Diced_EndRound_Detour()
+stock void Diced_EndRound_Detour()
 {
 	Clear_All_D_Vars();
-	for (new i = 0; i < MAX_MINES; i++)
+	for (int i = 0; i < MAX_MINES; i++)
 	{
 		d_MineActive[i] = false;
 		d_MineOwner[i] = 0;
@@ -160,28 +160,28 @@ stock Diced_EndRound_Detour()
 		d_MineEnt[i] = 0;
 		if (d_MineCheck[i] != INVALID_HANDLE)
 		{
-			new Handle:subHndl = d_MineCheck[i];
+			Handle subHndl = d_MineCheck[i];
 			d_MineCheck[i] = INVALID_HANDLE;
 			CloseHandle(subHndl);
 		}
 	}
 }
 
-stock Diced_PlayerDeath_Detour(client)
+stock void Diced_PlayerDeath_Detour(int client)
 {
 	Clear_Client_D_Vars(client, true);
 }
 
-stock Diced_ResetClientVars_Detour(client)
+stock void Diced_ResetClientVars_Detour(int client)
 {
 	Clear_Client_D_Vars(client);
 }
 
-stock bool:Diced_CanUseWeapon_Detour(client, weapon)
+stock bool Diced_CanUseWeapon_Detour(int client, int weapon)
 {
 	if (d_WpnRestricted[client])
 	{
-		decl String:className[MAX_NAME_LENGTH]; //MAX_NAME_LENGTH...appropriate?
+		char className[MAX_NAME_LENGTH]; //MAX_NAME_LENGTH...appropriate?
 		GetEntityClassname(weapon, className, sizeof(className));
 		if (!StrEqual(className, "weapon_knife"))
 		{
@@ -191,7 +191,7 @@ stock bool:Diced_CanUseWeapon_Detour(client, weapon)
 	return true;
 }
 
-stock Float:Diced_SDKH_TakeDmg(victim, attacker, Float:dmg)
+stock float Diced_SDKH_TakeDmg(int victim, int attacker, float dmg)
 {
 	if (IsClientValid(victim)) //We only handle clients
 	{
@@ -209,16 +209,16 @@ stock Float:Diced_SDKH_TakeDmg(victim, attacker, Float:dmg)
 				}
 				if (d_GotMirrorDmg[attacker])
 				{
-					new amount = GetClientHealth(attacker) - RoundFloat(dmg / 5.0);
+					int amount = GetClientHealth(attacker) - RoundFloat(dmg / 5.0);
 					if (amount < 1) { amount = 1; }
 					SetEntityHealth(attacker, amount);
 				}
 				else if (d_GotVampireDmg[attacker])
 				{
-					new life = GetClientHealth(attacker);
+					int life = GetClientHealth(attacker);
 					if (!(life > 250))
 					{
-						new amount = life + RoundFloat(dmg / 5.0);
+						int amount = life + RoundFloat(dmg / 5.0);
 						if (amount > 250) { amount = 250; }
 						SetEntityHealth(attacker, amount);
 					}
@@ -229,18 +229,18 @@ stock Float:Diced_SDKH_TakeDmg(victim, attacker, Float:dmg)
 	return dmg;
 }
 
-stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
+stock void Diced_WeaponFire_Detour(int client, char[] weaponStr)
 {
 	if (d_ThrowingKnifeCount[client] > 0)
 	{
 		if (StrEqual(weaponStr, "knife", true))
 		{
 			d_ThrowingKnifeCount[client]--;
-			new Float:eyePos[3];
-			new Float:eyeAng[3];
-			new Float:fwd[3];
-			new Float:origin[3];
-			new Float:spinVec[3] = { 1080.0, 0.0, 0.0 }; //3 rounds per second - seems legit ^^
+			float eyePos[3];
+			float eyeAng[3];
+			float fwd[3];
+			float origin[3];
+			float spinVec[3] = { 1080.0, 0.0, 0.0 }; //3 rounds per second - seems legit ^^
 			GetClientEyePosition(client, eyePos);
 			GetClientEyeAngles(client, eyeAng);
 			GetAngleVectors(eyeAng, fwd, NULL_VECTOR, NULL_VECTOR);
@@ -248,7 +248,7 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 			ScaleVector(fwd, 50.0);
 			AddVectors(eyePos, fwd, origin);
 			ScaleVector(fwd, 30.0); //50*30=1500
-			new ent = CreateEntityByName("hegrenade_projectile");
+			int ent = CreateEntityByName("hegrenade_projectile");
 			TeleportEntity(ent, origin, eyeAng, fwd);
 			DispatchSpawn(ent);
 			SetEntityModel(ent, "models/weapons/w_knife_ct.mdl");
@@ -265,11 +265,11 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 		if (StrEqual(weaponStr, "knife", true))
 		{
 			d_EntCountToShoot[client]--;
-			new Float:eyePos[3];
-			new Float:eyeAng[3];
-			new Float:fwd[3];
-			new Float:origin[3];
-			new Float:spinVec[3] = { 720.0, -720.0, 360.0 };
+			float eyePos[3];
+			float eyeAng[3];
+			float fwd[3];
+			float origin[3];
+			float spinVec[3] = { 720.0, -720.0, 360.0 };
 			GetClientEyePosition(client, eyePos);
 			GetClientEyeAngles(client, eyeAng);
 			if (eyeAng[0] <= 62.0) // at 64.5° we'll get hit by our own entity.
@@ -279,10 +279,10 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 				ScaleVector(fwd, 50.0);
 				AddVectors(eyePos, fwd, origin);
 				ScaleVector(fwd, 30.0); //50*30=1500
-				new ent = CreateEntityByName("hegrenade_projectile");
+				int ent = CreateEntityByName("hegrenade_projectile");
 				TeleportEntity(ent, origin, eyeAng, fwd);
 				DispatchSpawn(ent);
-				decl String:modelName[PLATFORM_MAX_PATH];
+				char modelName[PLATFORM_MAX_PATH];
 				modelName = d_EntModelStringArray[GetRandomInt(0, d_EntModelCount - 1)];
 				if (!IsModelPrecached(modelName))
 				{
@@ -301,30 +301,30 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 	{
 		if (StrEqual(weaponStr, "knife", true))
 		{
-			new index = -1;
-			for (new i  = 0; i < MAX_MINES; i++)
+			int index = -1;
+			for (int i  = 0; i < MAX_MINES; i++)
 			{
 				if (!d_MineActive[i]) { index = i; break; }
 			}
 			if (index == -1) { return; }
-			new Float:EyePos[3];
-			new Float:EyeAng[3];
-			new Float:PlaneVec[3];
-			new Float:ang[3];
-			new Float:pos[3];
-			new bool:DidHit = false;
+			float EyePos[3];
+			float EyeAng[3];
+			float PlaneVec[3];
+			float ang[3];
+			float pos[3];
+			bool DidHit = false;
 			GetClientEyePosition(client, EyePos);
 			GetClientEyeAngles(client, EyeAng);
-			new Handle:traceRay = TR_TraceRayFilterEx(EyePos, EyeAng, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
+			Handle traceRay = TR_TraceRayFilterEx(EyePos, EyeAng, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
 			if ((DidHit = TR_DidHit(traceRay)))
 			{
 				TR_GetEndPosition(pos, traceRay);
 				TR_GetPlaneNormal(traceRay, PlaneVec);
 				GetVectorAngles(PlaneVec, ang);
-				new Float:testDistance = GetVectorDistance(pos, EyePos);
-				new Float:origin[3];
+				float testDistance = GetVectorDistance(pos, EyePos);
+				float origin[3];
 				GetClientAbsOrigin(client, origin);
-				new Float:testDistance_Ogn = GetVectorDistance(pos, origin);
+				float testDistance_Ogn = GetVectorDistance(pos, origin);
 				if (testDistance > 120.0 || testDistance < 40.0 || testDistance_Ogn < 40.0)
 				{
 					DidHit = false;
@@ -333,7 +333,7 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 			CloseHandle(traceRay);
 			if (DidHit)
 			{
-				new ent = CreateEntityByName("prop_dynamic_override");
+				int ent = CreateEntityByName("prop_dynamic_override");
 				SetEntityModel(ent, "models/items/battery.mdl");
 				DispatchKeyValue(ent, "solid", "6");
 				ang[0] += 90.0;
@@ -346,7 +346,7 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 				SetEntProp(ent, Prop_Data, "m_iMinHealthDmg", 50);
 				SetEntProp(ent, Prop_Data, "m_iMaxHealth", 5000);
 				SetEntProp(ent, Prop_Data, "m_iHealth", 5000);
-				new teamIndex = GetClientTeam(client);
+				int teamIndex = GetClientTeam(client);
 				if (teamIndex == CS_TEAM_T)
 				{ SetEntityRenderColor(ent, 255, 128, 128, 255); }
 				else if (teamIndex == CS_TEAM_CT)
@@ -356,7 +356,7 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 				d_MineOwner[index] = GetClientUserId(client);
 				d_MineOwnerTeam[index] = GetClientTeam(client);
 				d_MineEnt[index] = ent;
-				new Handle:pack;
+				Handle pack;
 				d_MineCheck[index] = CreateDataTimer(2.0, timer_CheckMines, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE | TIMER_REPEAT);
 				WritePackCell(pack, index);
 			}
@@ -364,7 +364,7 @@ stock Diced_WeaponFire_Detour(client, const String:weaponStr[])
 	}
 }
 
-stock Clear_Client_D_Vars(client, bool:OwningUpdate = false)
+stock void Clear_Client_D_Vars(int client, bool OwningUpdate = false)
 {
 	if (IsClientValid(client))
 	{
@@ -390,92 +390,92 @@ stock Clear_Client_D_Vars(client, bool:OwningUpdate = false)
 	d_MineCount[client] = 0;
 	if (d_EndNoclip[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_EndNoclip[client];
+		Handle subHndl = d_EndNoclip[client];
 		d_EndNoclip[client] = INVALID_HANDLE; //so we can be sure, if an handle error occurs, it occurs just one time.
 		CloseHandle(subHndl);
 	}
 	if (d_EndFreeze[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_EndFreeze[client];
+		Handle subHndl = d_EndFreeze[client];
 		d_EndFreeze[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_HandleFire[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_HandleFire[client];
+		Handle subHndl = d_HandleFire[client];
 		d_HandleFire[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_EndGodMode[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_EndGodMode[client];
+		Handle subHndl = d_EndGodMode[client];
 		d_EndGodMode[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_ExpBombExplode[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_ExpBombExplode[client];
+		Handle subHndl = d_ExpBombExplode[client];
 		d_ExpBombExplode[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_HologramShow[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_HologramShow[client];
+		Handle subHndl = d_HologramShow[client];
 		d_HologramShow[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_ApplyDrugs[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_ApplyDrugs[client];
+		Handle subHndl = d_ApplyDrugs[client];
 		d_ApplyDrugs[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_Regenerate[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_Regenerate[client];
+		Handle subHndl = d_Regenerate[client];
 		d_Regenerate[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_Disease[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_Disease[client];
+		Handle subHndl = d_Disease[client];
 		d_Disease[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_TeamHeal[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_TeamHeal[client];
+		Handle subHndl = d_TeamHeal[client];
 		d_TeamHeal[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (d_DeathDegenerate[client] != INVALID_HANDLE)
 	{
-		new Handle:subHndl = d_DeathDegenerate[client];
+		Handle subHndl = d_DeathDegenerate[client];
 		d_DeathDegenerate[client] = INVALID_HANDLE;
 		CloseHandle(subHndl);
 	}
 	if (OwningUpdate)
 	{
 		d_DoubleJumpExist = false;
-		for (new i = 1; i <= MaxClients; i++)
+		for (int i = 1; i <= MaxClients; i++)
 		{
 			if (d_DoubleJump[i]) { d_DoubleJumpExist = true; break; }
 		}
 	}
 }
 
-stock Clear_All_D_Vars()
+stock void Clear_All_D_Vars()
 {
 	d_DoubleJumpExist = false;
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		Clear_Client_D_Vars(i);
 	}
 }
 
-stock d_SetupExplosion(Float:pos[3], damage, radius = 0, teamOverride = CS_TEAM_T, guiltyClient = -1)
+stock void d_SetupExplosion(float pos[3], int damage, int radius = 0, int teamOverride = CS_TEAM_T, int guiltyClient = -1)
 {
-	new ent = CreateEntityByName("env_explosion");
+	int ent = CreateEntityByName("env_explosion");
 	DispatchKeyValue(ent, "spawnflags", "1088"); //no sound, no dlights
 	DispatchSpawn(ent);
 	SetEntProp(ent, Prop_Data, "m_iMagnitude", damage);
@@ -491,7 +491,7 @@ stock d_SetupExplosion(Float:pos[3], damage, radius = 0, teamOverride = CS_TEAM_
 	AcceptEntityInput(ent, "kill");
 }
 
-stock CreateMenus()
+stock void CreateMenus()
 {
 	d_CTBullyMenu = CreateMenu(menuHandler_CTBullyMenu, MenuAction_Select | MenuAction_Display | MenuAction_DisplayItem);
 	SetMenuTitle(d_CTBullyMenu, "d_ctbm_title");
@@ -522,10 +522,10 @@ stock CreateMenus()
 **
 */
 
-public Action:timer_endNoclip(Handle:timer, Handle:pack)
+public Action timer_endNoclip(Handle timer, Handle pack)
 {
 	ResetPack(pack, false);
-	new client = ReadPackCell(pack);
+	int client = ReadPackCell(pack);
 	d_EndNoclip[client] = INVALID_HANDLE;
 	client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
@@ -533,9 +533,9 @@ public Action:timer_endNoclip(Handle:timer, Handle:pack)
 		if (IsPlayerAlive(client))
 		{
 			SetEntityMoveType(client, MOVETYPE_WALK);
-			new Float:pos[3];
-			new Float:ePos[3];
-			new Float:ringPos[3];
+			float pos[3];
+			float ePos[3];
+			float ringPos[3];
 			GetClientAbsOrigin(client, pos);
 			if (TR_PointOutsideWorld(pos)) { ForcePlayerSuicide(client); return Plugin_Stop; }
 			GetClientEyePosition(client, ePos);
@@ -545,7 +545,7 @@ public Action:timer_endNoclip(Handle:timer, Handle:pack)
 			ringPos[2] = (pos[2] + ePos[2]) / 2.0;
 			TE_SetupBeamRingPoint(ringPos, 100.0, 25.0, g_BeamSprite, g_HaloSprite, 0, 15, 2.5, 20.0, 0.0, { 255, 255, 255, 255 }, 10, 0);
 			TE_SendToClient(client);
-			new Handle:newPack;
+			Handle newPack;
 			d_EndNoclip[client] = CreateDataTimer(2.5, timer_finalNoclipSafe, newPack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 			WritePackCell(newPack, client);
 			WritePackCell(newPack, GetClientUserId(client));
@@ -561,19 +561,19 @@ public Action:timer_endNoclip(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_finalNoclipSafe(Handle:timer, Handle:pack)
+public Action timer_finalNoclipSafe(Handle timer, Handle pack)
 {
 	ResetPack(pack, false);
-	new client = ReadPackCell(pack);
+	int client = ReadPackCell(pack);
 	d_EndNoclip[client] = INVALID_HANDLE;
 	client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
-			new Float:pos[3];
-			new Float:refPos[3];
-			new Float:ringPos[3];
+			float pos[3];
+			float refPos[3];
+			float ringPos[3];
 			refPos[0] = ReadPackFloat(pack);
 			refPos[1] = ReadPackFloat(pack);
 			refPos[2] = ReadPackFloat(pack);
@@ -592,10 +592,10 @@ public Action:timer_finalNoclipSafe(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_endFreeze(Handle:timer, Handle:pack)
+public Action timer_endFreeze(Handle timer, Handle pack)
 {
 	ResetPack(pack, false);
-	new client = ReadPackCell(pack);
+	int client = ReadPackCell(pack);
 	d_EndFreeze[client] = INVALID_HANDLE;
 	client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
@@ -607,17 +607,17 @@ public Action:timer_endFreeze(Handle:timer, Handle:pack)
 	}
 }
 
-public Action:timer_HandleFire(Handle:timer, Handle:pack)
+public Action timer_HandleFire(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
-			new hp = GetClientHealth(client);
-			new clientFlags = GetEntityFlags(client);
+			int hp = GetClientHealth(client);
+			int clientFlags = GetEntityFlags(client);
 			if (hp > 20)
 			{
 				if (!(clientFlags & FL_INWATER))
@@ -634,10 +634,10 @@ public Action:timer_HandleFire(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }	
 
-public Action:timer_endGodMode(Handle:timer, Handle:pack)
+public Action timer_endGodMode(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new client = ReadPackCell(pack);
+	int client = ReadPackCell(pack);
 	d_EndGodMode[client] = INVALID_HANDLE;
 	client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
@@ -649,24 +649,24 @@ public Action:timer_endGodMode(Handle:timer, Handle:pack)
 	}
 }
 
-public Action:timer_expCFour(Handle:timer, Handle:pack)
+public Action timer_expCFour(Handle timer, Handle pack)
 {
 	ResetPack(pack, false);
-	new client = ReadPackCell(pack);
+	int client = ReadPackCell(pack);
 	d_ExpBombExplode[client] = INVALID_HANDLE;
-	new ent = EntRefToEntIndex(ReadPackCell(pack));
+	int ent = EntRefToEntIndex(ReadPackCell(pack));
 	client = GetClientOfUserId(ReadPackCell(pack));
-	new team = ReadPackCell(pack);
+	int team = ReadPackCell(pack);
 	if (ent > 0)
 	{
 		if (IsValidEdict(ent))
 		{
-			new guiltyClient = -1;
+			int guiltyClient = -1;
 			if (client > 0)
 			{
 				if (IsClientValid(client)) { guiltyClient = client; }
 			}
-			new Float:pos[3];
+			float pos[3];
 			GetEntPropVector(ent, Prop_Data, "m_vecAbsOrigin", pos);
 			AcceptEntityInput(ent, "kill");
 			d_SetupExplosion(pos, 200, 250, team, guiltyClient);
@@ -674,21 +674,21 @@ public Action:timer_expCFour(Handle:timer, Handle:pack)
 	}
 }
 
-public Action:timer_hologramShow(Handle:timer, Handle:pack)
+public Action timer_hologramShow(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
-			new teamIndex = GetClientTeam(client);
-			new Float:pos_one[3];
-			new Float:pos_two[3];
+			int teamIndex = GetClientTeam(client);
+			float pos_one[3];
+			float pos_two[3];
 			GetClientAbsOrigin(client, pos_one);
 			pos_one[2] += 35.0;
-			for (new i = 1; i <= MaxClients; i++)
+			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (IsClientValid(i))
 				{
@@ -708,23 +708,23 @@ public Action:timer_hologramShow(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_ApplyDrugs(Handle:timer, Handle:pack)
+public Action timer_ApplyDrugs(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
 			d_DrugsSecondsLeft[client]--;
-			new Float:ang[3];
+			float ang[3];
 			GetClientEyeAngles(client, ang);
 			if (d_DrugsSecondsLeft[client] != 0)
 			{
 				ang[2] = GetRandomFloat(-30.0, 30.0);
 				TeleportEntity(client, NULL_VECTOR, ang, NULL_VECTOR);
-				new color[4];
+				int color[4];
 				color[0] = GetRandomInt(0, 255); color[1] = GetRandomInt(0, 255); color[2] = GetRandomInt(0, 255); 
 				color[3] = 200;
 				ApplyClientFade(client, 1000, color, false, false);
@@ -732,7 +732,7 @@ public Action:timer_ApplyDrugs(Handle:timer, Handle:pack)
 			}
 			ang[2] = 0.0;
 			TeleportEntity(client, NULL_VECTOR, ang, NULL_VECTOR);
-			new color[4];
+			int color[4];
 			color[0] = GetRandomInt(0, 255); color[1] = GetRandomInt(0, 255); color[2] = GetRandomInt(0, 255); 
 			color[3] = 200;
 			ApplyClientFade(client, 1000, color, true, false);
@@ -743,16 +743,16 @@ public Action:timer_ApplyDrugs(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_Regenerate(Handle:timer, Handle:pack)
+public Action timer_Regenerate(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
-			new hp = GetClientHealth(client);
+			int hp = GetClientHealth(client);
 			if (hp < 100)
 			{
 				hp++;
@@ -765,16 +765,16 @@ public Action:timer_Regenerate(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_Disease(Handle:timer, Handle:pack)
+public Action timer_Disease(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
-			new hp = GetClientHealth(client);
+			int hp = GetClientHealth(client);
 			if (hp > 1)
 			{
 				hp--;
@@ -787,29 +787,29 @@ public Action:timer_Disease(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_TeamHeal(Handle:timer, Handle:pack)
+public Action timer_TeamHeal(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
-			new Float:pos[3]; new Float:ang[3];
+			float pos[3]; float ang[3];
 			GetClientEyePosition(client, pos);
 			GetClientEyeAngles(client, ang);
-			new Handle:tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
+			Handle tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
 			if (TR_DidHit(tr))
 			{
-				new victim = TR_GetEntityIndex(tr);
+				int victim = TR_GetEntityIndex(tr);
 				if (IsClientValid(victim))
 				{
-					new Float:dest[3];
+					float dest[3];
 					TR_GetEndPosition(dest, tr);
 					if (GetVectorDistance(pos, dest) <= 250.0)
 					{
-						new victim_hp = GetClientHealth(victim);
+						int victim_hp = GetClientHealth(victim);
 						if (victim_hp < 100 && GetClientTeam(client) == GetClientTeam(victim))
 						{
 							d_TeamHealCount[client]--;
@@ -836,16 +836,16 @@ public Action:timer_TeamHeal(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_Degenerate(Handle:timer, Handle:pack)
+public Action timer_Degenerate(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
 		{
-			new hp = GetClientHealth(client);
+			int hp = GetClientHealth(client);
 			if (hp == 1)
 			{
 				d_DeathDegenerate[handleIndex] = INVALID_HANDLE;
@@ -864,27 +864,27 @@ public Action:timer_Degenerate(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_CheckMines(Handle:timer, Handle:pack)
+public Action timer_CheckMines(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new index = ReadPackCell(pack);
-	new hasWorked = false;
+	int index = ReadPackCell(pack);
+	bool hasWorked = false;
 	if (d_MineActive[index])
 	{
 		hasWorked = true;
-		new ent = d_MineEnt[index];
+		int ent = d_MineEnt[index];
 		if (!IsValidEdict(ent))
 		{ d_MineCheck[index] = INVALID_HANDLE; return Plugin_Stop; }
-		new mineTeam = d_MineOwnerTeam[index];
-		new Float:pos[3];
+		int mineTeam = d_MineOwnerTeam[index];
+		float pos[3];
 		GetEntPropVector(ent, Prop_Data, "m_vecAbsOrigin", pos);
-		for (new j = 1; j <= MaxClients; j++)
+		for (int j = 1; j <= MaxClients; j++)
 		{
 			if (IsClientValid(j))
 			{
 				if (IsPlayerAlive(j) && GetClientTeam(j) != mineTeam)
 				{
-					new Float:origin[3];
+					float origin[3];
 					GetClientAbsOrigin(j, origin);
 					if (GetVectorDistance(pos, origin) <= 300.0)
 					{
@@ -894,7 +894,7 @@ public Action:timer_CheckMines(Handle:timer, Handle:pack)
 						d_MineEnt[index] = 0;
 						d_MineCheck[index] = INVALID_HANDLE;
 						AcceptEntityInput(ent, "kill");
-						new guiltyClient = GetClientOfUserId(d_MineOwner[index]);
+						int guiltyClient = GetClientOfUserId(d_MineOwner[index]);
 						if (!IsClientValid(guiltyClient)) { guiltyClient = -1; }
 						SetupExplosion(pos, 200, 300, guiltyClient, mineTeam);
 						return Plugin_Stop;
@@ -913,16 +913,16 @@ public Action:timer_CheckMines(Handle:timer, Handle:pack)
 **
 */
 
-public _:menuHandler_CTBullyMenu(Handle:menu, MenuAction:action, client, param)
+public int menuHandler_CTBullyMenu(Handle menu, MenuAction action, int client, int param)
 {
 	if (action == MenuAction_Select)
 	{
 		if (!IsPlayerAlive(client)) { return 0; }
-		decl String:choosen[16];
+		char choosen[16];
 		GetMenuItem(menu, param, choosen, sizeof(choosen));
-		new victim = 0;
-		new victims[24]; new victimCount = 0;
-		for (new i = 1; i <= MaxClients; i++)
+		int victim = 0;
+		int victims[24]; int victimCount = 0;
+		for (int i = 1; i <= MaxClients; i++)
 		{
 			if (IsClientValid(i))
 			{
@@ -950,7 +950,7 @@ public _:menuHandler_CTBullyMenu(Handle:menu, MenuAction:action, client, param)
 		}
 		else if (StrEqual(choosen, "ctbm_2", true))
 		{
-			new amount = GetClientHealth(victim) - 50;
+			int amount = GetClientHealth(victim) - 50;
 			if (amount < 1) { amount = 1; }
 			SetEntityHealth(victim, amount);
 			AC_PrintToChat(client, "%t", "d_ctbm_2_client", victim);
@@ -958,7 +958,7 @@ public _:menuHandler_CTBullyMenu(Handle:menu, MenuAction:action, client, param)
 		}
 		else if (StrEqual(choosen, "ctbm_3", true))
 		{
-			new color[4];
+			int color[4];
 			color[0] = GetRandomInt(0, 255); color[1] = GetRandomInt(0, 255); color[2] = GetRandomInt(0, 255);
 			color[3] = GetRandomInt(210, 235);
 			ApplyClientFade(victim, 2000, color, false, true);
@@ -974,16 +974,16 @@ public _:menuHandler_CTBullyMenu(Handle:menu, MenuAction:action, client, param)
 	}
 	else if (action == MenuAction_DisplayItem)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuItem(menu, param, "", _:0, _, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		return RedrawMenuItem(displayTranslated);
 	}
 	else if (action == MenuAction_Display)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuTitle(menu, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		SetPanelTitle(Handle:param, displayTranslated);
@@ -991,12 +991,12 @@ public _:menuHandler_CTBullyMenu(Handle:menu, MenuAction:action, client, param)
 	return 0;
 }
 
-public _:menuHandler_GoodTMenu(Handle:menu, MenuAction:action, client, param)
+public int menuHandler_GoodTMenu(Handle menu, MenuAction action, int client, int param)
 {
 	if (action == MenuAction_Select)
 	{
 		if (!IsPlayerAlive(client)) { return 0; }
-		decl String:choosen[16];
+		char choosen[16];
 		GetMenuItem(menu, param, choosen, sizeof(choosen));
 		if (StrEqual(choosen, "gdtm_1", true))
 		{
@@ -1018,16 +1018,16 @@ public _:menuHandler_GoodTMenu(Handle:menu, MenuAction:action, client, param)
 	}
 	else if (action == MenuAction_DisplayItem)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuItem(menu, param, "", _:0, _, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		return RedrawMenuItem(displayTranslated);
 	}
 	else if (action == MenuAction_Display)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuTitle(menu, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		SetPanelTitle(Handle:param, displayTranslated);
@@ -1035,12 +1035,12 @@ public _:menuHandler_GoodTMenu(Handle:menu, MenuAction:action, client, param)
 	return 0;
 }
 
-public _:menuHandler_BadTMenu(Handle:menu, MenuAction:action, client, param)
+public int menuHandler_BadTMenu(Handle menu, MenuAction action, int client, int param)
 {
 	if (action == MenuAction_Select)
 	{
 		if (!IsPlayerAlive(client)) { return 0; }
-		decl String:choosen[16];
+		char choosen[16];
 		GetMenuItem(menu, param, choosen, sizeof(choosen));
 		if (StrEqual(choosen, "bdtm_1", true))
 		{
@@ -1048,7 +1048,7 @@ public _:menuHandler_BadTMenu(Handle:menu, MenuAction:action, client, param)
 		}
 		else if (StrEqual(choosen, "bdtm_2", true))
 		{
-			new amount = GetClientHealth(client);
+			int amount = GetClientHealth(client);
 			amount -= 50;
 			if (amount < 1)
 			{ ForcePlayerSuicide(client); } //his own fault...keep more attention ^^
@@ -1061,7 +1061,7 @@ public _:menuHandler_BadTMenu(Handle:menu, MenuAction:action, client, param)
 		}
 		else if (StrEqual(choosen, "bdtm_4", true))
 		{
-			new color[4];
+			int color[4];
 			color[0] = GetRandomInt(0, 255); color[1] = GetRandomInt(0, 255); color[2] = GetRandomInt(0, 255);
 			color[3] = GetRandomInt(210, 235);
 			ApplyClientFade(client, 2000, color, false, true);
@@ -1069,16 +1069,16 @@ public _:menuHandler_BadTMenu(Handle:menu, MenuAction:action, client, param)
 	}
 	else if (action == MenuAction_DisplayItem)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuItem(menu, param, "", _:0, _, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		return RedrawMenuItem(displayTranslated);
 	}
 	else if (action == MenuAction_Display)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuTitle(menu, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		SetPanelTitle(Handle:param, displayTranslated);
@@ -1089,12 +1089,12 @@ public _:menuHandler_BadTMenu(Handle:menu, MenuAction:action, client, param)
 		{
 			if (IsPlayerAlive(client))
 			{
-				new amount = GetClientHealth(client);
+				int amount = GetClientHealth(client);
 				amount -= 50;
 				if (amount > 0)
 				{
 					SetEntityHealth(client, amount);
-					new color[4];
+					int color[4];
 					color[0] = GetRandomInt(0, 255); color[1] = GetRandomInt(0, 255); color[2] = GetRandomInt(0, 255);
 					color[3] = GetRandomInt(210, 235);
 					ApplyClientFade(client, 2000, color, false, true);
@@ -1117,13 +1117,13 @@ public _:menuHandler_BadTMenu(Handle:menu, MenuAction:action, client, param)
 **
 */
 
-public Action:SDKH_ThrowingKnifeTouch(entity, other)
+public Action SDKH_ThrowingKnifeTouch(int entity, int other)
 {
 	if (IsClientValid(other))
 	{
-		new tempKnife = CreateEntityByName("weapon_knife");
-		new attacker = GetEntPropEnt(entity, Prop_Send, "m_hThrower");
-		new Float:dmgMultiply = 1.0;
+		int tempKnife = CreateEntityByName("weapon_knife");
+		int attacker = GetEntPropEnt(entity, Prop_Send, "m_hThrower");
+		float dmgMultiply = 1.0;
 		if (IsClientValid(attacker))
 		{
 			SetEntPropEnt(tempKnife, Prop_Send, "m_hOwnerEntity", attacker);
@@ -1141,7 +1141,7 @@ public Action:SDKH_ThrowingKnifeTouch(entity, other)
 	}
 	else
 	{
-		new Float:vec[3];
+		float vec[3];
 		GetEntPropVector(entity, Prop_Data, "m_vecVelocity", vec);
 		if (GetVectorLength(vec) <= 100.0)
 		{
@@ -1152,14 +1152,14 @@ public Action:SDKH_ThrowingKnifeTouch(entity, other)
 	return Plugin_Continue;
 }
 
-public Action:SDKH_ThrowingEntTouch(entity, other)
+public Action SDKH_ThrowingEntTouch(int entity, int other)
 {
 	if (other > 0)
 	{
 		if (IsClientValid(other) || IsValidEdict(other))
 		{
-			new Float:pos[3];
-			new Float:vel[3];
+			float pos[3];
+			float vel[3];
 			GetEntPropVector(entity, Prop_Data, "m_vecAbsOrigin", pos);
 			GetEntPropVector(entity, Prop_Data, "m_vecVelocity", vel);
 			AcceptEntityInput(entity, "kill");
@@ -1169,7 +1169,7 @@ public Action:SDKH_ThrowingEntTouch(entity, other)
 			return Plugin_Continue;
 		}
 	}
-	new Float:pos[3];
+	float pos[3];
 	GetEntPropVector(entity, Prop_Data, "m_vecAbsOrigin", pos);
 	AcceptEntityInput(entity, "kill");
 	TE_SetupEnergySplash(pos, NULL_VECTOR, false);
@@ -1178,22 +1178,22 @@ public Action:SDKH_ThrowingEntTouch(entity, other)
 	return Plugin_Continue;
 }
 
-public SDKH_MineGetDamage(victim, attacker, inflictor, Float:damage, damagetype)
+public void SDKH_MineGetDamage(int victim, int attacker, int inflictor, float damage, int damagetype)
 {
-	for (new i = 0; i < MAX_MINES; i++)
+	for (int i = 0; i < MAX_MINES; i++)
 	{
 		if (d_MineActive[i])
 		{
 			if (victim == d_MineEnt[i])
 			{
-				new enemyTeam = -2;
+				int enemyTeam = -2;
 				if (IsClientValid(attacker))
 				{ enemyTeam = GetClientTeam(attacker); }
-				new mineTeam = d_MineOwnerTeam[i];
+				int mineTeam = d_MineOwnerTeam[i];
 				if (mineTeam != enemyTeam)
 				{
-					new ent = d_MineEnt[i];
-					new Float:pos[3];
+					int ent = d_MineEnt[i];
+					float pos[3];
 					GetEntPropVector(ent, Prop_Data, "m_vecAbsOrigin", pos);
 					d_MineActive[i] = false;
 					d_MineOwner[i] = 0;
@@ -1201,7 +1201,7 @@ public SDKH_MineGetDamage(victim, attacker, inflictor, Float:damage, damagetype)
 					d_MineEnt[i] = 0;
 					d_MineCheck[i] = INVALID_HANDLE;
 					AcceptEntityInput(ent, "kill");
-					new guiltyClient = GetClientOfUserId(d_MineOwner[i]);
+					int guiltyClient = GetClientOfUserId(d_MineOwner[i]);
 					if (!IsClientValid(guiltyClient)) { guiltyClient = -1; }
 					SetupExplosion(pos, 200, 300, guiltyClient, mineTeam);
 				}

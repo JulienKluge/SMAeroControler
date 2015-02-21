@@ -20,65 +20,65 @@
 ** Their probability can calculated via subtract the next with the current.
 ** At the moment, all 50 possibilities have a probability at 2% .
 */
-new Float:d_pistol = 2.0;
-new Float:d_he = 4.0;
-new Float:d_flash = 6.0;
-new Float:d_smoke = 8.0;
-new Float:d_inchp = 10.0;
-new Float:d_dechp = 12.0;
-new Float:d_incspeed = 14.0;
-new Float:d_decspeed = 16.0;
-new Float:d_longjump = 18.0;
-new Float:d_frogjump = 20.0;
-new Float:d_doublejump = 22.0;
-new Float:d_fire = 24.0;
-new Float:d_noclip = 26.0;
-new Float:d_freeze = 28.0;
-new Float:d_lowgrav = 30.0;
-new Float:d_highgrav = 32.0;
-new Float:d_godmode = 34.0;
-new Float:d_nv = 36.0;
-new Float:d_invis = 38.0;
-new Float:d_model = 40.0;
-new Float:d_kevlar = 42.0;
-new Float:d_cfour = 44.0;
-new Float:d_expcfour = 46.0;
-new Float:d_throwingknife = 48.0;
-new Float:d_incfrags = 50.0;
-new Float:d_decfrags = 52.0;
-new Float:d_hologram = 54.0;
-new Float:d_blind = 56.0;
-new Float:d_increfuses = 58.0;
-new Float:d_decrefuses = 60.0;
-new Float:d_ctbullymenu = 62.0;
-new Float:d_goodtmenu = 64.0;
-new Float:d_badtmenu = 66.0;
-new Float:d_mirrordmg = 68.0;
-new Float:d_vampiredmg = 70.0;
-new Float:d_incdmg = 72.0;
-new Float:d_decdmg = 74.0;
-new Float:d_drugs = 76.0;
-new Float:d_randtelechange = 78.0;
-new Float:d_entshoot = 80.0;
-new Float:d_regenerate = 82.0;
-new Float:d_disease = 84.0;
-new Float:d_teamheal = 86.0;
-new Float:d_death_exp = 88.0;
-new Float:d_death_degenerate = 90.0;
-new Float:d_death_lightning = 92.0;
-new Float:d_wpnrestrict = 94.0;
-new Float:d_mine = 96.0;
-new Float:d_inccapitulates = 98.0;
-new Float:d_deccapitulates = 100.0;
+float d_pistol = 2.0;
+float d_he = 4.0;
+float d_flash = 6.0;
+float d_smoke = 8.0;
+float d_inchp = 10.0;
+float d_dechp = 12.0;
+float d_incspeed = 14.0;
+float d_decspeed = 16.0;
+float d_longjump = 18.0;
+float d_frogjump = 20.0;
+float d_doublejump = 22.0;
+float d_fire = 24.0;
+float d_noclip = 26.0;
+float d_freeze = 28.0;
+float d_lowgrav = 30.0;
+float d_highgrav = 32.0;
+float d_godmode = 34.0;
+float d_nv = 36.0;
+float d_invis = 38.0;
+float d_model = 40.0;
+float d_kevlar = 42.0;
+float d_cfour = 44.0;
+float d_expcfour = 46.0;
+float d_throwingknife = 48.0;
+float d_incfrags = 50.0;
+float d_decfrags = 52.0;
+float d_hologram = 54.0;
+float d_blind = 56.0;
+float d_increfuses = 58.0;
+float d_decrefuses = 60.0;
+float d_ctbullymenu = 62.0;
+float d_goodtmenu = 64.0;
+float d_badtmenu = 66.0;
+float d_mirrordmg = 68.0;
+float d_vampiredmg = 70.0;
+float d_incdmg = 72.0;
+float d_decdmg = 74.0;
+float d_drugs = 76.0;
+float d_randtelechange = 78.0;
+float d_entshoot = 80.0;
+float d_regenerate = 82.0;
+float d_disease = 84.0;
+float d_teamheal = 86.0;
+float d_death_exp = 88.0;
+float d_death_degenerate = 90.0;
+float d_death_lightning = 92.0;
+float d_wpnrestrict = 94.0;
+float d_mine = 96.0;
+float d_inccapitulates = 98.0;
+float d_deccapitulates = 100.0;
 
-public Action:Cmd_Dice(client, args)
+public Action Cmd_Dice(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	ThrowDiceChecked(client);
 	return Plugin_Handled;
 }
 
-public Action:Cmd_DiceMenu(client, args)
+public Action Cmd_DiceMenu(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	if (GetClientTeam(client) != CS_TEAM_T) { AC_PrintToChat(client, "%t", "denied_not_t"); return Plugin_Handled; }
@@ -86,7 +86,7 @@ public Action:Cmd_DiceMenu(client, args)
 	return Plugin_Handled;
 }
 
-stock ThrowDiceChecked(client, bool:silentFail = false, Float:value = -1.0, bool:forced = false)
+stock void ThrowDiceChecked(int client, bool silentFail = false, float value = -1.0, bool forced = false)
 {
 	if (!InWork) { return; }
 	if (GetClientTeam(client) != CS_TEAM_T)
@@ -108,11 +108,11 @@ stock ThrowDiceChecked(client, bool:silentFail = false, Float:value = -1.0, bool
 	ThrowDice(client, value, forced);
 }
 
-stock ThrowDice(client, Float:val = -1.0, bool:forced = false) //function without any checking
+stock void ThrowDice(int client, float val = -1.0, bool forced = false) //function without any checking
 {
-	new Float:value = val;
-	new iter = 0;
-	new bool:passThrough;
+	float value = val;
+	int iter = 0;
+	bool passThrough;
 	/*
 	** Well, you should aksing why the dice actions are encapsulated by a while loop.
 	** The dice system is recessive that means, if an action cannot be performed out
@@ -189,7 +189,7 @@ stock ThrowDice(client, Float:val = -1.0, bool:forced = false) //function withou
 	if (iter > 14) { Diced_Nothing(client); } //TODO: calculate how big this possibility is in the worst case (i approximate it to a 1 to 1 trillion event)
 }
 
-stock Float:ResolveDicePhrase(const String:phrase[]) //used for the admin cmd
+stock float ResolveDicePhrase(const char[] phrase) //used for the admin cmd
 {
 	if (StrEqual(phrase, "pistol", true)) { return d_pistol; }
 	if (StrEqual(phrase, "he")) { return d_he; }
@@ -244,10 +244,10 @@ stock Float:ResolveDicePhrase(const String:phrase[]) //used for the admin cmd
 	return -1.0; //if nothing matched
 }
 
-stock LoadDiceProbabilities()
+stock void LoadDiceProbabilities()
 {
-	new Handle:kv = CreateKeyValues("probabilities");
-	decl String:fileDir[PLATFORM_MAX_PATH];
+	Handle kv = CreateKeyValues("probabilities");
+	char fileDir[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, fileDir, sizeof(fileDir), "configs/AC_DiceProbabilities.ini");
 	if (FileToKeyValues(kv, fileDir))
 	{
@@ -308,9 +308,9 @@ stock LoadDiceProbabilities()
 	}
 }
 
-stock Float:LoadDiceProbabilitie(Handle:kv, const String:phrase[])
+stock float LoadDiceProbabilitie(Handle kv, const char[] phrase)
 {
-	new Float:value = KvGetFloat(kv, phrase, -1.0);
+	float value = KvGetFloat(kv, phrase, -1.0);
 	if (value == -1.0)
 	{
 		Log(EL_Message, "dicecore", "Diceprobabilitie-Key '%s' not found! Using 0.0%% for it.", phrase);
@@ -323,10 +323,10 @@ stock Float:LoadDiceProbabilitie(Handle:kv, const String:phrase[])
 #define d_StateLevel_Neutral 1
 #define d_StateLevel_Bad 2
 
-stock AC_Dice_PrintToChat(client, Float:probability, stateLevel, const String:msg[], any:...)
+stock void AC_Dice_PrintToChat(int client, float probability, int stateLevel, const char[] msg, any ...)
 {
-	decl String:message[255]; //not 192 because we perhaps need more
-	decl String:colStateTag[7];
+	char message[255]; //not 192 because we perhaps need more
+	char colStateTag[7];
 	colStateTag = "FFFF44";
 	if (stateLevel == d_StateLevel_Good)
 	{ colStateTag = "44FF44"; }
@@ -338,20 +338,20 @@ stock AC_Dice_PrintToChat(client, Float:probability, stateLevel, const String:ms
 	{ Format(message, sizeof(message), "\x01%s %s \x07%s[%0.1f %%] \x01- %t", Tag, message, colStateTag, Math_Max(probability, 0.0), "d_left_dices", c_dices[client]); }
 	else
 	{ Format(message, sizeof(message), "\x01%s %s \x07%s[%0.1f %%]", Tag, message, colStateTag, Math_Max(probability, 0.0)); }
-	new Handle:buffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
+	Handle buffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
 	BfWriteByte(buffer, client);
 	BfWriteByte(buffer, true);
 	BfWriteString(buffer, message);
 	EndMessage();
 }
 
-public Action:ACmd_ForceDice(client, args)
+public Action ACmd_ForceDice(int client, int args)
 {
 	if (!(args == 1 || args == 2))
 	{ ReplyToCommand(client, "[AC]: Usage: sm_forcedice <#userid|name> [value|phrase]"); return Plugin_Handled; }
-	decl String:target[MAX_NAME_LENGTH];
-	decl String:value[32] = "-1.0";
-	new Float:val = -1.0;
+	char target[MAX_NAME_LENGTH];
+	char value[32] = "-1.0";
+	float val = -1.0;
 	GetCmdArg(1, target, sizeof(target));
 	if (args == 2)
 	{
@@ -359,7 +359,7 @@ public Action:ACmd_ForceDice(client, args)
 		val = ResolveDicePhrase(value);
 		if (val == -1.0)
 		{
-			new count = StringToFloatEx(value, val);
+			int count = StringToFloatEx(value, val);
 			if (count < 1)
 			{
 				ReplyToCommand(client, "[AC]: [value|phrase]: A percent value (without the %% charachter) or a dicephrase.");
@@ -367,14 +367,14 @@ public Action:ACmd_ForceDice(client, args)
 			}
 		}
 	}
-	decl String:buffer[MAX_NAME_LENGTH];
-	new targets[MAXPLAYERS+1];
-	new bool:ml = false;
-	new count = ProcessTargetString(target, client, targets, sizeof(targets), COMMAND_FILTER_ALIVE | COMMAND_FILTER_CONNECTED, buffer, sizeof(buffer), ml);
+	char buffer[MAX_NAME_LENGTH];
+	int targets[MAXPLAYERS+1];
+	bool ml = false;
+	int count = ProcessTargetString(target, client, targets, sizeof(targets), COMMAND_FILTER_ALIVE | COMMAND_FILTER_CONNECTED, buffer, sizeof(buffer), ml);
 	if (count <= 0) { ReplyToTargetError(client, count); return Plugin_Handled; }
-	new bool:isForced = true;
+	bool isForced = true;
 	if (val == -1.0) { isForced = false; }
-	for (new i = 0; i < count; i++)
+	for (int i = 0; i < count; i++)
 	{
 		ThrowDice(targets[i], val, isForced);
 		LogAction(client, targets[i], "[AC]: %L forced dice (%s) on %L", client, value, targets[i]);

@@ -26,7 +26,7 @@
 
 int g_Game = Game_None;
 
-stock DetectGameMod()
+stock void DetectGameMod()
 {
 	char gameName[MAX_NAME_LENGTH]; //name length is enough...
 	GetGameFolderName(gameName, MAX_NAME_LENGTH);

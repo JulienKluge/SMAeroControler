@@ -18,7 +18,7 @@
 #endif
 #define _AC_CLIENTSYS_included
 
-stock bool:IsClientValid(client)
+stock bool IsClientValid(int client)
 {
 	if (client > 0 && client <= MaxClients)
 	{
@@ -33,7 +33,7 @@ stock bool:IsClientValid(client)
 	return false;
 }
 
-stock SetClientDefaultValues(client, bool:changed=false, hp=100, Float:gravity=1.0, Float:speed=1.0)
+stock void SetClientDefaultValues(int client, bool changed=false, int hp=100, float gravity=1.0, float speed=1.0)
 {
 	if (changed)
 	{
@@ -49,10 +49,10 @@ stock SetClientDefaultValues(client, bool:changed=false, hp=100, Float:gravity=1
 	}
 }
 
-stock RemoveAllClientItems(client, exception = -1)
+stock void RemoveAllClientItems(int client, int exception = -1)
 {
-	new entity = -1;
-	for (new i = 0; i < 5; i++)
+	int entity = -1;
+	for (int i = 0; i < 5; i++)
 	{
 		if (i != exception)
 		{
@@ -65,12 +65,12 @@ stock RemoveAllClientItems(client, exception = -1)
 	}
 }
 
-stock ApplyClientFade(client, duration, color[4], bool:fadeIn = true, bool:stayOut = false, bool:purge = true, _:holdTime = 0)
+stock void ApplyClientFade(int client, int duration, int color[4], bool fadeIn = true, bool stayOut = false, bool purge = true, int holdTime = 0)
 {
-	new flags = (fadeIn) ? 0x1 : 0x2; //i don't really often use ternary operators - but in this case, it seemed legit
+	int flags = (fadeIn) ? 0x1 : 0x2; //i don't really often use ternary operators - but in this case, it seemed legit
 	if (stayOut) { flags |= 0x8; }
 	if (purge) { flags |= 0x10; }
-	new Handle:fadeMsg = StartMessageOne("Fade", client);
+	Handle fadeMsg = StartMessageOne("Fade", client);
 	BfWriteShort(fadeMsg, duration);
 	BfWriteShort(fadeMsg, holdTime);
 	BfWriteShort(fadeMsg, flags);

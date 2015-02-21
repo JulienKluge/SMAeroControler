@@ -25,10 +25,10 @@
 #define EL_FatalEx 4			//Errorlevel: An error occured in the plugin which has fatal consequences. Try still running the plugin.
 #define EL_Abort 5			//Errorlevel: An error occured in the plugin which has fatal consequences in a way, that the plugin cannot run anymore.
 
-stock Log(_:EL_Level, const String:pluginName[], const String:message[], any:...)
+stock void Log(int EL_Level, const char[] pluginName, const char[] message, any ...)
 {
-	new eMsgLength = strlen(message) + 255;
-	new String:errorMsg[eMsgLength];
+	int eMsgLength = strlen(message) + 255;
+	char[] errorMsg = new char[eMsgLength];
 	VFormat(errorMsg, eMsgLength, message, 4);
 	switch (EL_Level)
 	{
@@ -39,8 +39,8 @@ stock Log(_:EL_Level, const String:pluginName[], const String:message[], any:...
 		case EL_FatalEx: { LogError("!!! [AeroControler (%s) - FATAL ERROR]: %s | try continue running plugin...", pluginName, errorMsg); }
 		case EL_Abort:
 		{
-			new endMessageLength = eMsgLength + 255;
-			decl String:endMsg[endMessageLength];
+			int endMessageLength = eMsgLength + 255;
+			char endMsg = new char[endMessageLength];
 			Format(endMsg, endMessageLength, "!!! [AeroControler (%s) - FATAL ERROR]: %s | STOP PLUGIN EXECUTION", pluginName, errorMsg);
 			SetFailState(endMsg);
 		}
