@@ -19,10 +19,10 @@
 /* CUSTOM INCLUDES */
 /* CUSTOM INCLUDES */
 
-new ExtensionEntryIndex = -1; //These variable will hold the menu-extension-entry-index.
-new bool:Ready = false; //If this is true, our WAR's are registered.
+int ExtensionEntryIndex = -1; //These variable will hold the menu-extension-entry-index.
+bool Ready = false; //If this is true, our WAR's are registered.
 
-public Plugin:myinfo = 
+public Plugin myinfo = 
 {
 	name = "WAR Template",
 	author = PLUGIN_AUTHOR,
@@ -31,7 +31,7 @@ public Plugin:myinfo =
 	url = ""
 };
 
-public OnPluginStart()
+public void OnPluginStart()
 {
 	DetectGameMod(); //detect, which gamemod is running (g_Game == Game_Css || Game_Csgo)
 	ac_getCoreComTag(Tag, sizeof(Tag)); //get our chat tag
@@ -39,27 +39,27 @@ public OnPluginStart()
 	RegisterWars();
 }
 
-public ac_OnCoreComTagChanged(const String:tag[]) { Format(Tag, sizeof(Tag), "%s", tag); } //when the tag change, we want to have the new one
+public ac_OnCoreComTagChanged(const char[] tag) { Format(Tag, sizeof(Tag), "%s", tag); } //when the tag change, we want to have the new one
 
-public OnPluginEnd()
+public void OnPluginEnd()
 {
 	if (LibraryExists("ac_core")) //alibi check
 	{ ac_unregisterPluginExtension(ExtensionEntryIndex); } //unregister our plugin from the about menu
 }
 
-public OnLibraryAdded(const String:name[])
+public void OnLibraryAdded(const char[] name)
 {
 	if (StrEqual(name, "ac_war_sys"))
 	{ RegisterWars(); }
 }
 
-public OnLibraryRemoved(const String:name[])
+public void OnLibraryRemoved(const char[] name)
 {
 	if (StrEqual(name, "ac_war_sys"))
 	{ Ready = false; }
 }
 
-stock RegisterWars()
+stock void RegisterWars()
 {
 	if (!Ready) //skip when we already registered
 	{
