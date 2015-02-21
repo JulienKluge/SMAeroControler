@@ -46,11 +46,11 @@ int WarCount = 0;
 bool War_Registered[MAX_WARS];
 char War_Name[MAX_WARS][MAX_WAR_NAME];
 Handle War_Plugin[MAX_WARS];
-new WarStart:War_StartFunc[MAX_WARS];
-new WarEnd:War_EndFunc[MAX_WARS];
+WarStart War_StartFunc[MAX_WARS];
+WarEnd War_EndFunc[MAX_WARS];
 bool War_HasFreezeTime[MAX_WARS];
-new WarFreezeTimeStart:War_FT_Start[MAX_WARS];
-new WarFreezeTimeEnd:War_FT_End[MAX_WARS];
+WarFreezeTimeStart War_FT_Start[MAX_WARS];
+WarFreezeTimeEnd War_FT_End[MAX_WARS];
 
 bool WarOnline = false;
 int WarIndex = 0;

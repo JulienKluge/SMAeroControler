@@ -3,7 +3,7 @@
 #endif
 #define _AC_WAR_SYS_Included_
 
-public SharedPlugin:__pl_ac_war_sys =
+public SharedPlugin __pl_ac_war_sys =
 {
 	name = "ac_war_sys",
 	file = "AeroControler_WARSytem.smx",
@@ -28,23 +28,23 @@ public __pl_ac_war_sys_SetNTVOptional()
 ** [@param maxtime			How much is the war allowed to run maximum. (-1 on endless time)]
 ** @noreturn
 */
-funcenum WarStart
+typeset WarStart
 {
-	public(), //you perhaps dont need any informations. If you declared a single function for every war and you wont worry about your war gets forced to be stopped.
-	public(_:index),
-	public(_:index, _:maxrounds, _:maxtime)
-}
+	function void (); //you perhaps dont need any informations. If you declared a single function for every war and you wont worry about your war gets forced to be stopped.
+	function void (int index);
+	function void (int index, int maxrounds, int maxtime);
+};
 
 /*
 ** Called when a war is forced to the end.
 ** [@param index				Index of the ended war.]
 ** @noreturn
 */
-funcenum WarEnd
+typeset WarEnd
 {
-	public(), //again, if you delcared a single function for every war, this is the end function for each war
-	public(_:index)
-}
+	function void (); //again, if you delcared a single function for every war, this is the end function for each war
+	function void (int index);
+};
 
 /*
 ** Called when a war freeze time is started.
@@ -52,14 +52,14 @@ funcenum WarEnd
 ** @noreturn
 **
 */
-functag public WarFreezeTimeStart(_:time);
+typedef WarFreezeTimeStart = function void (int time);
 
 /*
 ** Called when a war freeze time is ended.
 ** @noreturn
 **
 */
-functag public WarFreezeTimeEnd();
+typedef WarFreezeTimeEnd = function void ();
 
 /*
 ** Register a war into the war controler.
@@ -71,12 +71,12 @@ functag public WarFreezeTimeEnd();
 ** @param freezeEndFunction		Function to call when a freezetime ends.
 ** @return							Index of the war (-1 if no free place was available)
 */
-native int ac_war_RegWar(WarStart:startFunction
+native int ac_war_RegWar(WarStart startFunction
 						, WarEnd:endFunction
 						, const char[] name
 						, bool HasFreezeTime = false
-						, WarFreezeTimeStart:freezeStartFunction = INVALID_FUNCTION
-						, WarFreezeTimeEnd:freezeEndFunction = INVALID_FUNCTION);
+						, WarFreezeTimeStart freezeStartFunction = INVALID_FUNCTION
+						, WarFreezeTimeEnd freezeEndFunction = INVALID_FUNCTION);
 
 /*
 ** Unregister a war from the controler.

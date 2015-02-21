@@ -22,21 +22,21 @@ stock void AC_InterfaceControlRegister()
 	coreStateForward = CreateGlobalForward("ac_OnCoreStateChanged", ET_Ignore, Param_Cell);
 	cmdMenuBuildForward = CreateForward(ET_Hook, Param_Cell, Param_Cell);
 	
-	CreateNative("ac_setCoreOffline", NativeCall:AC_Native_SetCoreOffline);
-	CreateNative("ac_setCoreOnline", NativeCall:AC_Native_SetCoreOnline);
-	CreateNative("ac_getCoreComTag", NativeCall:AC_Native_GetCoreComTag);
-	CreateNative("ac_parseTransFile", NativeCall:AC_Native_ParseTransFile);
-	CreateNative("ac_setClientRefuseVars", NativeCall:AC_Native_SetClientRefuseVars);
-	CreateNative("ac_getClientRefuseVars", NativeCall:AC_Native_GetClientRefuseVars);
-	CreateNative("ac_setClientCapitulateVars", NativeCall:AC_Native_SetClientCapitulateVars);
-	CreateNative("ac_getClientCapitulateVars", NativeCall:AC_Native_GetClientCapitulateVars);
-	CreateNative("ac_setClientDiceVars", NativeCall:AC_Native_SetClientDiceVars);
-	CreateNative("ac_getClientDiceVars", NativeCall:AC_Native_GetClientDiceVars);
-	CreateNative("ac_isClientRebell", NativeCall:AC_Native_IsClientRebell);
-	CreateNative("ac_registerPluginExtension", NativeCall:AC_Native_RegisterPluginExtension);
-	CreateNative("ac_unregisterPluginExtension", NativeCall:AC_Native_UnRegisterPluginExtension);
-	CreateNative("ac_performDiceOnClient", NativeCall:AC_Native_PerformDiceOnClient);
-	CreateNative("ac_registerCMDMenuBuildForward", NativeCall:AC_Native_RegisterCMDMenuBuildForward);
+	CreateNative("ac_setCoreOffline", view_as<NativeCall>AC_Native_SetCoreOffline);
+	CreateNative("ac_setCoreOnline", view_as<NativeCall>AC_Native_SetCoreOnline);
+	CreateNative("ac_getCoreComTag", view_as<NativeCall>AC_Native_GetCoreComTag);
+	CreateNative("ac_parseTransFile", view_as<NativeCall>AC_Native_ParseTransFile);
+	CreateNative("ac_setClientRefuseVars", view_as<NativeCall>AC_Native_SetClientRefuseVars);
+	CreateNative("ac_getClientRefuseVars", view_as<NativeCall>AC_Native_GetClientRefuseVars);
+	CreateNative("ac_setClientCapitulateVars", view_as<NativeCall>AC_Native_SetClientCapitulateVars);
+	CreateNative("ac_getClientCapitulateVars", view_as<NativeCall>AC_Native_GetClientCapitulateVars);
+	CreateNative("ac_setClientDiceVars", view_as<NativeCall>AC_Native_SetClientDiceVars);
+	CreateNative("ac_getClientDiceVars", view_as<NativeCall>AC_Native_GetClientDiceVars);
+	CreateNative("ac_isClientRebell", view_as<NativeCall>AC_Native_IsClientRebell);
+	CreateNative("ac_registerPluginExtension", view_as<NativeCall>AC_Native_RegisterPluginExtension);
+	CreateNative("ac_unregisterPluginExtension", view_as<NativeCall>AC_Native_UnRegisterPluginExtension);
+	CreateNative("ac_performDiceOnClient", view_as<NativeCall>AC_Native_PerformDiceOnClient);
+	CreateNative("ac_registerCMDMenuBuildForward", view_as<NativeCall>AC_Native_RegisterCMDMenuBuildForward);
 	
 	RegPluginLibrary("ac_core");
 }

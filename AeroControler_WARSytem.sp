@@ -27,12 +27,19 @@
 #include <sdkhooks>
 
 #include "AeroControler\\aerocontroler_core_interface.inc" //interface to the core
-funcenum WarStart
-{ public(), public(_:index), public(_:index, _:maxrounds, _:maxtime) }
-funcenum WarEnd
-{ public(), public(_:index) }
-functag public WarFreezeTimeStart(_:time);
-functag public WarFreezeTimeEnd();
+typeset WarStart
+{
+	function void ();
+	function void (int index);
+	function void (int index, int maxrounds, int maxtime);
+};
+typeset WarEnd
+{
+	function void ();
+	function void (int index);
+};
+typedef WarFreezeTimeStart = function void (int time);
+typedef WarFreezeTimeEnd = function void ();
 
 #include "AeroControler\\SharedPluginBase\\AC_SharedPluginBase.inc"
 
@@ -60,7 +67,7 @@ public void OnPluginStart()
 	
 	ac_getCoreComTag(Tag, sizeof(Tag));
 	ExtensionEntryIndex = ac_registerPluginExtension("Aero WAR Base Control System", "_AeonOne_", PLUGIN_VERSION);
-	ac_registerCMDMenuBuildForward(buildCMDMenuForward:AddWarCmdToCmdMenu);
+	ac_registerCMDMenuBuildForward(view_as<buildCMDMenuForward>AddWarCmdToCmdMenu);
 	
 	if (Alw_warVoteCmd) { RegMultipleConsoleCmd(Str_WarVoteCmd, Cmd_VoteWar, "Vote for a war"); }
 	
@@ -82,9 +89,9 @@ public void OnPluginEnd()
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
 {
-	CreateNative("ac_war_RegWar", NativeCall:AC_Native_RegWar);
-	CreateNative("ac_war_UnRegWar", NativeCall:AC_Native_UnRegWar);
-	CreateNative("ac_war_EndWar", NativeCall:AC_Native_EndWar);
+	CreateNative("ac_war_RegWar", view_as<NativeCall>AC_Native_RegWar);
+	CreateNative("ac_war_UnRegWar", view_as<NativeCall>AC_Native_UnRegWar);
+	CreateNative("ac_war_EndWar", view_as<NativeCall>AC_Native_EndWar);
 	RegPluginLibrary("ac_war_sys");
 	return APLRes_Success;
 }

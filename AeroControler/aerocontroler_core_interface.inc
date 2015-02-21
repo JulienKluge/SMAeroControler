@@ -3,7 +3,7 @@
 #endif
 #define _AC_CORE_Included_
 
-public SharedPlugin:__pl_ac_core =
+public SharedPlugin __pl_ac_core =
 {
 	name = "ac_core",
 	file = "AeroControler.smx",
@@ -39,7 +39,7 @@ Prototype for a function, called when the cmd menu is build for a client
 @param menu		The menu handle (if you add a item, then make the info string empty or pass a commandstring to execute on click)
 @noreturn
 */
-functag public buildCMDMenuForward(_:client, Handle:menu);
+typedef buildCMDMenuForward = function void (int client, Handle menu)
 
 /*
 Set the core functions offline so that the core doesn't control the game-flow.
@@ -171,7 +171,7 @@ Adds a function to the private build-cmd-menu-forward
 @param function			The function which should be called when the forward raises
 @noreturn
 */
-native void ac_registerCMDMenuBuildForward(buildCMDMenuForward:func);
+native void ac_registerCMDMenuBuildForward(buildCMDMenuForward func);
 
 /*
 Got called when the tag gets changed.

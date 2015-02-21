@@ -51,7 +51,7 @@ public Action timer_EndFreezeTime(Handle timer)
 				}
 			}
 		}
-		if (War_FT_End[WarIndex] != WarFreezeTimeEnd:INVALID_FUNCTION)
+		if (War_FT_End[WarIndex] != view_as<WarFreezeTimeEnd>INVALID_FUNCTION)
 		{
 			Call_StartFunction(War_Plugin[WarIndex], War_FT_End[WarIndex]);
 			Call_Finish();

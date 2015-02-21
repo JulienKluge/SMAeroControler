@@ -64,7 +64,7 @@ public void OnPluginStart()
 	
 	ac_getCoreComTag(Tag, sizeof(Tag));
 	ExtensionEntryIndex = ac_registerPluginExtension("Aero Store System", "_AeonOne_", PLUGIN_VERSION);
-	ac_registerCMDMenuBuildForward(buildCMDMenuForward:AddStoreCmdsToCmdMenu);
+	ac_registerCMDMenuBuildForward(view_as<buildCMDMenuForward>AddStoreCmdsToCmdMenu);
 	
 	HookEvent("round_end", Event_RoundEnd, EventHookMode_Post);
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
