@@ -16,7 +16,7 @@
 */
 //#define DEBUG
 
-#define PLUGIN_VERSION_DEF "1.10λ" //RTM
+#define PLUGIN_VERSION_DEF "1.11λ" //RTM
 #define PLUGIN_AUTHOR "Λeon"
 
 /*
@@ -44,6 +44,7 @@
 ** |15th Februrary 2014	|1.10λ			|Storesystem+Skillforcesystem ready								|4th februrary 2014 - Storesystem ready
 ** |22th Februrary 2014	|1.10λ			|First Release													|~10500 loc
 ** |26th Februrary 2014	|1.10.000129λ	|bug & error fixed version - added some misc things			|Buildnumber: 000129
+** |21th Februrary 2015	|1.11			|Transitional Syntax is fully supported by all scripts		|
 ** _________________________________________________________________________Done Tasks_________________________________________________________________________
 ** 
 ** 
@@ -51,7 +52,7 @@
 ** 
 ** ________________________________________________________________________Planed Tasks________________________________________________________________________
 ** |version	|description
-** |1.11		|seperate modules (at least mute system)
+** |1.12		|seperate modules (at least mute system)
 ** |1.15		|game cmds
 ** |1.20		|new WAR's
 ** |1.30		|CT Ban
