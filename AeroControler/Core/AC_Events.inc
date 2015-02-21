@@ -13,9 +13,9 @@
 **
 */
 
-public Action:Event_Pre_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_Pre_PlayerSpawn(Handle event, char[] name, bool dontBroadcast)
 {
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if (IsClientValid(client))
 	{
 		/* Test in debug-version: multiple dicing, refusing, capitulating */
@@ -24,7 +24,7 @@ public Action:Event_Pre_PlayerSpawn(Handle:event, const String:name[], bool:dont
 		c_cBase[client] = 3;
 		c_dicesBase[client] = 3;
 		#endif
-		new teamIndex = GetClientTeam(client);
+		int teamIndex = GetClientTeam(client);
 		if (teamIndex > CS_TEAM_SPECTATOR)
 		{
 			RespawnClientVars(client);
@@ -42,10 +42,10 @@ public Action:Event_Pre_PlayerSpawn(Handle:event, const String:name[], bool:dont
 			{
 				if (tSpawnWeaponCount > 0)
 				{
-					for (new i = 0; i < tSpawnWeaponCount; i++)
+					for (int i = 0; i < tSpawnWeaponCount; i++)
 					{ GivePlayerItem(client, tSpawnWeapons[i]); }
 				}
-				new Handle:pack;
+				Handle pack;
 				c_DiceMenu[client] = CreateDataTimer(1.5, timer_PrepareSpawn, pack, TIMER_FLAG_NO_MAPCHANGE);
 				WritePackCell(pack, client);
 				WritePackCell(pack, GetClientUserId(client));
@@ -54,7 +54,7 @@ public Action:Event_Pre_PlayerSpawn(Handle:event, const String:name[], bool:dont
 			{
 				if (ctSpawnWeaponCount > 0)
 				{
-					for (new i = 0; i < ctSpawnWeaponCount; i++)
+					for (int i = 0; i < ctSpawnWeaponCount; i++)
 					{ GivePlayerItem(client, ctSpawnWeapons[i]); }
 				}
 			}
@@ -67,23 +67,23 @@ public Action:Event_Pre_PlayerSpawn(Handle:event, const String:name[], bool:dont
 	return Plugin_Continue;
 }
 
-public Action:Event_Post_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_Post_PlayerSpawn(Handle event, char[] name, bool dontBroadcast)
 {
 	UpdatePlayerCount();
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_PlayerDeath(Handle event, char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	Diced_PlayerDeath_Detour(client);
 	MuteSys_ClientDeath_Detour(client);
 	UpdatePlayerCount();
 	return Plugin_Continue;
 }
 
-public Action:Event_RoundStart(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_RoundStart(Handle event, char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
 	RoundStartedState = NoBlockState;
@@ -93,10 +93,10 @@ public Action:Event_RoundStart(Handle:event, const String:name[], bool:dontBroad
 	return Plugin_Continue;
 }
 
-public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_RoundEnd(Handle event, char[] name, bool dontBroadcast)
 {
-	new Handle:subhandle;
-	for (new i = 0; i <= MaxClients; i++)
+	Handle subhandle;
+	for (int i = 0; i <= MaxClients; i++)
 	{
 		if (c_topCDisableTimer[i] != INVALID_HANDLE)
 		{
@@ -124,21 +124,21 @@ public Action:Event_RoundEnd(Handle:event, const String:name[], bool:dontBroadca
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerJump(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_PlayerJump(Handle event, char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	Diced_PlayerJump_Detour(client);
 	return Plugin_Continue;
 }
 
-public Action:Event_WeaponFire(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_WeaponFire(Handle event, char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if (IsClientValid(client)) //does always a client fire a weapon?
 	{
-		decl String:weaponString[32];
+		char weaponString[32];
 		GetEventString(event, "weapon", weaponString, sizeof(weaponString));
 		Diced_WeaponFire_Detour(client, weaponString);
 		if (DropAll_Active)
@@ -146,7 +146,7 @@ public Action:Event_WeaponFire(Handle:event, const String:name[], bool:dontBroad
 			if (StrEqual(weaponString, "flashbang") || StrEqual(weaponString, "smokegrenade") || StrEqual(weaponString, "hegrenade"))
 			{
 				c_IsDropDenied[client] = true;
-				new Handle:pack;
+				Handle pack;
 				c_dropHandler[client] = CreateDataTimer(1.0, timer_ReAllowDrop, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 				WritePackCell(pack, client);
 				WritePackCell(pack, GetClientUserId(client));
@@ -156,11 +156,11 @@ public Action:Event_WeaponFire(Handle:event, const String:name[], bool:dontBroad
 	return Plugin_Continue;
 }
 
-public Action:Event_PlayerHurt(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_PlayerHurt(Handle event, char[] name, bool dontBroadcast)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
-	new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
 	if (IsClientValid(client) && IsClientValid(attacker))
 	{
 		if (!c_rebell[attacker])
@@ -182,7 +182,7 @@ public Action:Event_PlayerHurt(Handle:event, const String:name[], bool:dontBroad
 	return Plugin_Continue;
 }
 
-public Action:Event_ActivatePlayer(Handle:event, const String:name[], bool:dontBroadcast)
+public Action Event_ActivatePlayer(Handle event, char[] name, bool dontBroadcast)
 {
 	UpdatePlayerCount();
 	return Plugin_Continue;

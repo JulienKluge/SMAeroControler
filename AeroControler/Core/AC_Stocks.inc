@@ -13,7 +13,7 @@
 **
 */
 
-stock RespawnClientVars(client) //Used to set the variables of a client new. Used in player spawn. 
+stock void RespawnClientVars(int client) //Used to set the variables of a client new. Used in player spawn. 
 {
 	c_r[client] = c_rBase[client] + c_rSubBase[client];
 	c_rBaseMax[client] = c_r[client];
@@ -33,17 +33,17 @@ stock RespawnClientVars(client) //Used to set the variables of a client new. Use
 	SetClientDefaultValues(client, true, -1, 1.0, 1.0);
 }
 
-stock ResetClientVars(client) //Used to set the variables of a client to default. Used in player connect.
+stock void ResetClientVars(int client) //Used to set the variables of a client to default. Used in player connect.
 {
 	c_r[client] = c_c[client] = c_dices[client] = c_rBase[client] = c_cBase[client] = c_dicesBase[client] = 1;
 	c_rSubBase[client] = c_cSubBase[client] = c_dicesSubBase[client] = c_DiceState[client] = 0;
 	c_topC[client] = c_rebell[client] = c_cReal[client] = c_StateNotifyOverride[client] = c_IsDropDenied[client] = false;
 }
 
-stock UpdateClientColor(client, bool:KeepAlpha = true)
+stock void UpdateClientColor(int client, bool KeepAlpha = true)
 {
 	if(!InWork) { return; }
-	new r = 255; new g = 255; new b = 255; new a = 255;
+	int r = 255; int g = 255; int b = 255; int a = 255;
 	if (KeepAlpha)
 	{ a = GetClientAlphaRenderColor(client); }
 	if (c_cReal[client])
@@ -61,9 +61,9 @@ stock UpdateClientColor(client, bool:KeepAlpha = true)
 	SetEntityRenderColor(client, r, g, b, a);
 }
 
-stock SetupExplosion(Float:pos[3], damage, radius = 0, guiltyClient = -1, guiltyTeamOverride = -1)
+stock void SetupExplosion(float pos[3], int damage, int radius = 0, int guiltyClient = -1, int guiltyTeamOverride = -1)
 {
-	new ent = CreateEntityByName("env_explosion");
+	int ent = CreateEntityByName("env_explosion");
 	DispatchKeyValue(ent, "spawnflags", "1088"); //no sound, no dlights
 	DispatchSpawn(ent);
 	SetEntProp(ent, Prop_Data, "m_iMagnitude", damage);
@@ -83,9 +83,9 @@ stock SetupExplosion(Float:pos[3], damage, radius = 0, guiltyClient = -1, guilty
 	AcceptEntityInput(ent, "kill");
 }
 
-stock EmitRandomExplosionSound(Float:pos[3])
+stock void EmitRandomExplosionSound(float pos[3])
 {
-	new rand = GetRandomInt(0, 8);
+	int rand = GetRandomInt(0, 8);
 	switch (rand)
 	{
 		case 0: { EmitAmbientSound("ambient/explosions/explode_1.wav", pos);  }
@@ -100,7 +100,7 @@ stock EmitRandomExplosionSound(Float:pos[3])
 	}
 }
 
-stock DisplayDiceMenu(client)
+stock void DisplayDiceMenu(int client)
 {
 	if (GetClientMenu(client) == MenuSource_None) //make our menu recessive
 	{ DisplayMenu(diceMenu, client, 10); }
@@ -108,27 +108,27 @@ stock DisplayDiceMenu(client)
 	{
 		if (c_DiceMenu[client] != INVALID_HANDLE)
 		{
-			new Handle:subhandle = c_DiceMenu[client];
+			Handle subhandle = c_DiceMenu[client];
 			c_DiceMenu[client] = INVALID_HANDLE;
 			CloseHandle(subhandle);
 		}
-		new Handle:pack;
+		Handle pack;
 		c_DiceMenu[client] = CreateDataTimer(5.0, timer_CheckForDiceMenu, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE | TIMER_REPEAT);
 		WritePackCell(pack, client);
 		WritePackCell(pack, GetClientUserId(client));
 	}
 }
 
-stock GetClientAimingClient(client)
+stock int GetClientAimingClient(int client)
 {
-	new target = -1;
-	new Float:pos[3]; new Float:ang[3];
+	int target = -1;
+	float pos[3]; float ang[3];
 	GetClientEyePosition(client, pos);
 	GetClientEyeAngles(client, ang);
-	new Handle:tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
+	Handle tr = TR_TraceRayFilterEx(pos, ang, MASK_SOLID, RayType_Infinite, Filter_FilterOutData, client);
 	if (TR_DidHit(tr))
 	{
-		new ent = TR_GetEntityIndex(tr);
+		int ent = TR_GetEntityIndex(tr);
 		if (IsClientValid(ent))
 		{
 			target = ent;
@@ -138,15 +138,15 @@ stock GetClientAimingClient(client)
 	return target;
 }
 
-stock PrintStateString(client, teamIndex = -1)
+stock void PrintStateString(int client, int teamIndex = -1)
 {
 	if (teamIndex == -1) { teamIndex = GetClientTeam(client); }
 	SetGlobalTransTarget(client);
-	decl String:msg[255];
+	char msg[255];
 	Format(msg, sizeof(msg), "%t\n%t\n", "statestring_line_1", tAliveCount, "statestring_line_2", ctAliveCount);
 	if (teamIndex == CS_TEAM_CT)
 	{
-		new target = GetClientAimingClient(client);
+		int target = GetClientAimingClient(client);
 		if (IsClientValid(target))
 		{
 			if (GetClientTeam(target) == CS_TEAM_T)
@@ -154,8 +154,8 @@ stock PrintStateString(client, teamIndex = -1)
 				Format(msg, sizeof(msg), "%s\n%N", msg, target);
 				if (c_r[target] < c_rBaseMax[target])
 				{
-					new clientRefuseTimeStamp = RoundFloat(c_rTimeStamp[target]);
-					new timeAgo = RoundFloat(GetGameTime()) - clientRefuseTimeStamp;
+					int clientRefuseTimeStamp = RoundFloat(c_rTimeStamp[target]);
+					int timeAgo = RoundFloat(GetGameTime()) - clientRefuseTimeStamp;
 					if (timeAgo >= 0 && clientRefuseTimeStamp > 0)
 					{ Format(msg, sizeof(msg), "%s\n%t", msg, "statestring_line_refusings_time", "Yes", c_r[target], timeAgo); }
 					else
@@ -192,12 +192,12 @@ stock PrintStateString(client, teamIndex = -1)
 	AC_PrintKeyText(client, msg);
 }
 
-stock UpdatePlayerCount()
+stock void UpdatePlayerCount()
 {
 	tCount = 0; tAliveCount = 0;
 	ctCount = 0; ctAliveCount = 0;
-	new teamIndex;
-	for (new i = 1; i <= MaxClients; i++)
+	int teamIndex;
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
@@ -227,16 +227,16 @@ stock UpdatePlayerCount()
 	}
 }
 
-stock Core_GameFrame_Detour()
+stock void Core_GameFrame_Detour()
 {
-	for (new i = 1; i <= MaxClients; i++)
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
 			c_StateNotifyOverride[i] = false;
 			if (IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_CT)
 			{
-				new buttons = GetClientButtons(i);
+				int buttons = GetClientButtons(i);
 				if (buttons & IN_USE)
 				{
 					c_StateNotifyOverride[i] = true;
@@ -246,7 +246,7 @@ stock Core_GameFrame_Detour()
 	}
 }
 
-stock CreateStaticMenus()
+stock void CreateStaticMenus()
 {
 	diceMenu = CreateMenu(menuHandler_DiceMenu, MenuAction_Display | MenuAction_DisplayItem | MenuAction_Select);
 	SetMenuExitButton(diceMenu, true);
@@ -274,12 +274,12 @@ stock CreateStaticMenus()
 	AddMenuItem(aboutBackMenu, "exts", "", ITEMDRAW_DEFAULT);
 }
 
-stock CreateAndDisplayCmdMenu(client, time = 45)
+stock void CreateAndDisplayCmdMenu(int client, int time = 45)
 {
-	new Handle:hndl = CreateMenu(menuHandler_Cmds, MenuAction_End);
-	new teamIndex = GetClientTeam(client);
-	decl String:str[64];
-	decl String:realCmd[32];
+	Handle hndl = CreateMenu(menuHandler_Cmds, MenuAction_End);
+	int teamIndex = GetClientTeam(client);
+	char str[64];
+	char realCmd[32];
 	if (Cmd_Alw_About)
 	{
 		Format(str, sizeof(str), "%s - %T", Cmd_PStr_About, "cmds_about", client);
@@ -347,7 +347,7 @@ stock CreateAndDisplayCmdMenu(client, time = 45)
 	DisplayMenu(hndl, client, time);
 }
 
-stock InitMapStart()
+stock void InitMapStart()
 {
 	PrecacheSound("ambient/explosions/explode_1.wav", true);
 	PrecacheSound("ambient/explosions/explode_2.wav", true);
@@ -379,21 +379,21 @@ stock InitMapStart()
 	LoadRuleMenu();
 }
 
-stock GetClientAlphaRenderColor(client)
+stock int GetClientAlphaRenderColor(int client)
 {
 	static bool:gotconfig = false;
 	static String:prop[32];
 	if (!gotconfig)
 	{
-		new Handle:gc = LoadGameConfigFile("core.games");
-		new bool:exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
+		Handle gc = LoadGameConfigFile("core.games");
+		bool exists = GameConfGetKeyValue(gc, "m_clrRender", prop, sizeof(prop));
 		CloseHandle(gc);
 		if (!exists)
 		{ strcopy(prop, sizeof(prop), "m_clrRender"); }
 		gotconfig = true;
 	}
-	new offset = GetEntSendPropOffs(client, prop);
-	new a = 255;
+	int offset = GetEntSendPropOffs(client, prop);
+	int a = 255;
 	if (offset > 0)
 	{
 		a = GetEntData(client, offset + 3, 1);
@@ -401,23 +401,23 @@ stock GetClientAlphaRenderColor(client)
 	return a;
 }
 
-stock FilterCountry_Filter(client)
+stock void FilterCountry_Filter(int client)
 {
 	if (IsFakeClient(client) || IsClientReplay(client) || IsClientSourceTV(client))
 	{ return; } //allow bots, etc.
-	new AdminId:aId = GetUserAdmin(client);
+	AdminId aId = GetUserAdmin(client);
 	if (aId != INVALID_ADMIN_ID)
 	{ return; } //allow admins
-	new bool:Passed_by_ip = false;
-	new bool:Passed_by_lang = false;
-	decl String:code[4];
+	bool Passed_by_ip = false;
+	bool Passed_by_lang = false;
+	char code[4];
 	if (FC_GeoIPCodesCount > 0)
 	{
-		decl String:ip[16];
+		char ip[16];
 		GetClientIP(client, ip, sizeof(ip), true);
 		if (GeoipCode2(ip, code))
 		{
-			for (new i = 0; i < FC_GeoIPCodesCount; i++)
+			for (int i = 0; i < FC_GeoIPCodesCount; i++)
 			{
 				if (StrEqual(code, FC_GeoIPCodes[i], FC_FilterCaseSensitive))
 				{
@@ -434,9 +434,9 @@ stock FilterCountry_Filter(client)
 	}
 	if (FC_LanguageInfosCount > 0)
 	{
-		new languageCode = GetClientLanguage(client);
+		int languageCode = GetClientLanguage(client);
 		GetLanguageInfo(languageCode, code, sizeof(code));
-		for (new i = 0; i < FC_LanguageInfosCount; i++)
+		for (int i = 0; i < FC_LanguageInfosCount; i++)
 		{
 			if (StrEqual(code, FC_LanguageInfos[i], FC_FilterCaseSensitive))
 			{
@@ -445,7 +445,7 @@ stock FilterCountry_Filter(client)
 			}
 		}
 	}
-	new bool:Passed;
+	bool Passed;
 	if (FC_LanguageInfosCount > 0 && FC_GeoIPCodesCount > 0)
 	{
 		if (FC_FilterMatchExact)
@@ -461,7 +461,7 @@ stock FilterCountry_Filter(client)
 	{ KickClient(client, FC_KickMessage); }
 }
 
-stock SetCoreState(bool:control)
+stock void SetCoreState(bool control)
 {
 	if (control == InWork) { return; }
 	InWork = control;
@@ -470,7 +470,7 @@ stock SetCoreState(bool:control)
 	Call_Finish();
 }
 
-stock Float:Math_Max(Float:x1, Float:x2) //well i don't know, it should be a std stock
+stock float Math_Max(float x1, float x2) //well i don't know, it should be a std stock
 {
 	if (x1 > x2)
 	{ return x1; }

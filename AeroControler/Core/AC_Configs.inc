@@ -13,9 +13,9 @@
 **
 */
 
-stock InitCVarSettings()
+stock void InitCVarSettings()
 {
-	new Handle:cvar = INVALID_HANDLE; //subhandle
+	Handle cvar = INVALID_HANDLE; //subhandle
 	cvar = CreateConVar("ac_0_IntroducePlugin", "1.0", "Should the Plugin be introduced 90 seconds after every mapstart? You can set it to 0.0 to disable it, but please remember, I have invested much time and effort into this work...but I wont blame you if you set it to 0!", FCVAR_PLUGIN, true, 0.0, true, 1.0); //Wordwrap ftw
 	if (cvar != INVALID_HANDLE) { HookConVarChange(cvar, cvarchanged_IntroducePlugin); }
 	cvar = CreateConVar("ac_0_TagColor", "1188FF", "Defines the TagColor used ingame", FCVAR_PLUGIN, false, 0.0, false, 0.0);
@@ -55,74 +55,74 @@ stock InitCVarSettings()
 }
 
 /* Format/Intendation Change for the CVar_Changed publics to save lines... */
-public cvarchanged_IntroducePlugin(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_IntroducePlugin(Handle cvar, char[] oldValue, char[] newValue) {
 	IntroduceMe = GetConVarBool(cvar);
 }
-public cvarchanged_TagColor(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_TagColor(Handle cvar, char[] oldValue, char[] newValue) {
 	Format(serverChatColor, sizeof(serverChatColor), "%s", newValue);
 	UpdateTag();
 }
-public cvarchanged_TagString(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_TagString(Handle cvar, char[] oldValue, char[] newValue) {
 	Format(serverTag, sizeof(serverTag), "%s", newValue);
 	UpdateTag();
 }
-public cvarchanged_NoblockState(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_NoblockState(Handle cvar, char[] oldValue, char[] newValue) {
 	NoBlockState = GetConVarInt(cvar);
 }
-public cvarchanged_CTSpawnWeapons(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_CTSpawnWeapons(Handle cvar, char[] oldValue, char[] newValue) {
 	ctSpawnWeaponCount = ExplodeString(newValue, ";", ctSpawnWeapons, 10, 32); //1 line ftw xD
 }
-public cvarchanged_TSpawnWeapons(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_TSpawnWeapons(Handle cvar, char[] oldValue, char[] newValue) {
 	tSpawnWeaponCount = ExplodeString(newValue, ";", tSpawnWeapons, 10, 32); //whuuuhuuuu xD
 }
-public cvarchanged_GameDescription(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_GameDescription(Handle cvar, char[] oldValue, char[] newValue) {
 	//GetConVarString(cvar, gameDescription, sizeof(gameDescription)); Well I don't know which line i should preferre...
 	Format(gameDescription, sizeof(gameDescription), "%s", newValue); 
 }
-public cvarchanged_AnnounceDice(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_AnnounceDice(Handle cvar, char[] oldValue, char[] newValue) {
 	announce_dice = GetConVarBool(cvar);
 }
-public cvarchanged_AnnounceCmds(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_AnnounceCmds(Handle cvar, char[] oldValue, char[] newValue) {
 	announce_cmds = GetConVarBool(cvar);
 }
-public cvarchanged_AnnounceRules(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_AnnounceRules(Handle cvar, char[] oldValue, char[] newValue) {
 	announce_rules = GetConVarBool(cvar);
 }
-public cvarchanged_AnnounceDelay(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_AnnounceDelay(Handle cvar, char[] oldValue, char[] newValue) {
 	announce_delay = GetConVarFloat(cvar);
 	if (announce_Timer != INVALID_HANDLE)
 	{ CloseHandle(announce_Timer); }
 	announce_Timer = CreateTimer(announce_delay, timer_Announce, INVALID_HANDLE, TIMER_REPEAT);
 }
-public cvarchanged_fc_CountryFilter(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_fc_CountryFilter(Handle cvar, char[] oldValue, char[] newValue) {
 	FC_FilterCountries = GetConVarBool(cvar);
 }
-public cvarchanged_fc_CaseSensitive(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_fc_CaseSensitive(Handle cvar, char[] oldValue, char[] newValue) {
 	FC_FilterCaseSensitive = GetConVarBool(cvar);
 }
-public cvarchanged_fc_KickMsg(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_fc_KickMsg(Handle cvar, char[] oldValue, char[] newValue) {
 	Format(FC_KickMessage, sizeof(FC_KickMessage), "%s", newValue);
 }
-public cvarchanged_fc_Countries(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_fc_Countries(Handle cvar, char[] oldValue, char[] newValue) {
 	if (strlen(newValue) > 1)
 	{ FC_GeoIPCodesCount = ExplodeString(newValue, ";", FC_GeoIPCodes, 32, 4); }
 	else
 	{ FC_GeoIPCodesCount = 0; }
 }
-public cvarchanged_fc_Languages(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_fc_Languages(Handle cvar, char[] oldValue, char[] newValue) {
 	if (strlen(newValue) > 1)
 	{ FC_LanguageInfosCount = ExplodeString(newValue, ";", FC_LanguageInfos, 32, 4); }
 	else
 	{ FC_LanguageInfosCount = 0; }
 }
-public cvarchanged_fc_ExactMatch(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_fc_ExactMatch(Handle cvar, char[] oldValue, char[] newValue) {
 	FC_FilterMatchExact = GetConVarBool(cvar);
 }
-public cvarchanged_fc_AllowWorldIPs(Handle:cvar, const String:oldValue[], const String:newValue[]) {
+public void cvarchanged_fc_AllowWorldIPs(Handle cvar, char[] oldValue, char[] newValue) {
 	FC_AllowWorldIps = GetConVarBool(cvar);
 }
 
-stock UpdateTag()
+stock void UpdateTag()
 {
 	Format(Tag, sizeof(Tag), "\x07%s%s\x01", serverChatColor, serverTag);
 	if (tagChangedForward != INVALID_HANDLE)
@@ -133,13 +133,13 @@ stock UpdateTag()
 	}
 }
 
-stock LoadStaticPluginConfig()
+stock void LoadStaticPluginConfig()
 {
-	decl String:FilePath[PLATFORM_MAX_PATH];
+	char FilePath[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, FilePath, sizeof(FilePath), "/configs/AC_StaticConfig.ini");
 	if (FileExists(FilePath))
 	{
-		new Handle:kv = CreateKeyValues("StaticSettings");
+		Handle kv = CreateKeyValues("StaticSettings");
 		if (FileToKeyValues(kv, FilePath))
 		{
 			KvGetString(kv, "Server_Phrase_Color", serverChatColor, sizeof(serverChatColor), "1188FF");
@@ -205,22 +205,22 @@ stock LoadStaticPluginConfig()
 ** The config File is located in Path_SM//configs/AC_TranslationFiles.ini
 ** 
 */
-stock LoadTranslationsFiles()
+stock void LoadTranslationsFiles()
 {
 	LoadTranslations("common.phrases.txt"); //necessary
-	decl String:FilePath[PLATFORM_MAX_PATH];
+	char FilePath[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, FilePath, sizeof(FilePath), "/configs/AC_TranslationFiles.ini");
 	if (FileExists(FilePath))
 	{
-		new Handle:kv = CreateKeyValues("translationfiles");
+		Handle kv = CreateKeyValues("translationfiles");
 		if (FileToKeyValues(kv, FilePath))
 		{
 			KvGotoFirstSubKey(kv);
-			new bool:FileIsImportant = false;
-			new bool:FileIsLoadIntended = false;
-			new String:targetString[PLATFORM_MAX_PATH];
-			new String:templateString[PLATFORM_MAX_PATH];
-			new Handle:loadArray = CreateArray(PLATFORM_MAX_PATH);
+			bool FileIsImportant = false;
+			bool FileIsLoadIntended = false;
+			char targetString[PLATFORM_MAX_PATH];
+			char templateString[PLATFORM_MAX_PATH];
+			Handle loadArray = CreateArray(PLATFORM_MAX_PATH);
 			do
 			{
 				targetString = ""; templateString = ""; FileIsImportant = false; FileIsLoadIntended = false; //Prevents eventually bugs. Safety first.
@@ -228,9 +228,9 @@ stock LoadTranslationsFiles()
 				FileIsImportant = IntToBool(KvGetNum(kv, "Important", 0));
 				FileIsLoadIntended = IntToBool(KvGetNum(kv, "Loading", 0));
 				KvGetString(kv, "TranslatedFile", targetString, sizeof(targetString), "");
-				new String:targetFile[PLATFORM_MAX_PATH];
+				char targetFile[PLATFORM_MAX_PATH];
 				BuildPath(Path_SM, targetFile, sizeof(targetFile), "translations/%s", targetString);
-				new String:templateFile[PLATFORM_MAX_PATH];
+				char templateFile[PLATFORM_MAX_PATH];
 				BuildPath(Path_SM, templateFile, sizeof(templateFile), "translations/%s", templateString);
 				if (FileExists(targetFile))
 				{
@@ -257,12 +257,12 @@ stock LoadTranslationsFiles()
 				}
 			}
 			while (KvGotoNextKey(kv)); //the first time i think, i have an usability of do-while :D
-			new arrayCount = GetArraySize(loadArray);
+			int arrayCount = GetArraySize(loadArray);
 			if (arrayCount > 0)
 			{
-				for (new i = 0; i < arrayCount; i++)
+				for (int i = 0; i < arrayCount; i++)
 				{
-					decl String:loadFile[PLATFORM_MAX_PATH];
+					char loadFile[PLATFORM_MAX_PATH];
 					GetArrayString(loadArray, i, loadFile, sizeof(loadFile));
 					LoadTranslations(loadFile); //That is the function, why we are here :D
 				}
@@ -280,11 +280,11 @@ stock LoadTranslationsFiles()
 	}
 }
 
-stock bool:ParseTransFile(const String:source[], const String:dest[])
+stock bool ParseTransFile(char[] source, char[] dest)
 {
-	new bufferSize = FileSize(source) + 8;
-	new String:buff[bufferSize]; //use 'new' because when Readfile will fail, we want to check that and not initialized data can lead to a false negative
-	new Handle:file = OpenFile(source, "r");
+	int bufferSize = FileSize(source) + 8;
+	char[] buff = new char[bufferSize];
+	Handle file = OpenFile(source, "r");
 	if (file == INVALID_HANDLE) { return false; }
 	ReadFileString(file, buff, bufferSize);
 	CloseHandle(file);
@@ -292,20 +292,20 @@ stock bool:ParseTransFile(const String:source[], const String:dest[])
 	ReplaceString(buff, bufferSize, "{CLID}", serverStaticChatColor, false);
 	file = OpenFile(dest, "w+");
 	if (file == INVALID_HANDLE) { return false; }
-	new bool:retResult = WriteFileString(file, buff, false);
+	bool retResult = WriteFileString(file, buff, false);
 	CloseHandle(file);
 	return retResult;
 }
 
-stock LoadRuleMenu()
+stock void LoadRuleMenu()
 {
 	if (ruleMenu != INVALID_HANDLE) { CloseHandle(ruleMenu); }
 	if (ruleSubMenus != INVALID_HANDLE)
 	{
-		new count = GetArraySize(ruleSubMenus);
-		for (new i = 0; i < count; i++)
+		int count = GetArraySize(ruleSubMenus);
+		for (int i = 0; i < count; i++)
 		{
-			CloseHandle(Handle:GetArrayCell(ruleSubMenus, i));
+			CloseHandle(view_as<Handle>GetArrayCell(ruleSubMenus, i));
 		}
 		ClearArray(ruleSubMenus);
 		CloseHandle(ruleSubMenus);
@@ -317,14 +317,14 @@ stock LoadRuleMenu()
 	}
 	ruleMenu = CreateMenu(menuHandler_RuleMenu, MenuAction_Select);
 	SetMenuExitButton(ruleMenu, true);
-	decl String:file[PLATFORM_MAX_PATH];
+	char file[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, file, sizeof(file), "configs/AC_RuleMenu.ini");
-	new Handle:kv = CreateKeyValues("RuleMenu");
+	Handle kv = CreateKeyValues("RuleMenu");
 	if (FileToKeyValues(kv, file))
 	{
-		new arrayIndex = -1;
-		decl String:str[64];
-		decl String:sub_str[64];
+		int arrayIndex = -1;
+		char str[64];
+		char sub_str[64];
 		KvGetString(kv, "title", str, sizeof(str), "");
 		SetMenuTitle(ruleMenu, str);
 		if (KvGotoFirstSubKey(kv))
@@ -336,19 +336,19 @@ stock LoadRuleMenu()
 				if (StrEqual(sub_str, "3"))
 				{
 					KvGetString(kv, "address", sub_str, sizeof(sub_str), "_");
-					decl String:newInfo[64];
+					char newInfo[64];
 					Format(newInfo, sizeof(newInfo), "3\x01%s", sub_str);
 					AddMenuItem(ruleMenu, newInfo, str);
 				}
 				else if (StrEqual(sub_str, "4"))
 				{
 					arrayIndex++;
-					new Handle:subMenu = CreateMenu(menuHandler_SubRuleMenus, MenuAction_Cancel);
+					Handle subMenu = CreateMenu(menuHandler_SubRuleMenus, MenuAction_Cancel);
 					SetMenuExitButton(subMenu, true); SetMenuExitBackButton(subMenu, true);
 					SetMenuTitle(subMenu, str);
-					for (new i = 0; i < 32; i++)
+					for (int i = 0; i < 32; i++)
 					{
-						decl String:keyName[11];
+						char keyName[11];
 						Format(keyName, sizeof(keyName), "rule%i", (i + 1));
 						KvGetString(kv, keyName, sub_str, sizeof(sub_str), "\x01");
 						if (StrEqual(sub_str, "\x01"))
@@ -381,10 +381,9 @@ stock LoadRuleMenu()
 		AddMenuItem(ruleMenu, "null", "-");
 	}
 	CloseHandle(kv);
-	
 }
 
-stock bool:IntToBool(_:integer)
+stock bool IntToBool(int integer)
 {
 	if (integer == 0)
 	{
@@ -393,7 +392,7 @@ stock bool:IntToBool(_:integer)
 	return true;
 }
 
-stock LoadVersionNumber()
+stock void LoadVersionNumber()
 {
 	#if defined DEBUG
 	/*
@@ -404,18 +403,18 @@ stock LoadVersionNumber()
 	** you still should disable this. It's only usefull for me to make
 	** a valid version management.
 	*/
-	new snapshot = 0;
-	decl String:file[PLATFORM_MAX_PATH];
+	int snapshot = 0;
+	char file[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, file, sizeof(file), "configs/AC_Version.dat");
 	if (FileExists(file))
 	{
-		decl String:v_parts[2][32];
+		char v_parts[2][32];
 		if (ExplodeString(PLUGIN_VERSION_DEF, ".", v_parts, 2, 32) == 2)
 		{
-			decl String:versionMajor[32] = "0";
-			decl String:versionMinor[32] = "00";
-			decl String:versionSnapshot[32] = "000000";
-			new Handle:f = OpenFile(file, "r");
+			char versionMajor[32] = "0";
+			char versionMinor[32] = "00";
+			char versionSnapshot[32] = "000000";
+			Handle f = OpenFile(file, "r");
 			ReadFileLine(f, versionMajor, sizeof(versionMajor)); TrimString(versionMajor);
 			ReadFileLine(f, versionMinor, sizeof(versionMinor)); TrimString(versionMinor);
 			ReadFileLine(f, versionSnapshot, sizeof(versionSnapshot)); TrimString(versionSnapshot);

@@ -80,7 +80,7 @@ public OnPluginEnd()
 	}
 }
 
-public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
+public APLRes:AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
 {
 	CreateNative("ac_war_RegWar", NativeCall:AC_Native_RegWar);
 	CreateNative("ac_war_UnRegWar", NativeCall:AC_Native_UnRegWar);
@@ -94,7 +94,7 @@ public OnMapStart()
 	g_Offset_CollisionGroup = FindSendPropOffs("CBaseEntity", "m_CollisionGroup");
 }
 
-public ac_OnCoreComTagChanged(const String:tag[])
+public ac_OnCoreComTagChanged(const char[] tag)
 {
 	Format(Tag, sizeof(Tag), "%s", tag);
 }

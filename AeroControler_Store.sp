@@ -103,17 +103,17 @@ public OnClientPutInServer(client)
 	SDKHook(client, SDKHook_OnTakeDamage, SDKH_OnTakeDamage);
 }
 
-public ac_OnCoreStateChanged(bool:indicator)
+public ac_OnCoreStateChanged(bool indicator)
 {
 	InWork = indicator;
 }
 
-public ac_OnCoreComTagChanged(const String:tag[])
+public ac_OnCoreComTagChanged(const char[] tag)
 {
 	Format(Tag, sizeof(Tag), "%s", tag);
 }
 
-public OnClientAuthorized(client, const String:auth[])
+public OnClientAuthorized(client, const char[] auth)
 {
 	#if defined DEBUG
 	LoadClient(client, auth);
@@ -129,15 +129,15 @@ public OnClientDisconnect(client)
 	{ UpdateClientAsync(client); }
 }
 
-public Action:OnClientSayCommand(client, const String:command[], const String:sArgs[])
+public Action:OnClientSayCommand(client, const char[] command, const char[] sArgs)
 {
 	if (c_InSFNameChooseProcess[client])
 	{
 		if (StrEqual(command, "say", false))
 		{
 			c_InSFNameChooseProcess[client] = false;
-			decl String:name[32];
-			decl String:argument[64];
+			char name[32];
+			char argument[64];
 			Format(argument, sizeof(argument), "%s", sArgs);
 			StripQuotes(argument);
 			WhiteStripIllegalCharacters(argument);
@@ -145,10 +145,10 @@ public Action:OnClientSayCommand(client, const String:command[], const String:sA
 			SQL_EscapeString(db, argument, name, sizeof(name));
 			if (strlen(name) > 1)
 			{
-				new Handle:pack = CreateDataPack();
+				Handle pack = CreateDataPack();
 				WritePackCell(pack, GetClientUserId(client));
 				WritePackString(pack, name);
-				decl String:query[255];
+				char query[255];
 				Format(query, sizeof(query), "SELECT id FROM `%s` WHERE name='%s'", sfTableName, name);
 				SQL_TQuery(db, TSQL_CheckUniqueSFName, query, pack);
 			}

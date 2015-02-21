@@ -39,20 +39,20 @@ Prototype for a function, called when the cmd menu is build for a client
 @param menu		The menu handle (if you add a item, then make the info string empty or pass a commandstring to execute on click)
 @noreturn
 */
-functag public buildCMDMenuForward(client, Handle:menu);
+functag public buildCMDMenuForward(_:client, Handle:menu);
 
 /*
 Set the core functions offline so that the core doesn't control the game-flow.
 Including dicing, rebell, refuse, capitulate, gunsafety, mute control etc.
 @noreturn
 */
-native ac_setCoreOffline();
+native void ac_setCoreOffline();
 
 /*
 Set the core functions online back so that the game-flow is controled by the core.
 @noreturn
 */
-native ac_setCoreOnline();
+native void ac_setCoreOnline();
 
 /*
 Writes the actual tag in the given string.
@@ -60,7 +60,7 @@ Writes the actual tag in the given string.
 @param length			Length of the string. 32 is the max possible length.
 @noreturn
 */
-native ac_getCoreComTag(const String:tag[], length);
+native void ac_getCoreComTag(const char[] tag, int length);
 
 /*
 Parses a translation file, adds the color tags and saves it.
@@ -68,7 +68,7 @@ Parses a translation file, adds the color tags and saves it.
 @param destinationFile	The file to save the result in. (If still existing it will be deleted)
 @return 					true on succes otherwise false
 */
-native bool:ac_parseTransFile(const String:sourceFile[], const String:destinationFile[]);
+native bool ac_parseTransFile(const char[] sourceFile, const char[] destinationFile);
 
 /*
 Set the refuse variables for a client.
@@ -79,7 +79,7 @@ Set the refuse variables for a client.
 @param oneBaseRefuses		temporary maximum refuses for the next round - reset when the next round is over (-1 for no change)
 @noreturn
 */
-native ac_setClientRefuseVars(_:client, _:refuses = -1, _:maxRefuses = -1, _:baseRefuses = -1, _:oneBaseRefuses = -1);
+native void ac_setClientRefuseVars(int client, int refuses = -1, int maxRefuses = -1, int baseRefuses = -1, int oneBaseRefuses = -1);
 
 /*
 Get the refuse variables for a client
@@ -90,7 +90,7 @@ Get the refuse variables for a client
 @outparam	oneBaseRefuses	temporary maximum refuses for the next round
 @noreturn
 */
-native ac_getClientRefuseVars(_:client, &_:refuses = 0, &_:maxRefuses = 0, &_:baseRefuses = 0, &_:oneBaseRefuses = 0);
+native void ac_getClientRefuseVars(int client, int &refuses = 0, int &maxRefuses = 0, int &baseRefuses = 0, int &oneBaseRefuses = 0);
 
 /*
 Set the capitulate variables for a client
@@ -101,7 +101,7 @@ Set the capitulate variables for a client
 @param oneBaseCapitulates	temporary maximum capitulates for the next round (-1 for no change)
 @noreturn
 */
-native ac_setClientCapitulateVars(_:client, _:capitulates = -1, _:maxCapitulates = -1, _:baseCapitulates = -1, _:oneBaseCapitulates = -1);
+native void ac_setClientCapitulateVars(int client, int capitulates = -1, int maxCapitulates = -1, int baseCapitulates = -1, int oneBaseCapitulates = -1);
 
 /*
 Get the capitulate variables for a client
@@ -112,7 +112,7 @@ Get the capitulate variables for a client
 @outparam oneBaseCapitulates		temporary maximum capitulates for the next round
 @noreturn
 */
-native ac_getClientCapitulateVars(_:client, &_:capitulates = 0, &_:maxCapitulates = 0, &_:baseCapitulates = 0, &_:oneBaseCapitulates = 0);
+native void ac_getClientCapitulateVars(int client, int &capitulates = 0, int &maxCapitulates = 0, int &baseCapitulates = 0, int &oneBaseCapitulates = 0);
 
 /*
 Set the dice variables for a client
@@ -122,7 +122,7 @@ Set the dice variables for a client
 @param oneBaseDices	temporary maximum dicing for the next round (-1 for no change)
 @noreturn
 */
-native ac_setClientDiceVars(_:client, _:dices = -1, _:baseDices = -1, _:oneBaseDices = -1);
+native void ac_setClientDiceVars(int client, int dices = -1, int baseDices = -1, int oneBaseDices = -1);
 
 /*
 Get the dice variables for a client
@@ -132,14 +132,14 @@ Get the dice variables for a client
 @outparam	oneBaseDices	temporary maximum dicing for the next round (-1 for no change)
 @noreturn
 */
-native ac_getClientDiceVars(_:client, &_:dices = 0, &_:baseDices = 0, &_:oneBaseDices = 0);
+native void ac_getClientDiceVars(int client, int &dices = 0, int &baseDices = 0, int &oneBaseDices = 0);
 
 /*
 Check if a player is rebell
 @param client		the client to get the state from
 @return true if rebell, otherwise false
 */
-native bool:ac_isClientRebell(_:client);
+native bool ac_isClientRebell(int client);
 
 /*
 Register the name of your Aero-extension here to display it in the extension-menu
@@ -148,14 +148,14 @@ Register the name of your Aero-extension here to display it in the extension-men
 @param pluginExtensionVersion	The version to show in the menu (max. 64 characters)
 @return The index of the first line
 */
-native _:ac_registerPluginExtension(const String:pluginExtensionName[], const String:pluginExtensionAuthor[], const String:pluginExtensionVersion[]);
+native int ac_registerPluginExtension(const char[] pluginExtensionName, const char[] pluginExtensionAuthor, const char[] pluginExtensionVersion);
 
 /*
 Unregister the name of your Aero-Extension
 @param index		The index of your first entry
 @noreturn
 */
-native ac_unregisterPluginExtension(index);
+native void ac_unregisterPluginExtension(int index);
 
 /*
 Performes a dice on a client.
@@ -164,32 +164,32 @@ Performes a dice on a client.
 @param lowerDiceCount		Should the diceable count be descreased? (Attention, negative values can happen and are NOT checked!)
 @noreturn
 */
-native ac_performDiceOnClient(client, Float:forcedValue = -1.0, bool:lowerDiceCount = false);
+native void ac_performDiceOnClient(client, float forcedValue = -1.0, bool lowerDiceCount = false);
 
 /*
 Adds a function to the private build-cmd-menu-forward
 @param function			The function which should be called when the forward raises
-@noparam
+@noreturn
 */
-native ac_registerCMDMenuBuildForward(buildCMDMenuForward:func);
+native void ac_registerCMDMenuBuildForward(buildCMDMenuForward:func);
 
 /*
 Got called when the tag gets changed.
 @param tag				The changed Tag.
 @noreturn
 */
-forward ac_OnCoreComTagChanged(const String:tag[]);
+forward void ac_OnCoreComTagChanged(const char[] tag);
 
 /*
 Got called, when a client is spawned and all core settings are applied to him.
 @param client			The client id spawned.
 @noreturn
 */
-forward ac_OnClientIsReadyForRound(client);
+forward void ac_OnClientIsReadyForRound(int client);
 
 /*
 Got called, when the corestate is changed.
 @param indicator		True for core online, false for core offline.
 @noreturn
 */
-forward ac_OnCoreStateChanged(bool:indicator);
+forward void ac_OnCoreStateChanged(bool indicator);

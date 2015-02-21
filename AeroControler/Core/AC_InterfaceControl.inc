@@ -15,7 +15,7 @@
 
 functag public buildCMDMenuForward(client, Handle:menu);
 
-stock AC_InterfaceControlRegister()
+stock void AC_InterfaceControlRegister()
 {
 	tagChangedForward = CreateGlobalForward("ac_OnCoreComTagChanged", ET_Ignore, Param_String);
 	clientRoundReadyForward = CreateGlobalForward("ac_OnClientIsReadyForRound", ET_Ignore, Param_Cell);
@@ -41,27 +41,27 @@ stock AC_InterfaceControlRegister()
 	RegPluginLibrary("ac_core");
 }
 
-public AC_Native_SetCoreOffline(Handle:plugin, numParams)
+public int AC_Native_SetCoreOffline(Handle plugin, int numParams)
 {
 	OverrideWorkToFalse = true; SetCoreState(false); return 0;
 }
 
-public AC_Native_SetCoreOnline(Handle:plugin, numParams)
+public int AC_Native_SetCoreOnline(Handle plugin, int numParams)
 {
 	OverrideWorkToFalse = false; SetCoreState(true); return 0;
 }
 
-public AC_Native_GetCoreComTag(Handle:plugin, numParams)
+public int AC_Native_GetCoreComTag(Handle plugin, int numParams)
 {
-	new length = GetNativeCell(2);
+	int length = GetNativeCell(2);
 	SetNativeString(1, Tag, length);
 	return 0;
 }
 
-public bool:AC_Native_ParseTransFile(Handle:plugin, numParams)
+public bool AC_Native_ParseTransFile(Handle plugin, numParams)
 {
-	decl String:file_Dest[PLATFORM_MAX_PATH];
-	decl String:file_Srce[PLATFORM_MAX_PATH];
+	char file_Dest[PLATFORM_MAX_PATH];
+	char file_Srce[PLATFORM_MAX_PATH];
 	GetNativeString(1, file_Srce, sizeof(file_Srce));
 	GetNativeString(2, file_Dest, sizeof(file_Dest));
 	if (FileExists(file_Srce))
@@ -72,13 +72,13 @@ public bool:AC_Native_ParseTransFile(Handle:plugin, numParams)
 	return false;
 }
 
-public AC_Native_SetClientRefuseVars(Handle:plugin, numParams)
+public int AC_Native_SetClientRefuseVars(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
-	new refusings = GetNativeCell(2);
-	new maxRefusings = GetNativeCell(3);
-	new baseRefusings = GetNativeCell(4);
-	new oneBaseRefusings = GetNativeCell(5);
+	int client = GetNativeCell(1);
+	int refusings = GetNativeCell(2);
+	int maxRefusings = GetNativeCell(3);
+	int baseRefusings = GetNativeCell(4);
+	int oneBaseRefusings = GetNativeCell(5);
 	if (IsClientValid(client))
 	{
 		if (refusings != -1)
@@ -93,9 +93,9 @@ public AC_Native_SetClientRefuseVars(Handle:plugin, numParams)
 	return 0;
 }
 
-public AC_Native_GetClientRefuseVars(Handle:plugin, numParams)
+public int AC_Native_GetClientRefuseVars(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
+	int client = GetNativeCell(1);
 	if (IsClientValid(client))
 	{
 		SetNativeCellRef(2, c_r[client]);
@@ -113,13 +113,13 @@ public AC_Native_GetClientRefuseVars(Handle:plugin, numParams)
 	return 0;
 }
 
-public AC_Native_SetClientCapitulateVars(Handle:plugin, numParams)
+public int AC_Native_SetClientCapitulateVars(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
-	new capitulatings = GetNativeCell(2);
-	new maxCapitulatings = GetNativeCell(3);
-	new baseCapitulatings = GetNativeCell(4);
-	new oneBaseCapitulatings = GetNativeCell(5);
+	int client = GetNativeCell(1);
+	int capitulatings = GetNativeCell(2);
+	int maxCapitulatings = GetNativeCell(3);
+	int baseCapitulatings = GetNativeCell(4);
+	int oneBaseCapitulatings = GetNativeCell(5);
 	if (IsClientValid(client))
 	{
 		if (capitulatings != -1)
@@ -134,9 +134,9 @@ public AC_Native_SetClientCapitulateVars(Handle:plugin, numParams)
 	return 0;
 }
 
-public AC_Native_GetClientCapitulateVars(Handle:plugin, numParams)
+public int AC_Native_GetClientCapitulateVars(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
+	int client = GetNativeCell(1);
 	if (IsClientValid(client))
 	{
 		SetNativeCellRef(2, c_c[client]);
@@ -154,12 +154,12 @@ public AC_Native_GetClientCapitulateVars(Handle:plugin, numParams)
 	return 0;
 }
 
-public AC_Native_SetClientDiceVars(Handle:plugin, numParams)
+public int AC_Native_SetClientDiceVars(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
-	new dicings = GetNativeCell(2);
-	new baseDicings = GetNativeCell(3);
-	new oneBaseDicings = GetNativeCell(4);
+	int client = GetNativeCell(1);
+	int dicings = GetNativeCell(2);
+	int baseDicings = GetNativeCell(3);
+	int oneBaseDicings = GetNativeCell(4);
 	if (IsClientValid(client))
 	{
 		if (dicings != -1)
@@ -172,9 +172,9 @@ public AC_Native_SetClientDiceVars(Handle:plugin, numParams)
 	return 0;
 }
 
-public AC_Native_GetClientDiceVars(Handle:plugin, numParams)
+public int AC_Native_GetClientDiceVars(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
+	int client = GetNativeCell(1);
 	if (IsClientValid(client))
 	{
 		SetNativeCellRef(2, c_dices[client]);
@@ -190,9 +190,9 @@ public AC_Native_GetClientDiceVars(Handle:plugin, numParams)
 	return 0;
 }
 
-public bool:AC_Native_IsClientRebell(Handle:plugin, numParams)
+public bool AC_Native_IsClientRebell(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
+	int client = GetNativeCell(1);
 	if (IsClientValid(client))
 	{
 		return c_rebell[client];
@@ -200,11 +200,11 @@ public bool:AC_Native_IsClientRebell(Handle:plugin, numParams)
 	return false;
 }
 
-public _:AC_Native_RegisterPluginExtension(Handle:plugin, numParams)
+public int AC_Native_RegisterPluginExtension(Handle plugin, numParams)
 {
-	decl String:subString[64];
+	char subString[64];
 	GetNativeString(1, subString, sizeof(subString));
-	new index = PushArrayString(extensionPlugins, subString);
+	int index = PushArrayString(extensionPlugins, subString);
 	GetNativeString(2, subString, sizeof(subString));
 	PushArrayString(extensionPlugins, subString);
 	GetNativeString(3, subString, sizeof(subString));
@@ -213,28 +213,28 @@ public _:AC_Native_RegisterPluginExtension(Handle:plugin, numParams)
 	return index;
 }
 
-public AC_Native_UnRegisterPluginExtension(Handle:plugin, numParams)
+public int AC_Native_UnRegisterPluginExtension(Handle plugin, numParams)
 {
-	new index = GetNativeCell(1);
-	for (new i = 0; i < 4; i++)
+	int index = GetNativeCell(1);
+	for (int i = 0; i < 4; i++)
 	{ SetArrayString(extensionPlugins, index + i, ""); } //not the yellow from the egg ... i know...
 	return 0;
 }
 
-public AC_Native_PerformDiceOnClient(Handle:plugin, numParams)
+public int AC_Native_PerformDiceOnClient(Handle plugin, numParams)
 {
-	new client = GetNativeCell(1);
-	new Float:value = Float:GetNativeCell(2);
-	new bool:lowerDiceCount = bool:GetNativeCell(3);
+	int client = GetNativeCell(1);
+	float value = Float:GetNativeCell(2);
+	bool lowerDiceCount = bool:GetNativeCell(3);
 	if (lowerDiceCount)
 	{ c_dices[client]--; }
 	ThrowDice(client, value, false);
 	return 0;
 }
 
-public AC_Native_RegisterCMDMenuBuildForward(Handle:plugin, numParams)
+public int AC_Native_RegisterCMDMenuBuildForward(Handle plugin, numParams)
 {
-	new Function:func = GetNativeCell(1);
+	Function func = GetNativeCell(1);
 	AddToForward(cmdMenuBuildForward, plugin, func);
 	return 0;
 }

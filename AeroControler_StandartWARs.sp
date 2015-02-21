@@ -67,7 +67,7 @@ public OnPluginEnd()
 	}
 }
 
-public OnLibraryAdded(const String:name[])
+public OnLibraryAdded(const char[] name)
 {
 	if (StrEqual(name, "ac_war_sys"))
 	{
@@ -75,7 +75,7 @@ public OnLibraryAdded(const String:name[])
 	}
 }
 
-public OnLibraryRemoved(const String:name[])
+public OnLibraryRemoved(const char[] name)
 {
 	if (StrEqual(name, "ac_war_sys"))
 	{
@@ -83,7 +83,7 @@ public OnLibraryRemoved(const String:name[])
 	}
 }
 
-public ac_OnCoreComTagChanged(const String:tag[])
+public ac_OnCoreComTagChanged(const char[] tag)
 {
 	Format(Tag, sizeof(Tag), "%s", tag);
 }

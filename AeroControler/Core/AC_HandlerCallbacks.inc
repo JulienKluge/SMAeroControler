@@ -16,22 +16,22 @@
 
 /* **************************************************************************TIMER************************************************************************** */
 
-public Action:timer_Introduce(Handle:timer, any:client)
+public Action timer_Introduce(Handle timer, any client)
 {
 	if (IntroduceMe) //Double save when the variable is set into the 90seconds to 0.0
 	{
 		IncludeTag = false;
 		AC_PrintToChatAll("%t", "introduceplugin", PLUGIN_VERSION, PLUGIN_AUTHOR);
-		new String:dateToCheck[7];
+		char dateToCheck[7];
 		FormatTime(dateToCheck, sizeof(dateToCheck), "%d%m");
 		if (StrEqual(dateToCheck, "3001", true))
 		{
-			new String:actualYear[6];
+			char actualYear[6];
 			FormatTime(actualYear, sizeof(actualYear), "%Y");
-			new actYear = StringToInt(actualYear);
+			int actYear = StringToInt(actualYear);
 			if (actYear > 0)
 			{
-				new age = actYear - 1995;
+				int age = actYear - 1995;
 				AC_PrintToChatAll("%t", "introduceplugin_bday", "_AeonOne_", age);
 			}
 		}
@@ -40,13 +40,13 @@ public Action:timer_Introduce(Handle:timer, any:client)
 	return Plugin_Stop;
 }
 
-public Action:timer_disableTopC(Handle:timer, Handle:pack)
+public Action timer_disableTopC(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
+	int handleIndex = ReadPackCell(pack);
 	c_topCDisableTimer[handleIndex] = INVALID_HANDLE;
 	if (!InWork) { return Plugin_Stop; }
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{
 		if (IsPlayerAlive(client))
@@ -59,11 +59,11 @@ public Action:timer_disableTopC(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_PrepareSpawn(Handle:timer, Handle:pack)
+public Action timer_PrepareSpawn(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client) && InWork)
 	{
 		if (IsPlayerAlive(client))
@@ -86,11 +86,11 @@ public Action:timer_PrepareSpawn(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_CheckForDiceMenu(Handle:timer, Handle:pack)
+public Action timer_CheckForDiceMenu(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int handleIndex = ReadPackCell(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client) && InWork)
 	{
 		if (IsPlayerAlive(client))
@@ -106,18 +106,18 @@ public Action:timer_CheckForDiceMenu(Handle:timer, Handle:pack)
 	return Plugin_Stop;
 }
 
-public Action:timer_NotifyOfStates(Handle:timer)
+public Action timer_NotifyOfStates(Handle timer)
 {
 	if (!InWork) { return Plugin_Continue; }
-	new notifyClients[MAXPLAYERS + 1]; new notifyCount = 0;
-	new victimClients[MAXPLAYERS + 1]; new victimCount = 0;
-	for (new i = 1; i <= MaxClients; i++)
+	int notifyClients[MAXPLAYERS + 1]; int notifyCount = 0;
+	int victimClients[MAXPLAYERS + 1]; int victimCount = 0;
+	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientValid(i))
 		{
 			if (IsPlayerAlive(i))
 			{
-				new teamIndex = GetClientTeam(i);
+				int teamIndex = GetClientTeam(i);
 				if (teamIndex == CS_TEAM_CT)
 				{
 					if (StateNotifyCounter > 0 || c_StateNotifyOverride[i])
@@ -140,10 +140,10 @@ public Action:timer_NotifyOfStates(Handle:timer)
 	if (notifyCount > 0 && victimCount > 0)
 	{
 		//I love this piece of code :D
-		new Float:pos[3];
-		for (new i = 0; i < victimCount; i++)
+		float pos[3];
+		for (int i = 0; i < victimCount; i++)
 		{
-			new client = victimClients[i];
+			int client = victimClients[i];
 			GetClientAbsOrigin(client, pos);
 			if (c_c[client] < c_cBase[client])
 			{
@@ -154,8 +154,8 @@ public Action:timer_NotifyOfStates(Handle:timer)
 			else
 			{
 				pos[2] += 20.0;
-				new refuseCount = c_r[client] - 1;
-				for (new j = 0; j < c_rBaseMax[client]; j++)
+				int refuseCount = c_r[client] - 1;
+				for (int j = 0; j < c_rBaseMax[client]; j++)
 				{
 					if (refuseCount >= j)
 					{
@@ -164,8 +164,8 @@ public Action:timer_NotifyOfStates(Handle:timer)
 					}
 					else
 					{
-						new Float:secondsUntil = GetGameTime() - c_rTimeStamp[client];
-						new Float:lifeTime = 1.0;
+						float secondsUntil = GetGameTime() - c_rTimeStamp[client];
+						float lifeTime = 1.0;
 						if (secondsUntil < 35.0) { lifeTime = 0.5; }
 						TE_SetupBeamRingPoint(pos, 40.0, 20.0, g_BeamSprite, g_HaloSprite, 0, 10, lifeTime, 2.0, 0.0, { 128, 192, 255, 255 }, 10, 0);
 						TE_Send(notifyClients, notifyCount);
@@ -183,21 +183,21 @@ public Action:timer_NotifyOfStates(Handle:timer)
 	return Plugin_Continue;
 }
 
-public Action:timer_ReAllowDrop(Handle:timer, Handle:pack)
+public Action timer_ReAllowDrop(Handle timer, Handle pack)
 {
 	ResetPack(pack);
-	new handleIndex = ReadPackCell(pack);
+	int handleIndex = ReadPackCell(pack);
 	c_dropHandler[handleIndex] = INVALID_HANDLE;
-	new client = GetClientOfUserId(ReadPackCell(pack));
+	int client = GetClientOfUserId(ReadPackCell(pack));
 	if (IsClientValid(client))
 	{ c_IsDropDenied[client] = false; }
 	return Plugin_Handled;
 }
 
-public Action:timer_Announce(Handle:timer)
+public Action timer_Announce(Handle timer)
 {
-	new bool:cmds = (announce_cmds && Cmd_Alw_Commands);
-	new bool:rules = (announce_rules && Cmd_Alw_Rules);
+	bool cmds = (announce_cmds && Cmd_Alw_Commands);
+	bool rules = (announce_rules && Cmd_Alw_Rules);
 	if (rules && cmds)
 	{ AC_PrintToChatAll("%t", "announce_rulescmds", Cmd_PStr_Rules, Cmd_PStr_Commands); }
 	else
@@ -217,12 +217,12 @@ public Action:timer_Announce(Handle:timer)
 
 /* ***********************************************************************MENUHANDLER*********************************************************************** */
 
-public _:menuHandler_DiceMenu(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_DiceMenu(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
 		if (!InWork) { return 0; }
-		decl String:info[5];
+		char info[5];
 		GetMenuItem(menu, param2, info, sizeof(info));
 		if (StrEqual(info, "dice"))
 		{
@@ -245,29 +245,29 @@ public _:menuHandler_DiceMenu(Handle:menu, MenuAction:action, param1, param2)
 	}
 	else if (action == MenuAction_DisplayItem)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuItem(menu, param2, "", _:0, _, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, param1);
 		return RedrawMenuItem(displayTranslated);
 	}
 	else if (action == MenuAction_Display)
 	{
-		decl String:display[32];
-		decl String:displayTranslated[32];
+		char display[32];
+		char displayTranslated[32];
 		GetMenuTitle(menu, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, param1);
-		SetPanelTitle(Handle:param2, displayTranslated);
+		SetPanelTitle(view_as<Handle>param2, displayTranslated);
 	}
 	return 0;
 }
 
-public _:menuHandler_AboutMenu(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_AboutMenu(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_DisplayItem)
 	{
-		decl String:info[5];
-		decl String:display[64];
+		char info[5];
+		char display[64];
 		GetMenuItem(menu, param2, info, sizeof(info));
 		if (StrEqual(info, "auth"))
 		{
@@ -298,13 +298,13 @@ public _:menuHandler_AboutMenu(Handle:menu, MenuAction:action, param1, param2)
 	}
 	else if (action == MenuAction_Select)
 	{
-		new extCount = GetArraySize(extensionPlugins);
+		int extCount = GetArraySize(extensionPlugins);
 		if (extCount > 0)
 		{
-			new Handle:extMenu = CreateMenu(menuHandler_DisposeMenu, MenuAction_End);
-			decl String:pName[64];
-			decl String:subStr[64];
-			for (new i = 0; i < extCount; i += 4)
+			Handle extMenu = CreateMenu(menuHandler_DisposeMenu, MenuAction_End);
+			char pName[64];
+			char subStr[64];
+			for (int i = 0; i < extCount; i += 4)
 			{
 				GetArrayString(extensionPlugins, i, pName, sizeof(pName));
 				if (strlen(pName) > 1)
@@ -327,11 +327,11 @@ public _:menuHandler_AboutMenu(Handle:menu, MenuAction:action, param1, param2)
 	return 0;
 }
 
-public menuHandler_Cmds(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_Cmds(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:cmd[64];
+		char cmd[64];
 		GetMenuItem(menu, param2, cmd, sizeof(cmd));
 		if (strlen(cmd) > 1)
 		{
@@ -342,12 +342,12 @@ public menuHandler_Cmds(Handle:menu, MenuAction:action, param1, param2)
 	{ CloseHandle(menu); }
 }
 
-public menuHandler_RuleMenu(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_RuleMenu(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Select)
 	{
-		decl String:info[64];
-		decl String:display[64];
+		char info[64];
+		char display[64];
 		GetMenuItem(menu, param2, info, sizeof(info), _, display, sizeof(display));
 		if (strlen(info) > 0)
 		{
@@ -355,7 +355,7 @@ public menuHandler_RuleMenu(Handle:menu, MenuAction:action, param1, param2)
 			{
 				if (info[0] == '3')
 				{
-					decl String:parts[2][64]; //<----
+					char parts[2][64]; //<----
 					if (ExplodeString(info, "\x01", parts, 2, 64) > 1)
 					{
 						ShowMOTDPanel(param1, display, parts[1], MOTDPANEL_TYPE_URL);
@@ -363,11 +363,11 @@ public menuHandler_RuleMenu(Handle:menu, MenuAction:action, param1, param2)
 				}
 				else if (info[0] == '4')
 				{
-					decl String:sub_parts[2][64]; //that is pretty strange, it's seems, that the part variable some lines below is in the same code scope so that i cannot name it "parts"...
+					char sub_parts[2][64]; //that is pretty strange, it's seems, that the part variable some lines below is in the same code scope so that i cannot name it "parts"...
 					if (ExplodeString(info, "\x01", sub_parts, 2, 64) > 1)
 					{
-						new arrayIndex = StringToInt(sub_parts[1]);
-						new Handle:sMenu = Handle:GetArrayCell(ruleSubMenus, arrayIndex);
+						int arrayIndex = StringToInt(sub_parts[1]);
+						Handle sMenu = view_as<Handle>GetArrayCell(ruleSubMenus, arrayIndex);
 						DisplayMenu(sMenu, param1, 60);
 					}
 				}
@@ -388,7 +388,7 @@ public menuHandler_RuleMenu(Handle:menu, MenuAction:action, param1, param2)
 	return;
 }
 
-public menuHandler_SubRuleMenus(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_SubRuleMenus(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_Cancel)
 	{
@@ -397,7 +397,7 @@ public menuHandler_SubRuleMenus(Handle:menu, MenuAction:action, param1, param2)
 	}
 }
 
-public menuHandler_DisposeMenu(Handle:menu, MenuAction:action, param1, param2)
+public int menuHandler_DisposeMenu(Handle menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
 	{
@@ -412,7 +412,7 @@ public menuHandler_DisposeMenu(Handle:menu, MenuAction:action, param1, param2)
 
 /* ********************************************************************SDKHOOKSCALLBACKS******************************************************************** */
 
-public Action:SDKH_OnCanUseWeapon(client, weapon)
+public Action SDKH_OnCanUseWeapon(int client, int weapon)
 {
 	if (!InWork) { return Plugin_Continue; }
 	if (GetClientTeam(client) == CS_TEAM_T)
@@ -429,11 +429,11 @@ public Action:SDKH_OnCanUseWeapon(client, weapon)
 	return Plugin_Continue;
 }
 
-public Action:SDKH_OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damagetype, &weapon, Float:damageForce[3], Float:damagePosition[3]) //Make us backwards until 2.0+
+public Action SDKH_OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3]) //Make us backwards until 2.0+
 {
 	if (!InWork) { return Plugin_Continue; }
-	new Action:returnResult = Plugin_Continue;
-	new Float:newDamage = Diced_SDKH_TakeDmg(victim, attacker, damage);
+	Action returnResult = Plugin_Continue;
+	float newDamage = Diced_SDKH_TakeDmg(victim, attacker, damage);
 	if (newDamage != damage)
 	{
 		damage = newDamage;
@@ -449,7 +449,7 @@ public Action:SDKH_OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &d
 
 /* *********************************************************************FILTER CALLBACKS******************************************************************** */
 
-public bool:Filter_FilterOutData(ent, contentMask, any:data)
+public bool Filter_FilterOutData(int ent, int contentMask, any data)
 {
 	if (ent == data) { return false; }
 	return true;

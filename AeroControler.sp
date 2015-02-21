@@ -117,7 +117,7 @@ public OnPluginStart()
 {
 	CreateConVar("ac_version", PLUGIN_VERSION, "Version of the AeroControler",  FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
 
-	LoadVersionNumber();	
+	LoadVersionNumber();
 	DetectGameMod();
 	InitCVarSettings();
 	CreateStaticMenus();
@@ -155,12 +155,12 @@ public OnPluginStart()
 	if (announce_Timer == INVALID_HANDLE)
 	{ announce_Timer = CreateTimer(announce_delay, timer_Announce, INVALID_HANDLE, TIMER_REPEAT); }
 	
-	for (new i = 0; i < (MAXPLAYERS + 1); i++) { ResetClientVars(i); } //init my client variables
+	for (int i = 0; i < (MAXPLAYERS + 1); i++) { ResetClientVars(i); } //init my client variables
 	
 	AutoExecConfig(true, "aerocontroler");
 }
 
-public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
+public APLRes:AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
 {
 	MarkNativeAsOptional("Steam_SetGameDescription"); //the include didn't do it, so we have to...
 	extensionPlugins = CreateArray(64, 0);
@@ -174,7 +174,7 @@ public OnAllPluginsLoaded()
 {
 	if (GunSafetyState == 0)
 	{
-		new bool:gunSafetyWillWork = false;
+		bool gunSafetyWillWork = false;
 		if (CanTestFeatures())
 		{
 			if (GetFeatureStatus(FeatureType_Capability, FEATURECAP_COMMANDLISTENER) == FeatureStatus_Available)
@@ -192,12 +192,12 @@ public OnAllPluginsLoaded()
 	}
 }
 
-public OnLibraryAdded(const String:name[])
+public OnLibraryAdded(const char[] name)
 {
 	MuteSys_LibraryAdded_Detour(name);
 }
 
-public OnLibraryRemoved(const String:name[])
+public OnLibraryRemoved(const char[] name)
 {
 	MuteSys_LibraryRemoved_Detour(name);
 }
@@ -232,19 +232,19 @@ public OnMapStart()
 	CreateTimer(1.0, timer_NotifyOfStates, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
 }
 
-public OnClientPutInServer(client)
+public OnClientPutInServer(int client)
 {
 	SDKHook(client, SDKHook_WeaponCanUse, SDKH_OnCanUseWeapon);
 	SDKHook(client, SDKHook_OnTakeDamage, SDKH_OnTakeDamage);
 }
 
-public OnClientDisconnect_Post(client)
+public OnClientDisconnect_Post(int client)
 {
 	ResetClientVars(client); //yearh, i lied when i said that I will place this in the connect-forward xD
 	UpdatePlayerCount();
 }
 
-public OnClientPostAdminCheck(client)
+public OnClientPostAdminCheck(int client)
 {
 	/*if (FC_FilterCountries)
 	{ FilterCountry_Filter(client); } TODO: BUGGY*/

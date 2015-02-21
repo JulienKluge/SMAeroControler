@@ -16,10 +16,10 @@
 ** because public messages are prepared (add Tag, colorize etc.)
 */
 
-public Action:Cmd_Refuse(client, args)
+public Action Cmd_Refuse(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
-	new teamIndex = GetClientTeam(client);
+	int teamIndex = GetClientTeam(client);
 	if (teamIndex == CS_TEAM_T)
 	{
 		if (IsPlayerAlive(client))
@@ -54,10 +54,10 @@ public Action:Cmd_Refuse(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_Capitulate(client, args)
+public Action Cmd_Capitulate(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
-	new teamIndex = GetClientTeam(client);
+	int teamIndex = GetClientTeam(client);
 	if (teamIndex == CS_TEAM_T)
 	{
 		if (IsPlayerAlive(client))
@@ -75,7 +75,7 @@ public Action:Cmd_Capitulate(client, args)
 						CloseHandle(c_topCDisableTimer[client]);
 						c_topCDisableTimer[client] = INVALID_HANDLE; //just because beautiful code
 					}
-					new Handle:pack;
+					Handle pack;
 					c_topCDisableTimer[client] = CreateDataTimer(30.0, timer_disableTopC, pack, TIMER_FLAG_NO_MAPCHANGE | TIMER_DATA_HNDL_CLOSE);
 					WritePackCell(pack, client);
 					WritePackCell(pack, GetClientUserId(client));
@@ -109,7 +109,7 @@ public Action:Cmd_Capitulate(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_Kill(client, args)
+public Action Cmd_Kill(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	if (IsPlayerAlive(client))
@@ -122,14 +122,14 @@ public Action:Cmd_Kill(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_SetColors(client, args)
+public Action Cmd_SetColors(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	if (GetClientTeam(client) == CS_TEAM_CT)
 	{
 		if (IsPlayerAlive(client))
 		{
-			for (new i = 1; i <= MaxClients; i++)
+			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (IsClientValid(i))
 				{
@@ -149,14 +149,14 @@ public Action:Cmd_SetColors(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_DeleteColors(client, args)
+public Action Cmd_DeleteColors(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	if (GetClientTeam(client) == CS_TEAM_CT)
 	{
 		if (IsPlayerAlive(client))
 		{
-			for (new i = 1; i <= MaxClients; i++)
+			for (int i = 1; i <= MaxClients; i++)
 			{
 				if (IsClientValid(i))
 				{
@@ -176,7 +176,7 @@ public Action:Cmd_DeleteColors(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_Noblock(client, args)
+public Action Cmd_Noblock(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	if (RoundStartedState > 1)
@@ -185,7 +185,7 @@ public Action:Cmd_Noblock(client, args)
 		{
 			if (IsPlayerAlive(client))
 			{
-				for (new i = 1; i <= MaxClients; i++)
+				for (int i = 1; i <= MaxClients; i++)
 				{
 					if (IsClientValid(i))
 					{
@@ -208,7 +208,7 @@ public Action:Cmd_Noblock(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_Block(client, args)
+public Action Cmd_Block(int client, int args)
 {
 	if (!InWork) { return Plugin_Handled; }
 	if (RoundStartedState > 1)
@@ -217,7 +217,7 @@ public Action:Cmd_Block(client, args)
 		{
 			if (IsPlayerAlive(client))
 			{
-				for (new i = 1; i <= MaxClients; i++)
+				for (int i = 1; i <= MaxClients; i++)
 				{
 					if (IsClientValid(i))
 					{
@@ -240,12 +240,12 @@ public Action:Cmd_Block(client, args)
 	return Plugin_Handled;
 }
 
-public Action:Cmd_Drop(client, args)
+public Action Cmd_Drop(int client, int args)
 {
 	if (c_IsDropDenied[client]) { return Plugin_Handled; }
 	if (DropAll_Active)
 	{
-		new weaponIndex = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+		int weaponIndex = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 		if (IsValidEdict(weaponIndex))
 		{ CS_DropWeapon(client, weaponIndex, true, false); }
 		return Plugin_Handled;
@@ -253,19 +253,19 @@ public Action:Cmd_Drop(client, args)
 	return Plugin_Continue;
 }
 
-public Action:Cmd_About(client, args)
+public Action Cmd_About(int client, int args)
 {
 	DisplayMenu(aboutMenu, client, 60);
 	return Plugin_Handled;
 }
 
-public Action:Cmd_Commands(client, args)
+public Action Cmd_Commands(int client, int args)
 {
 	CreateAndDisplayCmdMenu(client);
 	return Plugin_Handled;
 }
 
-public Action:Cmd_Rules(client, args)
+public Action Cmd_Rules(int client, int args)
 {
 	DisplayMenu(ruleMenu, client, 60);
 	return Plugin_Handled;
@@ -277,12 +277,12 @@ public Action:Cmd_Rules(client, args)
 **
 */
 
-public Action:Listener_Drop(client, const String:command[], argc)
+public Action Listener_Drop(int client, const char[] command, int argc)
 {
 	if (c_IsDropDenied[client]) { return Plugin_Handled; }
 	if (DropAll_Active)
 	{
-		new weaponIndex = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+		int weaponIndex = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 		if (IsValidEdict(weaponIndex))
 		{ CS_DropWeapon(client, weaponIndex, true, false); }
 		return Plugin_Handled;
@@ -290,7 +290,7 @@ public Action:Listener_Drop(client, const String:command[], argc)
 	return Plugin_Continue;
 }
 
-public Action:Listener_ShouldStripped(client, const String:command[], argc)
+public Action Listener_ShouldStripped(int client, char[] command, int argc)
 {
 	if (argc < 1) { return Plugin_Continue; }
 	if (StrEqual(command, "sm_slay", false))
@@ -309,14 +309,14 @@ public Action:Listener_ShouldStripped(client, const String:command[], argc)
 	{
 		return Plugin_Continue;
 	}
-	decl String:targetString[32];
+	char targetString[32];
 	GetCmdArg(1, targetString, sizeof(targetString));
-	new bool:isMl = true;
-	new targets[MAXPLAYERS + 1];
-	new targetCount = ProcessTargetString(targetString, client, targets, sizeof(targets), COMMAND_FILTER_CONNECTED, "", _:0, bool:isMl);
+	bool isMl = true;
+	int targets[MAXPLAYERS + 1];
+	int targetCount = ProcessTargetString(targetString, client, targets, sizeof(targets), COMMAND_FILTER_CONNECTED, "", _:0, bool:isMl);
 	if (targetCount > 0)
 	{
-		for (new i = 0; i < targetCount; i++)
+		for (int i = 0; i < targetCount; i++)
 		{
 			RemoveAllClientItems(targets[i]);
 		}

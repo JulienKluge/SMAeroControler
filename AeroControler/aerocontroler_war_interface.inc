@@ -71,10 +71,10 @@ functag public WarFreezeTimeEnd();
 ** @param freezeEndFunction		Function to call when a freezetime ends.
 ** @return							Index of the war (-1 if no free place was available)
 */
-native _:ac_war_RegWar(WarStart:startFunction
+native int ac_war_RegWar(WarStart:startFunction
 						, WarEnd:endFunction
-						, const String:name[]
-						, bool:HasFreezeTime = false
+						, const char[] name
+						, bool HasFreezeTime = false
 						, WarFreezeTimeStart:freezeStartFunction = INVALID_FUNCTION
 						, WarFreezeTimeEnd:freezeEndFunction = INVALID_FUNCTION);
 
@@ -83,7 +83,7 @@ native _:ac_war_RegWar(WarStart:startFunction
 ** @param index				Index of the war to unregister
 ** @noreturn
 */
-native ac_war_UnRegWar(_:index);
+native void ac_war_UnRegWar(int index);
 
 /*
 ** Ends a war softly. This should only be called when the war is over before the controler will force it to be over (Example: A gungame war which only needs one round).
@@ -91,4 +91,4 @@ native ac_war_UnRegWar(_:index);
 ** @param ForceRoundRestart	Forces the controler to restart the round.
 ** @noreturn
 */
-native ac_war_EndWar(bool:ForceRoundRestart = true);
+native void ac_war_EndWar(bool ForceRoundRestart = true);
