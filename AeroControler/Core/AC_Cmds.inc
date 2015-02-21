@@ -313,7 +313,7 @@ public Action Listener_ShouldStripped(int client, char[] command, int argc)
 	GetCmdArg(1, targetString, sizeof(targetString));
 	bool isMl = true;
 	int targets[MAXPLAYERS + 1];
-	int targetCount = ProcessTargetString(targetString, client, targets, sizeof(targets), COMMAND_FILTER_CONNECTED, "", _:0, bool:isMl);
+	int targetCount = ProcessTargetString(targetString, client, targets, sizeof(targets), COMMAND_FILTER_CONNECTED, "", 0, isMl);
 	if (targetCount > 0)
 	{
 		for (int i = 0; i < targetCount; i++)

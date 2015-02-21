@@ -150,7 +150,7 @@ public int AC_Native_RegWar(Handle plugin, int numParams)
 		War_StartFunc[index] = GetNativeCell(1);
 		War_EndFunc[index] = GetNativeCell(2);
 		GetNativeString(3, War_Name[index], MAX_WAR_NAME);
-		War_HasFreezeTime[index] = bool:GetNativeCell(4);
+		War_HasFreezeTime[index] = view_as<bool>GetNativeCell(4);
 		if (War_HasFreezeTime[index])
 		{
 			War_FT_Start[index] = GetNativeCell(5);
@@ -177,7 +177,7 @@ public void AC_Native_UnRegWar(Handle plugin, int numParams)
 
 public void AC_Native_EndWar(Handle plugin, int numParams)
 {
-	EndWar(bool:GetNativeCell(1));
+	EndWar(view_as<bool>GetNativeCell(1));
 }
 
 /*

@@ -127,7 +127,9 @@ stock void Diced_GameFrame_Detour()
 									{
 										d_JumpState[i] = -1;
 										float vec[3];
-										GetAngleVectors(Float:{-90.0, 0.0, 0.0}, vec, NULL_VECTOR, NULL_VECTOR);
+										float angleVec[3];
+										angleVec[0] = -90.0; angleVec[1] = angleVec[2] = 0.0;
+										GetAngleVectors(angleVec, vec, NULL_VECTOR, NULL_VECTOR);
 										NormalizeVector(vec, vec);
 										ScaleVector(vec, 250.0);
 										SetEntPropVector(i, Prop_Send, "m_vecBaseVelocity", vec);
@@ -976,7 +978,8 @@ public int menuHandler_CTBullyMenu(Handle menu, MenuAction action, int client, i
 	{
 		char display[32];
 		char displayTranslated[32];
-		GetMenuItem(menu, param, "", _:0, _, display, sizeof(display));
+		int style = 0;
+		GetMenuItem(menu, param, "", 0, style, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		return RedrawMenuItem(displayTranslated);
 	}
@@ -986,7 +989,7 @@ public int menuHandler_CTBullyMenu(Handle menu, MenuAction action, int client, i
 		char displayTranslated[32];
 		GetMenuTitle(menu, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
-		SetPanelTitle(Handle:param, displayTranslated);
+		SetPanelTitle(view_as<Handle>param, displayTranslated);
 	}
 	return 0;
 }
@@ -1020,7 +1023,8 @@ public int menuHandler_GoodTMenu(Handle menu, MenuAction action, int client, int
 	{
 		char display[32];
 		char displayTranslated[32];
-		GetMenuItem(menu, param, "", _:0, _, display, sizeof(display));
+		int style = 0;
+		GetMenuItem(menu, param, "", 0, style, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		return RedrawMenuItem(displayTranslated);
 	}
@@ -1030,7 +1034,7 @@ public int menuHandler_GoodTMenu(Handle menu, MenuAction action, int client, int
 		char displayTranslated[32];
 		GetMenuTitle(menu, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
-		SetPanelTitle(Handle:param, displayTranslated);
+		SetPanelTitle(view_as<Handle>param, displayTranslated);
 	}
 	return 0;
 }
@@ -1071,7 +1075,8 @@ public int menuHandler_BadTMenu(Handle menu, MenuAction action, int client, int 
 	{
 		char display[32];
 		char displayTranslated[32];
-		GetMenuItem(menu, param, "", _:0, _, display, sizeof(display));
+		int style = 0;
+		GetMenuItem(menu, param, "", 0, style, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
 		return RedrawMenuItem(displayTranslated);
 	}
@@ -1081,7 +1086,7 @@ public int menuHandler_BadTMenu(Handle menu, MenuAction action, int client, int 
 		char displayTranslated[32];
 		GetMenuTitle(menu, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, client);
-		SetPanelTitle(Handle:param, displayTranslated);
+		SetPanelTitle(view_as<Handle>param, displayTranslated);
 	}
 	else if (action == MenuAction_Cancel)
 	{

@@ -381,8 +381,8 @@ stock void InitMapStart()
 
 stock int GetClientAlphaRenderColor(int client)
 {
-	static bool:gotconfig = false;
-	static String:prop[32];
+	static bool gotconfig = false;
+	static char prop[32];
 	if (!gotconfig)
 	{
 		Handle gc = LoadGameConfigFile("core.games");

@@ -73,7 +73,7 @@ public void TSQL_FetchSFTax(Handle owner, Handle hndl, const char[] error, any d
 
 public void TSQL_CheckValidTransferLimit(Handle owner, Handle hndl, const char[] error, any data)
 {
-	Handle pack = Handle:data; //first thing to do: read data packet and dispose it
+	Handle pack = view_as<Handle>data; //first thing to do: read data packet and dispose it
 	ResetPack(pack, false);
 	int client = GetClientOfUserId(ReadPackCell(pack));
 	float price = ReadPackFloat(pack);
@@ -245,7 +245,7 @@ public void TSQL_CheckUniqueSFName(Handle owner, Handle hndl, const char[] error
 			Handle menu = CreateMenu(menuHandler_ChooseCoFounder, MenuAction_Select | MenuAction_End);
 			SetMenuTitle(menu, "%T", "sfmenu_foundsf_cofounder", client);
 			char handleString[32];
-			IntToString(_:pack, handleString, sizeof(handleString));
+			IntToString(view_as<int>pack, handleString, sizeof(handleString));
 			AddMenuItem(menu, handleString, "", ITEMDRAW_IGNORE); //tricky way to store data in a menu ^^
 			char uid[32];
 			char cName[32];

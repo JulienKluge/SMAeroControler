@@ -247,7 +247,8 @@ public int menuHandler_DiceMenu(Handle menu, MenuAction action, int param1, int 
 	{
 		char display[32];
 		char displayTranslated[32];
-		GetMenuItem(menu, param2, "", _:0, _, display, sizeof(display));
+		int style = 0;
+		GetMenuItem(menu, param2, "", 0, style, display, sizeof(display));
 		Format(displayTranslated, sizeof(displayTranslated), "%T", display, param1);
 		return RedrawMenuItem(displayTranslated);
 	}

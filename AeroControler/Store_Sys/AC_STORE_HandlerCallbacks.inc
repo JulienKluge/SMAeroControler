@@ -362,7 +362,7 @@ public int menuHandler_ChooseCoFounder(Handle menu, MenuAction action, int param
 		{
 			char packHandleString[32];
 			GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-			Handle subPack = Handle:StringToInt(packHandleString);
+			Handle subPack = view_as<Handle>StringToInt(packHandleString);
 			ResetPack(subPack);
 			char name[32];
 			int client = GetClientOfUserId(ReadPackCell(subPack));
@@ -370,7 +370,7 @@ public int menuHandler_ChooseCoFounder(Handle menu, MenuAction action, int param
 			Handle pack = CreateDataPack();
 			WritePackCell(pack, GetClientUserId(client));
 			WritePackString(pack, name);
-			IntToString(_:pack, packHandleString, sizeof(packHandleString));
+			IntToString(view_as<int>pack, packHandleString, sizeof(packHandleString));
 			Handle chooseMenu = CreateMenu(menuHandler_ChooseSFFoundership, MenuAction_Select | MenuAction_End);
 			SetMenuTitle(chooseMenu, "%T", "sfmenu_foundsf_cfchoose", target);
 			AddMenuItem(chooseMenu, packHandleString, "", ITEMDRAW_IGNORE); //tricky way to store data in a menu ^^
@@ -390,7 +390,7 @@ public int menuHandler_ChooseCoFounder(Handle menu, MenuAction action, int param
 	{
 		char packHandleString[32];
 		GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-		Handle pack = Handle:StringToInt(packHandleString);
+		Handle pack = view_as<Handle>StringToInt(packHandleString);
 		CloseHandle(pack);
 		CloseHandle(menu);
 	}
@@ -404,7 +404,7 @@ public int menuHandler_ChooseSFFoundership(Handle menu, MenuAction action, int p
 		GetMenuItem(menu, param2, info, sizeof(info));
 		char packHandleString[32];
 		GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-		Handle pack = Handle:StringToInt(packHandleString);
+		Handle pack = view_as<Handle>StringToInt(packHandleString);
 		char sfName[32];
 		ResetPack(pack);
 		int founder1 = GetClientOfUserId(ReadPackCell(pack));
@@ -434,7 +434,7 @@ public int menuHandler_ChooseSFFoundership(Handle menu, MenuAction action, int p
 	{
 		char packHandleString[32];
 		GetMenuItem(menu, 0, packHandleString, sizeof(packHandleString));
-		Handle pack = Handle:StringToInt(packHandleString);
+		Handle pack = view_as<Handle>StringToInt(packHandleString);
 		CloseHandle(pack);
 		CloseHandle(menu);
 	}
@@ -838,7 +838,7 @@ public int menuHandler_CloseHandleOnEnd(Handle menu, MenuAction action, int para
 /* TIMER */
 public Action timer_RespawnClient(Handle timer, any data)
 {
-	ResetPack(Handle:data);
+	ResetPack(view_as<Handle>data);
 	int clientIndex = ReadPackCell(data);
 	int client = GetClientOfUserId(ReadPackCell(data));
 	CloseHandle(data);
@@ -854,7 +854,7 @@ public Action timer_RespawnClient(Handle timer, any data)
 
 public Action timer_InvisTimer(Handle timer, any data)
 {
-	ResetPack(Handle:data);
+	ResetPack(view_as<Handle>data);
 	int clientIndex = ReadPackCell(data);
 	int client = GetClientOfUserId(ReadPackCell(data));
 	c_InvisibleSeconds[clientIndex]--;

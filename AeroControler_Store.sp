@@ -46,7 +46,7 @@
 #include "AeroControler\\Store_Sys\\AC_STORE_FeatureStocks.inc"
 /* plugin::includes */
 
-public Plugin:myinfo = 
+public Plugin myinfo = 
 {
 	name = "Aero Controler Store",
 	author = PLUGIN_AUTHOR,
@@ -55,7 +55,7 @@ public Plugin:myinfo =
 	url = "Julien.Kluge@gmail.com"
 };
 
-public OnPluginStart()
+public void OnPluginStart()
 {
 	DetectGameMod();
 	LoadStaticConfig();
@@ -78,7 +78,7 @@ public OnPluginStart()
 	if (Cmd_SFC) { RegMultipleConsoleCmd(Cmd_Str_SFC, Cmd_SFChat, "Chat with your skillforce"); }
 }
 
-public OnPluginEnd()
+public void OnPluginEnd()
 {
 	if (LibraryExists("ac_core"))
 	{
@@ -86,34 +86,34 @@ public OnPluginEnd()
 	}
 }
 
-public OnMapStart()
+public void OnMapStart()
 {
 	g_BeamSprite = PrecacheModel("materials/sprites/laserbeam.vmt");
 	g_HaloSprite = PrecacheModel("materials/sprites/glow01.vmt");
 	skillTimer = CreateTimer(2.0, timer_CheckSkill, INVALID_HANDLE, TIMER_REPEAT);
 }
 
-public OnMapEnd()
+public void OnMapEnd()
 {
 	CloseHandle(skillTimer);
 }
 
-public OnClientPutInServer(client)
+public void OnClientPutInServer(client)
 {
 	SDKHook(client, SDKHook_OnTakeDamage, SDKH_OnTakeDamage);
 }
 
-public ac_OnCoreStateChanged(bool indicator)
+public void ac_OnCoreStateChanged(bool indicator)
 {
 	InWork = indicator;
 }
 
-public ac_OnCoreComTagChanged(const char[] tag)
+public void ac_OnCoreComTagChanged(const char[] tag)
 {
 	Format(Tag, sizeof(Tag), "%s", tag);
 }
 
-public OnClientAuthorized(client, const char[] auth)
+public void OnClientAuthorized(client, const char[] auth)
 {
 	#if defined DEBUG
 	LoadClient(client, auth);
@@ -123,13 +123,13 @@ public OnClientAuthorized(client, const char[] auth)
 	#endif
 }
 
-public OnClientDisconnect(client)
+public void OnClientDisconnect(client)
 {
 	if (IsClientValid(client))
 	{ UpdateClientAsync(client); }
 }
 
-public Action:OnClientSayCommand(client, const char[] command, const char[] sArgs)
+public Action OnClientSayCommand(client, const char[] command, const char[] sArgs)
 {
 	if (c_InSFNameChooseProcess[client])
 	{

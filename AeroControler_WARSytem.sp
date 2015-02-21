@@ -43,7 +43,7 @@ functag public WarFreezeTimeEnd();
 #include "AeroControler\\War_Sys\\Controler\\AC_WAR_Cmds.inc"
 #include "AeroControler\\War_Sys\\Controler\\AC_WAR_Configs.inc"
 
-public Plugin:myinfo = 
+public Plugin myinfo = 
 {
 	name = "Aero Controler - Extension: WAR Base Control System",
 	author = "_AeonOne_",
@@ -52,7 +52,7 @@ public Plugin:myinfo =
 	url = "Julien.Kluge@gmail.com"
 };
 
-public OnPluginStart()
+public void OnPluginStart()
 {
 	DetectGameMod();
 	LoadStaticConfig();
@@ -72,7 +72,7 @@ public OnPluginStart()
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 }
 
-public OnPluginEnd()
+public void OnPluginEnd()
 {
 	if (LibraryExists("ac_core")) //alibi check
 	{
@@ -80,7 +80,7 @@ public OnPluginEnd()
 	}
 }
 
-public APLRes:AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
 {
 	CreateNative("ac_war_RegWar", NativeCall:AC_Native_RegWar);
 	CreateNative("ac_war_UnRegWar", NativeCall:AC_Native_UnRegWar);
@@ -89,22 +89,22 @@ public APLRes:AskPluginLoad2(Handle myself, bool late, char[] error, err_max)
 	return APLRes_Success;
 }
 
-public OnMapStart()
+public void OnMapStart()
 {
 	g_Offset_CollisionGroup = FindSendPropOffs("CBaseEntity", "m_CollisionGroup");
 }
 
-public ac_OnCoreComTagChanged(const char[] tag)
+public void ac_OnCoreComTagChanged(const char[] tag)
 {
 	Format(Tag, sizeof(Tag), "%s", tag);
 }
 
-public OnClientPutInServer(client)
+public void OnClientPutInServer(client)
 {
 	SDKHook(client, SDKHook_OnTakeDamage, SDKH_OnTakeDamage);
 }
 
-public OnClientDisconnect_Post(client)
+public void OnClientDisconnect_Post(client)
 {
 	HasVotedWar[client] = false;
 }

@@ -224,8 +224,8 @@ public int AC_Native_UnRegisterPluginExtension(Handle plugin, numParams)
 public int AC_Native_PerformDiceOnClient(Handle plugin, numParams)
 {
 	int client = GetNativeCell(1);
-	float value = Float:GetNativeCell(2);
-	bool lowerDiceCount = bool:GetNativeCell(3);
+	float value = view_as<float>GetNativeCell(2);
+	bool lowerDiceCount = view_as<bool>GetNativeCell(3);
 	if (lowerDiceCount)
 	{ c_dices[client]--; }
 	ThrowDice(client, value, false);

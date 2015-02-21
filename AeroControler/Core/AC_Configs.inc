@@ -356,7 +356,7 @@ stock void LoadRuleMenu()
 						else
 						{ AddMenuItem(subMenu, "", sub_str); }
 					}
-					PushArrayCell(ruleSubMenus, _:subMenu);
+					PushArrayCell(ruleSubMenus, view_as<int>subMenu);
 					Format(sub_str, sizeof(sub_str), "4\x01%i", arrayIndex);
 					AddMenuItem(ruleMenu, sub_str, str);
 				}

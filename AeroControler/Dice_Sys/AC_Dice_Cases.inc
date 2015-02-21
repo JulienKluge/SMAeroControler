@@ -55,7 +55,7 @@ stock bool Diced_Pistol(int client)
 
 stock bool Diced_HE(int client)
 {
-	if (GetEntProp(client, Prop_Data, "m_iAmmo", _:4, g_preoffset_he) > 0) { return false; }
+	if (GetEntProp(client, Prop_Data, "m_iAmmo", 4, g_preoffset_he) > 0) { return false; }
 	GivePlayerItem(client, "weapon_hegrenade");
 	AC_Dice_PrintToChat(client, d_he - d_pistol, d_StateLevel_Good, "%t", "d_he");
 	return true;
@@ -64,7 +64,7 @@ stock bool Diced_HE(int client)
 stock bool Diced_Flash(int client)
 {
 	int currentCount = 0;
-	if ((currentCount = GetEntProp(client, Prop_Data, "m_iAmmo", _:4, g_preoffset_flash)) > 1) { return false; }
+	if ((currentCount = GetEntProp(client, Prop_Data, "m_iAmmo", 4, g_preoffset_flash)) > 1) { return false; }
 	int count = GetRandomInt(1, 2);
 	if (currentCount == 1) { count = 1; }
 	if (count == 1)
@@ -77,7 +77,7 @@ stock bool Diced_Flash(int client)
 
 stock bool Diced_Smoke(int client)
 {
-	if (GetEntProp(client, Prop_Data, "m_iAmmo", _:4, g_preoffset_smoke) > 0) { return false; }
+	if (GetEntProp(client, Prop_Data, "m_iAmmo", 4, g_preoffset_smoke) > 0) { return false; }
 	GivePlayerItem(client, "weapon_smokegrenade");
 	AC_Dice_PrintToChat(client, d_smoke - d_flash, d_StateLevel_Good, "%t", "d_smoke");
 	return true;
