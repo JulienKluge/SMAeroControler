@@ -71,12 +71,22 @@ stock void ApplyClientFade(int client, int duration, int color[4], bool fadeIn =
 	if (stayOut) { flags |= 0x8; }
 	if (purge) { flags |= 0x10; }
 	Handle fadeMsg = StartMessageOne("Fade", client);
-	BfWriteShort(fadeMsg, duration);
-	BfWriteShort(fadeMsg, holdTime);
-	BfWriteShort(fadeMsg, flags);
-	BfWriteByte(fadeMsg, color[0]); //R
-	BfWriteByte(fadeMsg, color[1]); //G
-	BfWriteByte(fadeMsg, color[2]); //B
-	BfWriteByte(fadeMsg, color[3]); //A
+	if (g_Game == Game_Css)
+	{
+		BfWriteShort(fadeMsg, duration);
+		BfWriteShort(fadeMsg, holdTime);
+		BfWriteShort(fadeMsg, flags);
+		BfWriteByte(fadeMsg, color[0]); //R
+		BfWriteByte(fadeMsg, color[1]); //G
+		BfWriteByte(fadeMsg, color[2]); //B
+		BfWriteByte(fadeMsg, color[3]); //A
+	}
+	else if (g_Game == Game_Csgo)
+	{
+		PbAddInt(fadeMsg, "duration", duration);
+		PbAddInt(fadeMsg, "hold_time", holdTime);
+		PbAddInt(fadeMsg, "flags", flags);
+		PbAddColor(fadeMsg, "clr", color);
+	}
 	EndMessage();
 }

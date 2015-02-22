@@ -18,7 +18,7 @@
 #endif
 #define _AC_SHAREDPB_included
 
-#include "AC_ClientSys.inc"
 #include "AC_ErrorSys.inc"
 #include "AC_GameSys.inc"
 #include "AC_UISys.inc"
+#include "AC_ClientSys.inc"

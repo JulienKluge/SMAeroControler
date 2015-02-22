@@ -14,7 +14,7 @@
 ** This license is a voluntary license. You don't have to observe it.
 **
 */
-//#define DEBUG
+#define DEBUG
 
 #define PLUGIN_VERSION_DEF "1.11λ" //RTM
 #define PLUGIN_AUTHOR "Λeon"

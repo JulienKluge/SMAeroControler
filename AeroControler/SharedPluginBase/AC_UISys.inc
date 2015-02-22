@@ -19,6 +19,7 @@
 #define _AC_UISYS_included
 
 #include "AC_GameSys.inc"
+#include <protobuf>
 
 bool IncludeTag = true;
 char Tag[32] = "\x071188FF[Jail]:\x01";
@@ -28,20 +29,30 @@ stock void AC_PrintToChat(int client, const char[] msg, any ...)
 	char message[255]; //not 192 because we perhaps need more without display more than 192
 	SetGlobalTransTarget(client);
 	VFormat(message, sizeof(message), msg, 3);
-	if (IncludeTag)
-	{ Format(message, sizeof(message), "\x01%s %s", Tag, message); }
-	else
-	{ Format(message, sizeof(message), "\x01%s", message); }
 	Handle buffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS);
 	if (g_Game == Game_Css)
 	{
+		if (IncludeTag)
+		{ Format(message, sizeof(message), "\x01%s %s", Tag, message); }
+		else
+		{ Format(message, sizeof(message), "\x01%s", message); }
 		BfWriteByte(buffer, client);
 		BfWriteByte(buffer, true);
 		BfWriteString(buffer, message);
 	}
 	else if (g_Game == Game_Csgo)
 	{
-		//TODO
+		if (IncludeTag)
+		{ Format(message, sizeof(message), "\x01\x0B\x01%s %s", Tag, message); }
+		else
+		{ Format(message, sizeof(message), "\x01\x0B\x01%s", message); }
+		PbSetInt(buffer, "ent_idx", client);
+		PbSetBool(buffer, "chat", true);
+		PbSetString(buffer, "msg_name", message);
+		PbAddString(buffer, "params", "");
+		PbAddString(buffer, "params", "");
+		PbAddString(buffer, "params", "");
+		PbAddString(buffer, "params", "");
 	}
 	EndMessage();
 }
@@ -55,20 +66,31 @@ stock void AC_PrintToChatAll(char[] msg, any ...)
 		{
 			SetGlobalTransTarget(i);
 			VFormat(message, sizeof(message), msg, 2);
-			if (IncludeTag)
-			{ Format(message, sizeof(message), "\x01%s %s", Tag, message); }
-			else
-			{ Format(message, sizeof(message), "\x01%s", message); }
+			
 			Handle buffer = StartMessageOne("SayText2", i, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS); //why I don't use AC_PrintToChat? Because 2 times a VFormat, Format & SetGlobalTransTarget is sensless!
 			if (g_Game == Game_Css)
 			{
+				if (IncludeTag)
+				{ Format(message, sizeof(message), "\x01%s %s", Tag, message); }
+				else
+				{ Format(message, sizeof(message), "\x01%s", message); }
 				BfWriteByte(buffer, i);
 				BfWriteByte(buffer, true);
 				BfWriteString(buffer, message);
 			}
 			else if (g_Game == Game_Csgo)
 			{
-				//TODO
+				if (IncludeTag)
+				{ Format(message, sizeof(message), "\x01\x0B\x01%s %s", Tag, message); }
+				else
+				{ Format(message, sizeof(message), "\x01\x0B\x01%s", message); }
+				PbSetInt(buffer, "ent_idx", i);
+				PbSetBool(buffer, "chat", true);
+				PbSetString(buffer, "msg_name", message);
+				PbAddString(buffer, "params", "");
+				PbAddString(buffer, "params", "");
+				PbAddString(buffer, "params", "");
+				PbAddString(buffer, "params", "");
 			}
 			EndMessage();
 		}
@@ -88,7 +110,7 @@ stock void AC_PrintKeyText(int client, char[] msg, any ...)
 	}
 	else if (g_Game == Game_Csgo)
 	{
-		//TODO
+		PbAddString(userMessage, "hints", message);
 	}
 	EndMessage();
 }

@@ -16,7 +16,7 @@
 **
 */
 
-//#define DEBUG
+#define DEBUG
 
 /* γ = dev : α = canditae for control testing : β = proving ground/release candidate : λ = Final stable/RTM */
 #define PLUGIN_VERSION "1.00λ"

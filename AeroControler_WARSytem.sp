@@ -16,7 +16,7 @@
 **
 */
 
-//#define DEBUG
+#define DEBUG
 
 /* γ = dev : α = canditae for control testing : β = proving ground/release candidate : λ = Final stable/RTM */
 #define PLUGIN_VERSION "1.03λ"
@@ -26,7 +26,6 @@
 #include <cstrike>
 #include <sdkhooks>
 
-#include "AeroControler\\aerocontroler_core_interface.inc" //interface to the core
 typeset WarStart
 {
 	function void ();
@@ -40,6 +39,8 @@ typeset WarEnd
 };
 typedef WarFreezeTimeStart = function void (int time);
 typedef WarFreezeTimeEnd = function void ();
+
+#include "AeroControler\\aerocontroler_core_interface.inc" //interface to the core
 
 #include "AeroControler\\SharedPluginBase\\AC_SharedPluginBase.inc"
 

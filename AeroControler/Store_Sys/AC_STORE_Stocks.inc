@@ -59,9 +59,9 @@ stock void UpdateClientAsync(int client)
 stock void GainPoints(int client, float pointsToGain)
 {
 	if (!InWork) { return; }
-	#if defined DEBUG
+	/*#if defined DEBUG
 	tCount = ctCount = 1;
-	#endif
+	#endif*/
 	newPoints[client] += pointsToGain;
 	virtualNewPoints[client] += pointsToGain;
 }
